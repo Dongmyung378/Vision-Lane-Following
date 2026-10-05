@@ -1,0 +1,34 @@
+# Local Python environments and generated caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+
+# Simulator packages, datasets and model artifacts
+/carla/
+/CARLA_*/
+/data/
+/datasets/
+/checkpoints/
+/runs/
+*.pt
+*.pth
+*.ckpt
+*.onnx
+
+# Per-machine diagnostics and transient experiment output
+/results/local/
+*.log
+.DS_Store
+Thumbs.db
