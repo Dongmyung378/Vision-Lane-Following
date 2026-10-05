@@ -1,0 +1,111 @@
+{
+  "python": "3.13.15",
+  "machine": "x86_64",
+  "libc": [
+    "glibc",
+    "2.39"
+  ],
+  "uid": 0,
+  "gpu": [
+    {
+      "name": "Tesla T4",
+      "memory_mib": 15360,
+      "driver": "580.178.04"
+    },
+    {
+      "name": "Tesla T4",
+      "memory_mib": 15360,
+      "driver": "580.178.04"
+    }
+  ],
+  "vulkan": {
+    "status": "nvidia_hardware",
+    "devices": [
+      {
+        "name": "Tesla T4",
+        "vendor_id": 4318,
+        "device_type": 2,
+        "api_version": 4211000
+      },
+      {
+        "name": "Tesla T4",
+        "vendor_id": 4318,
+        "device_type": 2,
+        "api_version": 4211000
+      }
+    ]
+  },
+  "carla_rgb_verified": false,
+  "working_free_gib": 19.5,
+  "scratch_free_gib": 1069.93,
+  "graphics_driver_files": [
+    "libEGL_nvidia.so.0",
+    "libEGL_nvidia.so.580.178.04",
+    "libGLX_nvidia.so.0",
+    "libGLX_nvidia.so.580.178.04"
+  ],
+  "icd_files": [],
+  "vulkan_before_icd": {
+    "status": "instance_failed",
+    "vk_result": -9,
+    "devices": []
+  },
+  "vulkan_attempts": [
+    {
+      "library": "libGLX_nvidia.so.0",
+      "path": "/usr/local/nvidia/lib64/libGLX_nvidia.so.580.178.04",
+      "fresh_process_probe": true,
+      "vulkan": {
+        "status": "instance_failed",
+        "vk_result": -9,
+        "devices": []
+      },
+      "status": "instance_failed"
+    },
+    {
+      "library": "libEGL_nvidia.so.0",
+      "path": "/usr/local/nvidia/lib64/libEGL_nvidia.so.580.178.04",
+      "fresh_process_probe": true,
+      "vulkan": {
+        "status": "nvidia_hardware",
+        "devices": [
+          {
+            "name": "Tesla T4",
+            "vendor_id": 4318,
+            "device_type": 2,
+            "api_version": 4211000
+          },
+          {
+            "name": "Tesla T4",
+            "vendor_id": 4318,
+            "device_type": 2,
+            "api_version": 4211000
+          }
+        ]
+      },
+      "status": "nvidia_hardware"
+    }
+  ],
+  "nvidia_graphics_library": "loadable",
+  "fresh_process_probe": true,
+  "icd_remediation": "attempted_existing_driver_manifest",
+  "selected_vulkan_library": "/usr/local/nvidia/lib64/libEGL_nvidia.so.580.178.04",
+  "cuda_training": {
+    "status": "PASS",
+    "torch": "2.11.0+cu128",
+    "devices": [
+      {
+        "index": 0,
+        "name": "Tesla T4",
+        "three_optimizer_steps_verified": true,
+        "final_loss": 1.3034266233444214
+      },
+      {
+        "index": 1,
+        "name": "Tesla T4",
+        "three_optimizer_steps_verified": true,
+        "final_loss": 1.3034266233444214
+      }
+    ]
+  }
+}

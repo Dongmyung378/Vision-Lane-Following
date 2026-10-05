@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "stage": "verified",
+  "carla_rgb_verified": true,
+  "python": "3.13.15",
+  "stages": [
+    {
+      "name": "vulkan-preflight",
+      "elapsed_seconds": 0.01
+    },
+    {
+      "name": "python312-client",
+      "elapsed_seconds": 1.85
+    },
+    {
+      "name": "server-download",
+      "elapsed_seconds": 4.95
+    },
+    {
+      "name": "server-extraction",
+      "elapsed_seconds": 110.3
+    },
+    {
+      "name": "server-launch",
+      "elapsed_seconds": 328.69
+    },
+    {
+      "name": "rgb-probe",
+      "elapsed_seconds": 359.74
+    },
+    {
+      "name": "verified",
+      "elapsed_seconds": 372.1
+    }
+  ],
+  "max_seconds": 1200,
+  "vulkan_attempts": [
+    {
+      "library": "libGLX_nvidia.so.0",
+      "path": "/usr/local/nvidia/lib64/libGLX_nvidia.so.580.178.04",
+      "vulkan": {
+        "status": "instance_failed",
+        "vk_result": -9,
+        "devices": []
+      },
+      "status": "instance_failed"
+    },
+    {
+      "library": "libEGL_nvidia.so.0",
+      "path": "/usr/local/nvidia/lib64/libEGL_nvidia.so.580.178.04",
+      "vulkan": {
+        "status": "nvidia_hardware",
+        "devices": [
+          {
+            "name": "Tesla T4",
+            "vendor_id": 4318,
+            "device_type": 2,
+            "api_version": 4211000
+          },
+          {
+            "name": "Tesla T4",
+            "vendor_id": 4318,
+            "device_type": 2,
+            "api_version": 4211000
+          }
+        ]
+      },
+      "status": "nvidia_hardware"
+    }
+  ],
+  "vulkan": {
+    "status": "nvidia_hardware",
+    "devices": [
+      {
+        "name": "Tesla T4",
+        "vendor_id": 4318,
+        "device_type": 2,
+        "api_version": 4211000
+      },
+      {
+        "name": "Tesla T4",
+        "vendor_id": 4318,
+        "device_type": 2,
+        "api_version": 4211000
+      }
+    ]
+  },
+  "selected_vulkan_library": "/usr/local/nvidia/lib64/libEGL_nvidia.so.580.178.04",
+  "download_attempts": [
+    {
+      "url": "https://downloads.carlasim.com/Linux/CARLA_0.9.16.tar.gz",
+      "http_status": 200,
+      "content_length": 8346095504,
+      "status": "selected"
+    }
+  ],
+  "download_url": "https://downloads.carlasim.com/Linux/CARLA_0.9.16.tar.gz",
+  "download_bytes": 8346095504,
+  "elapsed_seconds": 374.12,
+  "server_stopped": true
+}

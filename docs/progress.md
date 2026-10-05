@@ -49,6 +49,21 @@ GitHub About 설명은 `Camera-based lane following in CARLA: RGB-to-waypoint pr
 4. 실제 사용한 Python·API·server 버전, 설치 경로 및 연결 결과를 기록한다.
 5. 연결 오류가 있으면 원인과 재현 명령을 남긴 뒤 해결한다. 연결 성공 전에는 D2 완료로 표시하지 않는다.
 
+## D1 이후 추가 검증: Kaggle T4와 CARLA
+
+- 실제 날짜: **2026-10-05 (Asia/Seoul)**
+- 상태: **원격 CUDA 학습 및 CARLA RGB 실행 통과**
+- 실제 작업: 공식 Kaggle CLI, 비공개 T4 작업, CARLA RGB 작업 version 2
+- 결과: CARLA API/server 모두 0.9.16, Town01, RGB 640×360 20프레임의 유효 픽셀 및 frame 번호 정합 확인
+- 해결: 기본 GLX Vulkan 경로 대신 기존 EGL ICD 사용, Python 3.13과 분리한 3.12 client, 공식 다운로드 헤더 명시
+- 검증: 전체 단위 검증 36개 통과, 실제 원격 JSON·PNG 내려받아 확인, 제출한 작업 모두 종료
+- 제한: 정지 상태의 짧은 실행이며 주행 모델·controller·장시간 성능과 로컬 6GiB 실행 여부는 미검증. 종료 구간의 Signal 11 로그는 후속 안정성 점검 대상
+- 산출물: [Kaggle CARLA 검증 기록과 실제 증거](KAGGLE_CARLA_VERIFICATION.md)
+
+이 기록은 사용자가 요청한 원격 실행 가능성의 선행 검증이다. 로컬 D2 구성이 완료됐거나 이후 주행·학습 단계가 완료됐다고 표시하지 않는다.
+
+사용자 요청에 따라 Kaggle 작업은 이미 생성한 노트북 3개를 재사용한다. 이후 날짜·일차·실험별로 새 노트북을 만들지 않고 같은 ID에 실행 버전을 추가한다. 자세한 운영 원칙은 [작업 지침](../AGENTS.md)과 [검증 기록](KAGGLE_CARLA_VERIFICATION.md)에 있다.
+
 ### 이후 기록 양식
 
 ```text

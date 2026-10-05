@@ -4,7 +4,7 @@ Camera-based lane following in CARLA with reproducible closed-loop evaluation.
 
 전방 RGB 영상에서 차선 중심 waypoint를 예측하고 controller로 차량을 조향합니다. 차선 검출 정확도뿐 아니라 실제 주행의 완주율, 횡방향 오차, 차선 침범, 충돌 및 처리 시간을 평가합니다.
 
-**진행 상태: D1 완료.** 프로젝트 범위와 실제 개발 환경을 정리하고, 재실행 가능한 환경 진단 도구를 구현했습니다. 다음 단계인 D2에서 CARLA server와 Python API의 동일 버전 연결을 검증합니다. 주행 모델과 benchmark 결과는 이후 일정에서 구현합니다.
+**진행 상태: D1 완료, Kaggle 원격 실행 추가 검증 완료.** 프로젝트 범위와 실제 개발 환경을 정리하고, 환경 진단 도구를 구현했습니다. Kaggle T4에서 CARLA 0.9.16 server/API 연결과 실제 RGB 20프레임 수집도 확인했습니다. 로컬 simulator 구성, 주행 모델과 benchmark 결과는 이후 일정에서 진행합니다.
 
 ## 시스템과 입력 범위
 
@@ -56,6 +56,8 @@ GPU의 VRAM 6GB는 CARLA 공식 권장 8GB보다 작습니다. D2에서 작은 �
 
 ## 검증
 
+Kaggle T4 두 개에서 작은 모델의 CUDA 학습을 확인했고, 기존 EGL 드라이버를 지정해 CARLA의 off-screen RGB 렌더링을 검증했습니다. Town01, Low, 640×360 카메라 하나에서 20프레임의 정합을 확인했습니다. 정지 상태의 짧은 수집 시험이며 주행 benchmark와 장기 안정성은 후속 단계에서 확인합니다. 환경 차이, 실제 PNG·JSON 및 재현 명령은 [Kaggle CARLA 검증 기록](docs/KAGGLE_CARLA_VERIFICATION.md)에 있습니다.
+
 ```powershell
 py -3.12 -m unittest discover -s tests -v
 ```
@@ -67,6 +69,7 @@ py -3.12 -m unittest discover -s tests -v
 - [일별 로드맵](docs/ROADMAP.md): 핵심 D1~D56, 선택 연구 D57~D84.
 - [프로젝트 범위](docs/PROJECT_SCOPE.md): 입력, 출력, 라벨 및 비교 원칙.
 - [D1 환경 기록](docs/ENVIRONMENT_D1.md): 실제 호스트 조사와 D2 준비 상태.
+- [Kaggle CARLA 검증](docs/KAGGLE_CARLA_VERIFICATION.md): 실제 T4 학습, Vulkan, CARLA RGB 실행 결과와 재현 방법.
 - [진행 기록](docs/progress.md): 완료 근거와 다음 작업.
 
 대규모 데이터, simulator 배포 파일, checkpoint 및 머신별 실행 출력은 Git에 넣지 않습니다. 이후 dataset snapshot과 모델 artifact는 버전 및 checksum으로 추적합니다.
