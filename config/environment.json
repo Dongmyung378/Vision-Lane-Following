@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "python": "3.12",
+  "carla_version": "0.9.16",
+  "windows_package": {
+    "url": "https://downloads.carlasim.com/Windows/CARLA_0.9.16.zip",
+    "archive_bytes": 7812252810,
+    "sha256": "0972f26fa3f1c741fbfcb4602b4ccf520415b8f8cf3d06cb83c9502fe8118bd2",
+    "install_directory": "carla/CARLA_0.9.16"
+  },
+  "runtime": {
+    "host": "127.0.0.1",
+    "rpc_port": 2000,
+    "streaming_port": 2001,
+    "map": "Town01",
+    "quality": "Low",
+    "offscreen": true
+  }
+}

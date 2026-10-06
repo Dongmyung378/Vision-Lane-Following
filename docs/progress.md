@@ -64,6 +64,46 @@ GitHub About 설명은 `Camera-based lane following in CARLA: RGB-to-waypoint pr
 
 사용자 요청에 따라 Kaggle 작업은 이미 생성한 노트북 3개를 재사용한다. 이후 날짜·일차·실험별로 새 노트북을 만들지 않고 같은 ID에 실행 버전을 추가한다. 자세한 운영 원칙은 [작업 지침](../AGENTS.md)과 [검증 기록](KAGGLE_CARLA_VERIFICATION.md)에 있다.
 
+## D2 로컬 CARLA 환경과 실제 연결 검증
+
+- 실제 날짜: **2026-10-06 (Asia/Seoul)**
+- 상태: **D2 gate PASS**, 로컬 Windows 서버·API 연결 및 짧은 RGB 시험 통과
+- 목표: 프로젝트 가상환경, 동일 버전 Windows 패키지·API 및 실제 simulation 진행 검증
+
+### 완료한 작업과 증거
+
+| 작업 | 실제 결과·산출물 |
+| --- | --- |
+| 프로젝트 환경 고정 | CPython 3.12.7 x64 `.venv`, hash 고정 CARLA 0.9.16 API, native import 및 `pip check` 통과 |
+| Windows 배포 설치 | `carla/CARLA_0.9.16`, ZIP SHA-256 manifest 일치 및 추출 완료; [설치 기록](evidence/carla_windows_install_2026-10-06.json) |
+| 실제 버전과 simulation 검증 | Package·client·server 0.9.16, 실제 Town01, asynchronous tick 3회; [RPC 기록](evidence/carla_windows_connection_2026-10-06.json) |
+| 시작·상태·종료 진입점 | 소유 process의 PID·경로·생성 시각 검증, TCP listener 최대 45초 대기, 시작과 RPC 최종 재실행 약 5.84초 |
+| 실제 RGB | 640×360 20장, frame 22094~22113 모두 정합, 유효 RGB 및 PNG; [RGB 기록](evidence/carla_windows_rgb_2026-10-06.json), [도로 이미지](evidence/carla_windows_rgb_2026-10-06.png) |
+| 정리 및 재검증 | 시험 actor 정리, asynchronous world 복구, RGB 종료 후 RPC PASS; 서버 종료 후 상태 파일 제거 및 두 port listener 없음 |
+| 로컬 품질 검사 | 단위 검증 70개 PASS·0 skip, PowerShell syntax, strict 환경 사전 검사 및 `pip check` PASS |
+| 재현 안내·요약 | [ENVIRONMENT_D2.md](ENVIRONMENT_D2.md), [실제 D2 요약](evidence/carla_windows_d2_2026-10-06.json) |
+
+### 실행과 측정
+
+설치·시작·RGB·재검증·종료 명령은 [D2 재현 순서](ENVIRONMENT_D2.md#실제-결과와-다음-단계)에 정리했다. Local RGB는 `--reuse-current-world`로 새로 시작한 Town01을 사용했다. API·서버 버전과 map은 설정 문자열이 아닌 실제 RPC 값으로 확인했다.
+
+수집 loop는 정지 차량의 simulation 1초, 측정 20프레임에서 0.345313초·57.919 FPS였다. RGB 검사를 포함하고 warmup·PNG 저장·GPU snapshot은 제외한 값이며 주행이나 모델의 처리율이 아니다. 전체 GPU 장치의 수집 전후 snapshot은 3,156 / 3,172MiB of 6,144MiB로, process 사용량이나 peak가 아니다.
+
+### 해결한 문제와 남은 제약
+
+- Windows Shipping이 positional Town01 argument를 반영하지 않고 Town10HD_Opt를 로드했다. Project 내부 배포의 `DefaultEngine.ini`에서 공식 기본값만 Town01으로 변경하고 원본을 보관했다. 실제 Town01 RPC·RGB를 재검증했다. AppData는 수정하지 않았다.
+- 초기 RPC 호출은 서버 준비 전 timeout이었다. 두 TCP listener를 최대 45초 기다린 뒤 별도 RPC 검사로 연결을 검증하도록 보완했다.
+- 이전 `load_world("Town01")` 중 서버가 종료됐다. [실패 JSON](evidence/carla_windows_reload_failure_2026-10-06.json)을 보존했으며 근본 원인은 미확인이다. 새 Town01을 재사용하는 RGB 시험은 통과했지만 map 재로드는 추가 검증이 필요하다.
+- DX12 소스·배포 기본값은 확인했으나 실제 engine RHI 로그는 확보하지 못했다. 소유 process 종료는 통과했으며 graceful engine shutdown은 미검증이다.
+- 짧은 정지 RGB 시험으로 장시간 안정성, waypoint 라벨, controller 및 학습 모델의 주행을 주장하지 않는다. GitHub Actions는 계정에서 비활성화되어 원격 CI가 실행되지 않았다.
+- 새 Kaggle 작업이나 노트북은 생성하지 않았다. 기존 3개 ID와 재사용 원칙을 유지한다.
+
+### Gate 판정과 D3 인계
+
+**D2 gate: 통과.** Windows 설치, 프로젝트 API import, 실제 버전 일치 및 tick 진행을 검증했다. RGB 20프레임은 추가 검증으로 기록한다. 실패와 검증 범위를 함께 보존했으며 설치 ZIP hash는 다운로드 파일의 동일성 확인용이다.
+
+D3에서는 고정 차량·전방 카메라, synchronous mode 및 0.05초 timestep을 재실행 가능한 config로 구현한다. 이후 frame별 자세 기록, 라벨 생성 및 정합 검증을 진행하고 장시간 실행과 map 재로드 제약도 추적한다.
+
 ### 이후 기록 양식
 
 ```text

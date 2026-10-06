@@ -1,0 +1,5 @@
+# CARLA 0.9.16 official CPython 3.12 wheels; other Python versions are not locked.
+# SHA-256 values from https://pypi.org/pypi/carla/0.9.16/json
+carla==0.9.16 \
+    --hash=sha256:f1f22d153b1a43b579d90e816b7016ca19f1483ca64cbc5ebbcd4dbf325e3356 \
+    --hash=sha256:c323a7b1f8ad3ac81cfac79f5d96c9cac8afa6d0a768fa2fffa46bb336945c4f

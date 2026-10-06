@@ -15,7 +15,7 @@ import zlib
 from contextlib import redirect_stdout
 from pathlib import Path
 from types import SimpleNamespace
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -147,9 +147,10 @@ class FakeWorld:
 def fake_carla(world, server_version="0.9.16"):
     client = SimpleNamespace(
         set_timeout=lambda _: None, get_client_version=lambda: "0.9.16",
-        get_server_version=lambda: server_version, load_world=lambda _: world,
+        get_server_version=lambda: server_version, load_world=Mock(return_value=world),
+        get_world=Mock(return_value=world),
     )
-    return SimpleNamespace(Client=lambda *args: client, Transform=lambda *args: None,
+    return SimpleNamespace(Client=Mock(return_value=client), Transform=lambda *args: None,
                            Location=lambda **kwargs: None, Rotation=lambda **kwargs: None)
 
 
@@ -210,6 +211,44 @@ class FailureSemanticsTests(unittest.TestCase):
         self.assertEqual(report["gpu_after_capture"]["status"], "unavailable")
         self.assertEqual(len(report["frames"]), 2)
         self.assertTrue(all(frame["world_frame"] == frame["sensor_frame"] for frame in report["frames"]))
+
+    def test_reuse_current_town01_never_loads_world_and_restores_its_settings(self):
+        with tempfile.TemporaryDirectory() as folder, patch.object(probe, "gpu_sample", return_value={"status": "unavailable"}):
+            world = FakeWorld()
+            carla = fake_carla(world)
+            config = probe.ProbeConfig(Path(folder), frames=2, warmup=1, width=2, height=1,
+                                       timeout=1, reuse_current_world=True)
+            report = probe.run_probe(config, carla)
+        self.assertEqual(report["status"], "PASS")
+        self.assertEqual(report["world_initialization"], "reuse-current-town01")
+        carla.Client.return_value.get_world.assert_called_once_with()
+        carla.Client.return_value.load_world.assert_not_called()
+        self.assertEqual(vars(world.settings), vars(world.initial_settings))
+        self.assertTrue(world.camera.destroyed)
+        self.assertTrue(world.vehicle.destroyed)
+
+    def test_reuse_wrong_map_is_refused_without_loading_or_changing_world(self):
+        with tempfile.TemporaryDirectory() as folder:
+            world = FakeWorld()
+            world.get_map = Mock(return_value=SimpleNamespace(name="/Game/Carla/Maps/Town02"))
+            carla = fake_carla(world)
+            report = probe.run_probe(probe.ProbeConfig(Path(folder), reuse_current_world=True), carla)
+        self.assertEqual(report["status"], "FAIL")
+        self.assertEqual(report["error"], {"stage": "world-reuse", "code": "unexpected-map", "exception_type": "ProbeFailure"})
+        carla.Client.return_value.load_world.assert_not_called()
+        self.assertEqual(world.applied, [])
+        self.assertFalse(report["preview_png_written"])
+        self.assertFalse(world.vehicle.destroyed)
+        self.assertNotIn("world_initialization", report)
+
+    def test_default_mode_still_loads_town01_for_existing_kaggle_jobs(self):
+        with tempfile.TemporaryDirectory() as folder, patch.object(probe, "gpu_sample", return_value={"status": "unavailable"}):
+            carla = fake_carla(FakeWorld())
+            report = probe.run_probe(self.config(folder), carla)
+        self.assertEqual(report["status"], "PASS")
+        self.assertEqual(report["world_initialization"], "load-town01")
+        carla.Client.return_value.load_world.assert_called_once_with("Town01")
+        carla.Client.return_value.get_world.assert_not_called()
 
     def test_black_startup_frame_is_warmed_up_without_counting_as_evidence(self):
         raw = lambda frame: bytes([0, 0, 0, 255] * 2) if frame == 1 else bytes([3, 2, 1, 255, 6, 5, 4, 255])

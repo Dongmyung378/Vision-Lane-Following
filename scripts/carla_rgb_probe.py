@@ -44,6 +44,7 @@ class ProbeConfig:
     width: int = 640
     height: int = 360
     fixed_delta_seconds: float = 0.05
+    reuse_current_world: bool = False
 
 
 def rgb_from_bgra(raw: bytes, width: int, height: int) -> tuple[bytes, dict[str, Any]]:
@@ -126,7 +127,8 @@ def run_probe(config: ProbeConfig, carla_module: Any = None) -> dict[str, Any]:
         "schema_version": 1, "status": "FAIL", "scope": "carla-rgb-rendering-only",
         "required_carla_version": CARLA_VERSION, "map_requested": "Town01",
         "configuration": {"width": config.width, "height": config.height, "warmup_frames": config.warmup,
-                          "measured_frames": config.frames, "fixed_delta_seconds": config.fixed_delta_seconds},
+                          "measured_frames": config.frames, "fixed_delta_seconds": config.fixed_delta_seconds,
+                          "reuse_current_world": config.reuse_current_world},
         "frames": [], "preview_png_written": False,
         "gpu_memory_scope": "whole-device-snapshots-not-peak", "cleanup_errors": [],
     }
@@ -138,7 +140,8 @@ def run_probe(config: ProbeConfig, carla_module: Any = None) -> dict[str, Any]:
     try:
         if (config.frames < 1 or config.warmup < 0 or config.width < 1 or config.height < 1
                 or config.timeout <= 0 or not math.isfinite(config.timeout)
-                or config.fixed_delta_seconds <= 0 or not math.isfinite(config.fixed_delta_seconds)):
+                or config.fixed_delta_seconds <= 0 or not math.isfinite(config.fixed_delta_seconds)
+                or not isinstance(config.reuse_current_world, bool)):
             raise ProbeFailure("invalid-configuration")
         stage = "output-directory"
         config.output_dir.mkdir(parents=True, exist_ok=True)
@@ -155,11 +158,12 @@ def run_probe(config: ProbeConfig, carla_module: Any = None) -> dict[str, Any]:
             report[label] = value if isinstance(value, str) and re.fullmatch(r"\d+\.\d+\.\d+(?:[-+][A-Za-z0-9_.-]+)?", value) else "invalid-response"
         if client_version != CARLA_VERSION or server_version != CARLA_VERSION:
             raise ProbeFailure("carla-version-mismatch")
-        stage = "world-load"
-        world = client.load_world("Town01")
+        stage = "world-reuse" if config.reuse_current_world else "world-load"
+        world = client.get_world() if config.reuse_current_world else client.load_world("Town01")
         if world.get_map().name.rsplit("/", 1)[-1] != "Town01":
             raise ProbeFailure("unexpected-map")
         report["map_verified"] = "Town01"
+        report["world_initialization"] = "reuse-current-town01" if config.reuse_current_world else "load-town01"
         stage = "world-settings"
         original_settings = world.get_settings()
         settings = world.get_settings()
@@ -277,6 +281,8 @@ def main(arguments: list[str] | None = None) -> int:
     parser.add_argument("--timeout", type=float, default=30.0)
     parser.add_argument("--frames", type=int, default=20)
     parser.add_argument("--warmup", type=int, default=5)
+    parser.add_argument("--reuse-current-world", action="store_true",
+                        help="Use the already-running Town01; fail if its map differs, without reloading it.")
     args = parser.parse_args(arguments)
     config = ProbeConfig(**vars(args))
     report = run_probe(config)

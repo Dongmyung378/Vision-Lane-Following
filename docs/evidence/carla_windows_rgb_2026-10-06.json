@@ -1,0 +1,499 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "scope": "carla-rgb-rendering-only",
+  "required_carla_version": "0.9.16",
+  "map_requested": "Town01",
+  "configuration": {
+    "width": 640,
+    "height": 360,
+    "warmup_frames": 5,
+    "measured_frames": 20,
+    "fixed_delta_seconds": 0.05,
+    "reuse_current_world": true
+  },
+  "frames": [
+    {
+      "world_frame": 22094,
+      "sensor_frame": 22094,
+      "simulation_timestamp_seconds": 66.1787885054946,
+      "tick_to_rgb_seconds": 0.006028100000094128,
+      "rgb": {
+        "width": 640,
+        "height": 360,
+        "rgb_bytes": 691200,
+        "channel_min": [
+          0,
+          0,
+          0
+        ],
+        "channel_max": [
+          255,
+          254,
+          252
+        ],
+        "spatially_nonconstant": true
+      }
+    },
+    {
+      "world_frame": 22095,
+      "sensor_frame": 22095,
+      "simulation_timestamp_seconds": 66.22878850623965,
+      "tick_to_rgb_seconds": 0.006414700000277662,
+      "rgb": {
+        "width": 640,
+        "height": 360,
+        "rgb_bytes": 691200,
+        "channel_min": [
+          0,
+          0,
+          0
+        ],
+        "channel_max": [
+          255,
+          255,
+          252
+        ],
+        "spatially_nonconstant": true
+      }
+    },
+    {
+      "world_frame": 22096,
+      "sensor_frame": 22096,
+      "simulation_timestamp_seconds": 66.27878850698471,
+      "tick_to_rgb_seconds": 0.005890999999792257,
+      "rgb": {
+        "width": 640,
+        "height": 360,
+        "rgb_bytes": 691200,
+        "channel_min": [
+          0,
+          0,
+          0
+        ],
+        "channel_max": [
+          255,
+          255,
+          252
+        ],
+        "spatially_nonconstant": true
+      }
+    },
+    {
+      "world_frame": 22097,
+      "sensor_frame": 22097,
+      "simulation_timestamp_seconds": 66.32878850772977,
+      "tick_to_rgb_seconds": 0.006612599999698432,
+      "rgb": {
+        "width": 640,
+        "height": 360,
+        "rgb_bytes": 691200,
+        "channel_min": [
+          0,
+          0,
+          0
+        ],
+        "channel_max": [
+          255,
+          255,
+          253
+        ],
+        "spatially_nonconstant": true
+      }
+    },
+    {
+      "world_frame": 22098,
+      "sensor_frame": 22098,
+      "simulation_timestamp_seconds": 66.37878850847483,
+      "tick_to_rgb_seconds": 0.006029099999977916,
+      "rgb": {
+        "width": 640,
+        "height": 360,
+        "rgb_bytes": 691200,
+        "channel_min": [
+          0,
+          0,
+          0
+        ],
+        "channel_max": [
+          255,
+          254,
+          252
+        ],
+        "spatially_nonconstant": true
+      }
+    },
+    {
+      "world_frame": 22099,
+      "sensor_frame": 22099,
+      "simulation_timestamp_seconds": 66.42878850921988,
+      "tick_to_rgb_seconds": 0.006393500000285712,
+      "rgb": {
+        "width": 640,
+        "height": 360,
+        "rgb_bytes": 691200,
+        "channel_min": [
+          0,
+          0,
+          0
+        ],
+        "channel_max": [
+          255,
+          254,
+          252
+        ],
+        "spatially_nonconstant": true
+      }
+    },
+    {
+      "world_frame": 22100,
+      "sensor_frame": 22100,
+      "simulation_timestamp_seconds": 66.47878850996494,
+      "tick_to_rgb_seconds": 0.006527499999720021,
+      "rgb": {
+        "width": 640,
+        "height": 360,
+        "rgb_bytes": 691200,
+        "channel_min": [
+          0,
+          0,
+          0
+        ],
+        "channel_max": [
+          255,
+          254,
+          252
+        ],
+        "spatially_nonconstant": true
+      }
+    },
+    {
+      "world_frame": 22101,
+      "sensor_frame": 22101,
+      "simulation_timestamp_seconds": 66.52878851071,
+      "tick_to_rgb_seconds": 0.006615799999963201,
+      "rgb": {
+        "width": 640,
+        "height": 360,
+        "rgb_bytes": 691200,
+        "channel_min": [
+          0,
+          0,
+          0
+        ],
+        "channel_max": [
+          255,
+          254,
+          252
+        ],
+        "spatially_nonconstant": true
+      }
+    },
+    {
+      "world_frame": 22102,
+      "sensor_frame": 22102,
+      "simulation_timestamp_seconds": 66.57878851145506,
+      "tick_to_rgb_seconds": 0.006477700000232289,
+      "rgb": {
+        "width": 640,
+        "height": 360,
+        "rgb_bytes": 691200,
+        "channel_min": [
+          0,
+          0,
+          0
+        ],
+        "channel_max": [
+          255,
+          255,
+          252
+        ],
+        "spatially_nonconstant": true
+      }
+    },
+    {
+      "world_frame": 22103,
+      "sensor_frame": 22103,
+      "simulation_timestamp_seconds": 66.62878851220012,
+      "tick_to_rgb_seconds": 0.006589099999928294,
+      "rgb": {
+        "width": 640,
+        "height": 360,
+        "rgb_bytes": 691200,
+        "channel_min": [
+          0,
+          0,
+          0
+        ],
+        "channel_max": [
+          255,
+          255,
+          253
+        ],
+        "spatially_nonconstant": true
+      }
+    },
+    {
+      "world_frame": 22104,
+      "sensor_frame": 22104,
+      "simulation_timestamp_seconds": 66.67878851294518,
+      "tick_to_rgb_seconds": 0.006904500000018743,
+      "rgb": {
+        "width": 640,
+        "height": 360,
+        "rgb_bytes": 691200,
+        "channel_min": [
+          0,
+          0,
+          0
+        ],
+        "channel_max": [
+          255,
+          254,
+          252
+        ],
+        "spatially_nonconstant": true
+      }
+    },
+    {
+      "world_frame": 22105,
+      "sensor_frame": 22105,
+      "simulation_timestamp_seconds": 66.72878851369023,
+      "tick_to_rgb_seconds": 0.006382399999893096,
+      "rgb": {
+        "width": 640,
+        "height": 360,
+        "rgb_bytes": 691200,
+        "channel_min": [
+          0,
+          0,
+          0
+        ],
+        "channel_max": [
+          255,
+          254,
+          252
+        ],
+        "spatially_nonconstant": true
+      }
+    },
+    {
+      "world_frame": 22106,
+      "sensor_frame": 22106,
+      "simulation_timestamp_seconds": 66.77878851443529,
+      "tick_to_rgb_seconds": 0.00682890000007319,
+      "rgb": {
+        "width": 640,
+        "height": 360,
+        "rgb_bytes": 691200,
+        "channel_min": [
+          0,
+          0,
+          0
+        ],
+        "channel_max": [
+          255,
+          255,
+          252
+        ],
+        "spatially_nonconstant": true
+      }
+    },
+    {
+      "world_frame": 22107,
+      "sensor_frame": 22107,
+      "simulation_timestamp_seconds": 66.82878851518035,
+      "tick_to_rgb_seconds": 0.006110399999670335,
+      "rgb": {
+        "width": 640,
+        "height": 360,
+        "rgb_bytes": 691200,
+        "channel_min": [
+          0,
+          0,
+          0
+        ],
+        "channel_max": [
+          255,
+          254,
+          252
+        ],
+        "spatially_nonconstant": true
+      }
+    },
+    {
+      "world_frame": 22108,
+      "sensor_frame": 22108,
+      "simulation_timestamp_seconds": 66.87878851592541,
+      "tick_to_rgb_seconds": 0.007257400000071357,
+      "rgb": {
+        "width": 640,
+        "height": 360,
+        "rgb_bytes": 691200,
+        "channel_min": [
+          0,
+          0,
+          0
+        ],
+        "channel_max": [
+          255,
+          254,
+          252
+        ],
+        "spatially_nonconstant": true
+      }
+    },
+    {
+      "world_frame": 22109,
+      "sensor_frame": 22109,
+      "simulation_timestamp_seconds": 66.92878851667047,
+      "tick_to_rgb_seconds": 0.006357300000217947,
+      "rgb": {
+        "width": 640,
+        "height": 360,
+        "rgb_bytes": 691200,
+        "channel_min": [
+          0,
+          0,
+          0
+        ],
+        "channel_max": [
+          255,
+          253,
+          251
+        ],
+        "spatially_nonconstant": true
+      }
+    },
+    {
+      "world_frame": 22110,
+      "sensor_frame": 22110,
+      "simulation_timestamp_seconds": 66.97878851741552,
+      "tick_to_rgb_seconds": 0.006491799999821524,
+      "rgb": {
+        "width": 640,
+        "height": 360,
+        "rgb_bytes": 691200,
+        "channel_min": [
+          0,
+          0,
+          0
+        ],
+        "channel_max": [
+          255,
+          254,
+          252
+        ],
+        "spatially_nonconstant": true
+      }
+    },
+    {
+      "world_frame": 22111,
+      "sensor_frame": 22111,
+      "simulation_timestamp_seconds": 67.02878851816058,
+      "tick_to_rgb_seconds": 0.0064199999997072155,
+      "rgb": {
+        "width": 640,
+        "height": 360,
+        "rgb_bytes": 691200,
+        "channel_min": [
+          0,
+          0,
+          0
+        ],
+        "channel_max": [
+          255,
+          254,
+          252
+        ],
+        "spatially_nonconstant": true
+      }
+    },
+    {
+      "world_frame": 22112,
+      "sensor_frame": 22112,
+      "simulation_timestamp_seconds": 67.07878851890564,
+      "tick_to_rgb_seconds": 0.0068307999999888125,
+      "rgb": {
+        "width": 640,
+        "height": 360,
+        "rgb_bytes": 691200,
+        "channel_min": [
+          0,
+          0,
+          0
+        ],
+        "channel_max": [
+          255,
+          255,
+          254
+        ],
+        "spatially_nonconstant": true
+      }
+    },
+    {
+      "world_frame": 22113,
+      "sensor_frame": 22113,
+      "simulation_timestamp_seconds": 67.1287885196507,
+      "tick_to_rgb_seconds": 0.006290899999839894,
+      "rgb": {
+        "width": 640,
+        "height": 360,
+        "rgb_bytes": 691200,
+        "channel_min": [
+          0,
+          0,
+          0
+        ],
+        "channel_max": [
+          255,
+          255,
+          254
+        ],
+        "spatially_nonconstant": true
+      }
+    }
+  ],
+  "preview_png_written": true,
+  "gpu_memory_scope": "whole-device-snapshots-not-peak",
+  "cleanup_errors": [],
+  "client_version": "0.9.16",
+  "server_version": "0.9.16",
+  "map_verified": "Town01",
+  "world_initialization": "reuse-current-town01",
+  "rendering_settings_verified": true,
+  "gpu_before_capture": {
+    "status": "available",
+    "devices": [
+      {
+        "name": "NVIDIA GeForce RTX 3060 Laptop GPU",
+        "total_mib": 6144,
+        "used_mib": 3156,
+        "utilization_percent": 100
+      }
+    ]
+  },
+  "metrics": {
+    "captured_frames": 20,
+    "capture_wall_seconds": 0.3453125999999429,
+    "simulated_advance_seconds": 1.0,
+    "capture_frames_per_second": 57.91853526342018,
+    "real_time_factor": 2.895926763171009,
+    "tick_to_rgb_mean_seconds": 0.006472674999963601,
+    "tick_to_rgb_max_seconds": 0.007257400000071357,
+    "timing_scope": "capture-loop-including-rgb-validation-excluding-gpu-snapshots-and-png-writing"
+  },
+  "gpu_after_capture": {
+    "status": "available",
+    "devices": [
+      {
+        "name": "NVIDIA GeForce RTX 3060 Laptop GPU",
+        "total_mib": 6144,
+        "used_mib": 3172,
+        "utilization_percent": 31
+      }
+    ]
+  },
+  "cleanup_complete": true,
+  "elapsed_seconds": 0.8228530999999748
+}

@@ -291,9 +291,9 @@ def build_report(
     carla = report["packages"]["carla"]
     api_ready = carla["version"] == CARLA_VERSION
     api_status = "pass" if api_ready else "fail" if carla["version"] else "deferred"
-    check("carla-api", api_status, "Matching CARLA API package metadata found; import and connection await D2." if api_ready else "Install or match CARLA 0.9.16 Python API during D2.")
+    check("carla-api", api_status, "Matching CARLA API package metadata found; import and connection require the separate runtime probe." if api_ready else "Install or match CARLA 0.9.16 Python API.")
     executable_found = report["simulator"]["executable_found"]
-    check("simulator", "pass" if executable_found else "deferred", "CarlaUE4.exe exists at the explicit package root; runtime/version verification awaits D2." if executable_found else "Provide an extracted Windows CARLA package root during D2.")
+    check("simulator", "pass" if executable_found else "deferred", "CarlaUE4.exe exists at the explicit package root; runtime/version verification requires the separate connection probe." if executable_found else "Provide an extracted Windows CARLA package root.")
     has_wheels = report["simulator"]["wheel_files_found"]
     matching_wheel = report["simulator"]["compatible_windows_wheel_found"]
     wheels_ready = not has_wheels or matching_wheel
@@ -306,7 +306,7 @@ def build_report(
         "d2_connection_verified": False,
         "measurement_limits": [
             "Unavailable hardware probes are recorded as unknown; no capacity is inferred.",
-            "GPU performance, CARLA server/API compatibility, sensors, and CUDA execution await later runtime checks.",
+            "GPU performance, CARLA server/API compatibility, sensors, and CUDA execution are not verified by this static audit.",
             "Simulator version is a candidate; executable presence does not verify its version.",
         ],
     }
@@ -331,11 +331,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         except (OSError, ValueError):
             print("ERROR: Could not write the report. Check the output location and permissions.", file=sys.stderr)
             return 2
-    print("D1 environment audit complete. Missing probes and D2 dependencies are recorded explicitly.")
+    print("Environment audit complete. Missing probes and dependencies are recorded explicitly.")
     for item in report["checks"]:
         print(f"[{item['status'].upper()}] {item['id']}: {item['detail']}")
     print("D2 package preflight: " + ("ready" if report["audit"]["d2_preflight_ready"] else "pending"))
-    print("CARLA server connection: not verified (D2).")
+    print("CARLA server connection: not verified by this audit; run scripts/check_carla_connection.py.")
     if args.output:
         print("Sanitized JSON report written.")
     return 1 if args.strict and not report["audit"]["d2_preflight_ready"] else 0
