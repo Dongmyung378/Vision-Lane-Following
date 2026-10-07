@@ -20,8 +20,10 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.12'
-      - name: Test environment and CARLA probe failure handling
+      - name: Test environment, collection config and CARLA failure handling
         run: python -m unittest discover -s tests -v
+      - name: Validate D3 config without simulator dependencies
+        run: python scripts/verify_collection.py --validate-only
       - name: Run audit without simulator or GPU requirements
         run: python scripts/doctor.py
       - name: Check the Windows entry point

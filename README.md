@@ -4,7 +4,7 @@ Camera-based lane following in CARLA with reproducible closed-loop evaluation.
 
 전방 RGB 영상에서 차선 중심 waypoint를 예측하고 controller로 차량을 조향합니다. 차선 검출 정확도뿐 아니라 실제 주행의 완주율, 횡방향 오차, 차선 침범, 충돌 및 처리 시간을 평가합니다.
 
-**진행 상태: D1·D2 완료.** 프로젝트 전용 Python 환경과 CARLA 0.9.16 Windows server/API를 구성했습니다. 로컬 RTX 3060 Laptop 6GB에서 Town01 연결, 실제 RGB 20프레임과 정리를 검증했습니다. Kaggle T4의 원격 실행도 선행 검증했습니다. 다음 단계는 D3의 재실행 가능한 차량·카메라 수집 설정입니다.
+**진행 상태: D1·D2·D3 완료.** CARLA 0.9.16의 고정 차량·전방 RGB·날씨·0.05초 동기 설정을 구현했습니다. 로컬 RTX 3060 Laptop 6GB에서 같은 설정을 두 번 실행해 RGB 40프레임, 카메라 장착 위치와 종료 후 복구를 검증했습니다. 다음 단계는 D4의 이미지·차량 자세 episode logger입니다.
 
 ## 시스템과 입력 범위
 
@@ -32,7 +32,23 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/carla_server.ps1 -Ac
 
 로컬 RGB 검사는 이미 시작한 Town01을 재사용합니다. 이번 Windows 배포에서 지도 재로딩 중 서버 종료를 관찰했으므로 `--reuse-current-world`를 지정합니다. 초기화, 복구 절차와 실제 증거는 [D2 실행 기록](docs/ENVIRONMENT_D2.md)에 있습니다.
 
-![로컬 CARLA 0.9.16 Town01에서 실제 수집한 RGB](docs/evidence/carla_windows_rgb_2026-10-06.png)
+## D3 수집 설정 검증
+
+[collection_d3.json](configs/collection_d3.json)에 Model3, Town01 spawn index 0, ClearNoon, RGB 640×360·FOV 90°, 전방 Rigid mount와 동기 timestep을 고정했습니다. 실행 도구가 적용된 속성·제어·카메라 장착 위치를 다시 읽고 같은 초기화를 확인합니다.
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/carla_server.ps1 -Action Start
+.\.venv\Scripts\python.exe scripts/verify_collection.py --validate-only
+.\.venv\Scripts\python.exe scripts/verify_collection.py --runs 2 --output-dir results/local/collection-d3
+.\.venv\Scripts\python.exe scripts/check_carla_connection.py --ticks 3
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/carla_server.ps1 -Action Stop
+```
+
+`--validate-only`는 API 설치 없이 설정을 검사하며 `CONFIG_VALIDATED`를 출력합니다. 실제 검증의 `PASS`에는 RGB·snapshot의 frame/시간 정합, 동일 초기화 signature, owned actor 제거 및 원래 날씨·월드 설정 복구가 필요합니다. 이미 동기 실행 중이거나 다른 차량·보행자·센서가 있으면 시작을 거부합니다.
+
+기존 Town01을 재사용하므로 검증 범위는 설정과 초기화·calibration 재현입니다. Strict physics determinism과 이미지의 pixel 동일성은 검증하지 않았습니다. 자세한 실행과 실제 증거는 [D3 수집 설정 기록](docs/COLLECTION_D3.md)에 있습니다.
+
+![D3 고정 설정으로 로컬 Town01에서 수집한 실제 전방 RGB](docs/evidence/carla_collection_d3_2026-10-07_run01.png)
 
 ## 환경 진단 실행
 
@@ -80,7 +96,7 @@ Kaggle T4 두 개에서 작은 모델의 CUDA 학습을 확인했고, 기존 EGL
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 ```
 
-로컬 검증 70개가 통과했습니다. 버전 불일치·서버 누락·동기 world 판정, RGB frame 정합, ZIP 무결성·경로 검사, Windows 포트 충돌과 소유하지 않은 process 종료 거부를 포함합니다. GitHub Actions는 Windows와 Linux 검증을 구성했으나 계정의 Actions 사용 제한으로 원격 CI는 실행되지 않았습니다.
+로컬 검증 123개가 통과했습니다(0 skip). 버전 불일치·서버 누락·설정 검증, RGB frame·timestamp·카메라 장착 정합, 불완전한 복구, actor 설명 캐시, ZIP 무결성·경로 검사, Windows 포트 충돌과 소유하지 않은 process 종료 거부를 포함합니다. GitHub Actions는 Windows와 Linux 검증을 구성했으나 계정의 Actions 사용 제한으로 원격 CI는 실행되지 않았습니다.
 
 ## 프로젝트 문서
 
@@ -88,6 +104,7 @@ Kaggle T4 두 개에서 작은 모델의 CUDA 학습을 확인했고, 기존 EGL
 - [프로젝트 범위](docs/PROJECT_SCOPE.md): 입력, 출력, 라벨 및 비교 원칙.
 - [D1 환경 기록](docs/ENVIRONMENT_D1.md): 실제 호스트 조사와 D2 준비 상태.
 - [D2 환경과 실행](docs/ENVIRONMENT_D2.md): 고정 버전, 설치·실행·복구 명령과 실제 로컬 JSON·PNG.
+- [D3 수집 설정](docs/COLLECTION_D3.md): 차량·카메라·동기 config, 반복 검증·복구와 실제 RGB 증거.
 - [Kaggle CARLA 검증](docs/KAGGLE_CARLA_VERIFICATION.md): 실제 T4 학습, Vulkan, CARLA RGB 실행 결과와 재현 방법.
 - [진행 기록](docs/progress.md): 완료 근거와 다음 작업.
 

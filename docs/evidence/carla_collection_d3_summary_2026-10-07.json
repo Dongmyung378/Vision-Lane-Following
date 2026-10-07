@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "day": 3,
+  "local_date": "2026-10-07",
+  "timezone": "Asia/Seoul",
+  "status": "PASS",
+  "execution": "local-Windows-RTX3060Laptop-6GiB",
+  "configuration_sha256": "4063be7db617865045a92ba3b73399ea3b747a4d59d713bd9950979724800e78",
+  "initialization_sha256": "be2e3207e114988c7434019ea6b0afb23cf38110ddd0f8954d99c37a70bf1641",
+  "runs": 2,
+  "captured_frames": 40,
+  "frame_ranges": [
+    [
+      112960,
+      112979
+    ],
+    [
+      113020,
+      113039
+    ]
+  ],
+  "applied_configuration_and_calibration_verified": true,
+  "cleanup_verified": true,
+  "post_cleanup_rpc": "PASS",
+  "owned_server_lifecycle_stop": "PASS",
+  "server_state_file_absent": true,
+  "tcp_ports_without_listeners": {
+    "2000": true,
+    "2001": true
+  },
+  "unit_tests": {
+    "status": "PASS",
+    "tests": 123,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "pip_check": "PASS",
+  "strict_environment_audit": "PASS-static-preflight-only",
+  "markdown_file_links": "PASS",
+  "physics_determinism_verified": false,
+  "gpu_snapshots": {
+    "before": {
+      "status": "available",
+      "devices": [
+        {
+          "name": "NVIDIA GeForce RTX 3060 Laptop GPU",
+          "total_mib": 6144,
+          "used_mib": 4074,
+          "utilization_percent": 100
+        }
+      ]
+    },
+    "after": {
+      "status": "available",
+      "devices": [
+        {
+          "name": "NVIDIA GeForce RTX 3060 Laptop GPU",
+          "total_mib": 6144,
+          "used_mib": 4074,
+          "utilization_percent": 29
+        }
+      ]
+    },
+    "scope": "whole-device-snapshots-not-process-or-peak"
+  },
+  "remote_ci": "not-run-GitHub-account-Actions-disabled",
+  "kaggle_jobs_submitted": 0,
+  "kaggle_notebooks_created": 0,
+  "evidence": [
+    "carla_collection_d3_2026-10-07.json",
+    "carla_collection_connection_after_d3_2026-10-07.json",
+    "carla_collection_d3_2026-10-07_run01.png",
+    "carla_collection_d3_2026-10-07_run02.png",
+    "carla_collection_cleanup_initial_2026-10-07.json",
+    "carla_collection_cleanup_cache_2026-10-07.json"
+  ]
+}

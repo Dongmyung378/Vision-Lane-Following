@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "carla_version": "0.9.16",
+  "map": "Town01",
+  "seed": 42,
+  "connection": {
+    "host": "127.0.0.1",
+    "port": 2000,
+    "timeout_seconds": 30.0
+  },
+  "world": {
+    "synchronous_mode": true,
+    "fixed_delta_seconds": 0.05,
+    "no_rendering_mode": false,
+    "substepping": true,
+    "max_substep_delta_time": 0.01,
+    "max_substeps": 10
+  },
+  "weather": {
+    "preset": "ClearNoon"
+  },
+  "vehicle": {
+    "blueprint": "vehicle.tesla.model3",
+    "spawn_point_index": 0,
+    "attributes": {
+      "role_name": "vlf_ego",
+      "color": "0,0,0"
+    },
+    "control": {
+      "throttle": 0.0,
+      "steer": 0.0,
+      "brake": 1.0,
+      "hand_brake": true,
+      "reverse": false
+    }
+  },
+  "camera": {
+    "blueprint": "sensor.camera.rgb",
+    "width": 640,
+    "height": 360,
+    "fov": 90.0,
+    "sensor_tick": 0.0,
+    "enable_postprocess_effects": false,
+    "gamma": 2.2,
+    "lens_k": 0.0,
+    "lens_kcube": 0.0,
+    "mount": {
+      "location": {
+        "x": 1.5,
+        "y": 0.0,
+        "z": 2.4
+      },
+      "rotation": {
+        "pitch": -12.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    }
+  },
+  "verification": {
+    "warmup_frames": 10,
+    "frames": 20,
+    "queue_capacity": 8
+  }
+}

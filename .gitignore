@@ -21,7 +21,7 @@ access_token
 
 # Simulator packages, datasets and model artifacts
 /carla/
-/CARLA_*/
+/CARLA_[0-9]*/
 /data/
 /datasets/
 /checkpoints/

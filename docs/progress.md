@@ -104,6 +104,35 @@ GitHub About 설명은 `Camera-based lane following in CARLA: RGB-to-waypoint pr
 
 D3에서는 고정 차량·전방 카메라, synchronous mode 및 0.05초 timestep을 재실행 가능한 config로 구현한다. 이후 frame별 자세 기록, 라벨 생성 및 정합 검증을 진행하고 장시간 실행과 map 재로드 제약도 추적한다.
 
+## D3 고정 차량·카메라와 동기 수집 설정
+
+- 실제 날짜: **2026-10-07 (Asia/Seoul)**
+- 상태: **D3 gate PASS**, 실제 고정 설정 2회 반복·RGB 40프레임·복구 검증 완료
+- 목표: 고정 Model3·전방 RGB·ClearNoon·0.05초 동기 주기를 재실행 가능한 config로 명시하고 실제 적용과 복구 검증
+
+### 구현 산출물과 실제 검증
+
+| 작업 | 산출물·검증 근거 |
+| --- | --- |
+| 고정 수집 설정 | [collection_d3.json](../configs/collection_d3.json): Model3 spawn index 0, ClearNoon, RGB 640×360·FOV 90°, Rigid mount `(1.5,0,2.4)m`, pitch -12° |
+| 설정 검증·nominal calibration | [config.py](../carla_tools/config.py): strict JSON, normalized SHA-256 및 pinhole intrinsics `(320,320,320,180)` |
+| Session 소유와 복구 | [session.py](../carla_tools/session.py): 외부 sync·dynamic actor·센서 거부, 고정 spawn, 적용 readback, owned actor·weather·settings 복구 |
+| 반복 실행과 실제 frame 검사 | [verify_collection.py](../scripts/verify_collection.py): 기본 2회, image·snapshot·frame·timestamp·mount·RGB 및 cleanup 검사 |
+| 재현 안내 | [COLLECTION_D3.md](COLLECTION_D3.md) |
+| 실제 반복 검증 | [실제 JSON](evidence/carla_collection_d3_2026-10-07.json): 2회 PASS, 각 20프레임, 같은 초기화 signature |
+| 종료 후 진행과 정리 | [RPC JSON](evidence/carla_collection_connection_after_d3_2026-10-07.json): 비동기 3 tick PASS; 서버 종료 및 port 2000·2001 해제 |
+| 로컬 품질 검사 | 단위 검증 123 PASS·0 skip, `pip check`와 strict 환경 사전 검사 PASS; [D3 요약](evidence/carla_collection_d3_summary_2026-10-07.json) |
+
+`--validate-only`의 CONFIG_VALIDATED는 simulator 성공이 아니다. 실제 2회 capture·cleanup PASS, 동일 초기화 signature, 실행 후 asynchronous RPC와 종료 결과에 근거해 **D3 gate 통과**로 판정했다. Run 1 frame 112960~112979, Run 2 frame 113020~113039이며 0.05초 timestep·RGB·snapshot·카메라 mount 정합을 검증했다. [Run 1 PNG](evidence/carla_collection_d3_2026-10-07_run01.png), [Run 2 PNG](evidence/carla_collection_d3_2026-10-07_run02.png)를 직접 확인했다.
+
+실제 시험에서 `get_actor(id)`의 제거된 actor 설명 캐시로 정리 판정이 실패했다. [실패와 원인 기록](evidence/carla_collection_cleanup_cache_2026-10-07.json)을 보존하고 더 최신 snapshot 및 현재 actor 목록으로 부재를 검사하도록 수정했다. 해당 회귀 검증과 native 재실행이 통과했다. GPU 전체 장치 메모리는 반복 실행 전후 4,074MiB of 6,144MiB였으며 peak 또는 process별 사용량은 아니다. 원격 CI는 기존 GitHub 계정 제한으로 실행되지 않았다.
+
+### 범위와 다음 작업
+
+현재 Town01을 재사용하고 `load_world()`를 호출하지 않는다. Windows map 재로드 종료의 원인은 미확인이며, 같은 설정·고정 spawn·calibration의 재현만 검증한다. Strict physics determinism, pixel 동일성, 장시간 주행 및 D4 episode logger의 완료를 주장하지 않는다.
+
+D4에서는 같은 frame의 이미지·차량 snapshot·자세를 보존하는 episode logger를 구현한다. 이번 D3은 로컬에서 진행하며 기존 Kaggle 3개 노트북 재사용 원칙을 유지한다.
+
 ### 이후 기록 양식
 
 ```text
