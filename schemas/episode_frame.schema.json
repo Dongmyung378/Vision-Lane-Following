@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vision-lane-following.local/schemas/episode_frame.schema.json",
+  "title": "D4/D5 same-frame RGB and privileged-state record",
+  "description": "Model input is RGB only. Pose, camera and route fields are privileged metadata. Runtime checks equality of frame/timestamps, rigid transforms, path/frame matching, disk integrity and generated geometry.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "index", "frame", "world_frame", "snapshot_frame", "sensor_frame", "timestamp", "snapshot_timestamp", "sensor_timestamp", "delta_seconds", "image", "vehicle", "camera", "label_state", "label"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "index": {"type": "integer", "minimum": 0},
+    "frame": {"type": "integer", "minimum": 0},
+    "world_frame": {"type": "integer", "minimum": 0},
+    "snapshot_frame": {"type": "integer", "minimum": 0},
+    "sensor_frame": {"type": "integer", "minimum": 0},
+    "timestamp": {"type": "number", "minimum": 0},
+    "snapshot_timestamp": {"type": "number", "minimum": 0},
+    "sensor_timestamp": {"type": "number", "minimum": 0},
+    "delta_seconds": {"type": "number", "exclusiveMinimum": 0},
+    "tick_to_rgb_ms": {"type": "number", "minimum": 0},
+    "mount_matrix_max_abs_error": {"type": "number", "minimum": 0, "maximum": 0.001},
+    "rgb": {
+      "type": "object", "additionalProperties": false,
+      "required": ["width", "height", "rgb_bytes", "channel_min", "channel_max", "spatially_nonconstant"],
+      "properties": {
+        "width": {"type": "integer", "minimum": 1},
+        "height": {"type": "integer", "minimum": 1},
+        "rgb_bytes": {"type": "integer", "minimum": 1},
+        "channel_min": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "integer", "minimum": 0, "maximum": 255}},
+        "channel_max": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "integer", "minimum": 0, "maximum": 255}},
+        "spatially_nonconstant": {"const": true}
+      }
+    },
+    "image": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "sha256", "width", "height"],
+      "properties": {
+        "path": {"type": "string", "pattern": "^images/[0-9]{8,}\\.png$"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "width": {"type": "integer", "minimum": 1},
+        "height": {"type": "integer", "minimum": 1}
+      }
+    },
+    "vehicle": {
+      "type": "object", "additionalProperties": false,
+      "required": ["transform", "velocity", "angular_velocity", "acceleration", "control"],
+      "properties": {
+        "transform": {"$ref": "#/$defs/transform"},
+        "velocity": {"$ref": "#/$defs/xyz"},
+        "angular_velocity": {"$ref": "#/$defs/xyz"},
+        "acceleration": {"$ref": "#/$defs/xyz"},
+        "control": {"type": "object", "minProperties": 1, "additionalProperties": {"type": ["number", "boolean"]}},
+        "actor_id": {"type": "integer", "minimum": 0},
+        "control_source": {"const": "client-cache-at-world-frame"}
+      }
+    },
+    "camera": {
+      "type": "object", "additionalProperties": false, "required": ["transform"],
+      "properties": {"transform": {"$ref": "#/$defs/transform"}, "actor_id": {"type": "integer", "minimum": 0}}
+    },
+    "label_state": {"enum": ["NOT_GENERATED", "GENERATED"]},
+    "label": {"oneOf": [{"type": "null"}, {"$ref": "waypoint_label.schema.json"}]}
+  },
+  "allOf": [
+    {"if": {"properties": {"label_state": {"const": "NOT_GENERATED"}}}, "then": {"properties": {"label": {"type": "null"}}}},
+    {"if": {"properties": {"label_state": {"const": "GENERATED"}}}, "then": {"properties": {"label": {"$ref": "waypoint_label.schema.json"}}}}
+  ],
+  "$defs": {
+    "xyz": {
+      "type": "object", "additionalProperties": false, "required": ["x", "y", "z"],
+      "properties": {"x": {"type": "number"}, "y": {"type": "number"}, "z": {"type": "number"}}
+    },
+    "rotation": {
+      "type": "object", "additionalProperties": false, "required": ["pitch", "yaw", "roll"],
+      "properties": {"pitch": {"type": "number"}, "yaw": {"type": "number"}, "roll": {"type": "number"}}
+    },
+    "transform": {
+      "type": "object", "additionalProperties": false, "required": ["location", "rotation", "matrix"],
+      "properties": {
+        "location": {"$ref": "#/$defs/xyz"},
+        "rotation": {"$ref": "#/$defs/rotation"},
+        "matrix": {
+          "type": "array", "minItems": 4, "maxItems": 4,
+          "items": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "number"}}
+        }
+      }
+    }
+  }
+}

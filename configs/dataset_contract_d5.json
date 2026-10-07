@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "contract_version": "vlf-dataset-d5-v1",
+  "input": {
+    "model_fields": ["rgb"],
+    "privileged_fields": ["vehicle", "camera", "route_contract", "label"],
+    "camera_calibration_policy": "nominal-fixed"
+  },
+  "waypoint": {
+    "coordinate_origin": "vehicle_actor_transform",
+    "axes": "x-forward_y-right",
+    "units": "m",
+    "distance_reference": "target-lane-centerline-arc-length",
+    "horizon_arc_m": [3, 6, 9, 12, 15],
+    "output_shape": [5, 2],
+    "generation_status": "NOT_GENERATED",
+    "geometry_tolerance_m": 0.001
+  },
+  "route": {
+    "horizon_m": 15,
+    "minimum_route_length_m": 35,
+    "maximum_anchor_step_m": 1,
+    "junctions_allowed": false,
+    "branches_allowed": false,
+    "lane_changes_allowed": false
+  },
+  "split": {
+    "allowed": ["train", "dev"],
+    "group_keys": ["route_id", "episode_id", "scene_group_id"],
+    "same_town_scene_buffer_m": 75,
+    "temporal_adjacency_seconds": 1,
+    "reserved_final": {
+      "town": "Town02",
+      "collection_status": "UNCOLLECTED",
+      "verification_status": "UNVERIFIED",
+      "available_after": "D42-freeze"
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "scope": "carla-read-only-connection",
+  "expected_version": "0.9.16",
+  "ticks_requested": 3,
+  "rpc_timeout_seconds": 30.0,
+  "ticks": [
+    {
+      "frame": 225993,
+      "elapsed_seconds": 716.9615007080138,
+      "delta_seconds": 0.002976600080728531
+    },
+    {
+      "frame": 225994,
+      "elapsed_seconds": 716.9644970111549,
+      "delta_seconds": 0.002996303141117096
+    },
+    {
+      "frame": 225995,
+      "elapsed_seconds": 716.9671553112566,
+      "delta_seconds": 0.0026583001017570496
+    }
+  ],
+  "observed_ticks": 3,
+  "runtime": {
+    "implementation": "CPython",
+    "python_version": "3.12.7",
+    "python_major": 3,
+    "python_minor": 12,
+    "architecture": "x86_64",
+    "pointer_bits": 64
+  },
+  "package_version": "0.9.16",
+  "client_version": "0.9.16",
+  "server_version": "0.9.16",
+  "versions_verified": true,
+  "map_name": "Town01",
+  "map_read_verified": true,
+  "initial_snapshot": {
+    "frame": 225992,
+    "elapsed_seconds": 716.958524107933,
+    "delta_seconds": 0.0030483976006507874
+  },
+  "world_settings": {
+    "synchronous_mode": false,
+    "no_rendering_mode": false,
+    "fixed_delta_seconds": null
+  },
+  "observed_simulation_seconds": 0.008631203323602676,
+  "elapsed_seconds": 0.13515389999884064
+}

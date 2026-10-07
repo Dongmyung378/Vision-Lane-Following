@@ -1,0 +1,317 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "actual_date": "2026-10-07",
+  "timezone": "Asia/Seoul",
+  "scope": "D4-stationary-RGB-pose-episodes-and-D5-data-contract-not-driving-pilot",
+  "dataset_version": "d4-smoke-v1",
+  "runtime": "local-Windows-RTX3060-Laptop-CARLA0.9.16-Python3.12.7",
+  "episodes": [
+    {
+      "episode_id": "train_smoke_01",
+      "route_id": "town01_train_p000",
+      "scene_group_id": "town01_scene_p000",
+      "split": "train",
+      "status": "COMPLETE",
+      "frame_count": 60,
+      "first_frame": 141695,
+      "last_frame": 141754,
+      "configuration_sha256": "8f0c4099b9288961d70cf376eb3939ac1d5e46c862c9e08ba73544baf115692d",
+      "route_sha256": "db6697561d2362961a434592a6ef6df98fa43ad3cb6a132508971290dfe9c2c1",
+      "frames_jsonl_sha256": "71104bfa759762812a3c2f214198c1ffe75e990e968e5905f94f6269466756e2",
+      "metadata_sha256": "9392da22e5788e4dbb8084fdc85f2b4a5b41e557451c354a31c560cf9afa9f90",
+      "capture_report": {
+        "schema_version": 1,
+        "status": "PASS",
+        "scope": "stationary-D4-smoke",
+        "frames_written": 60,
+        "started_utc": "2026-10-07T06:25:05.797493+00:00",
+        "metrics": {
+          "captured_frames": 60,
+          "capture_wall_seconds": 3.3696000999989337,
+          "simulation_advance_seconds": 3.0,
+          "timing_scope": "capture-loop-including-validation-png-and-disk-write-excluding-warmup"
+        },
+        "cleanup": {
+          "status": "PASS",
+          "errors": [],
+          "owned_actor_ids": [
+            174,
+            175
+          ],
+          "sensor_stopped": true,
+          "settings_restored": true,
+          "weather_restored": true,
+          "owned_actors_absent": true,
+          "cleanup_reference_frame": 141754,
+          "absence_observed_frame": 141756,
+          "absence_waited_ticks": 1,
+          "absence_verification": "fresh-snapshot-and-current-actor-list",
+          "owned_actors_absent_in_snapshot": true,
+          "owned_actors_absent_in_current_list": true
+        },
+        "validation": {
+          "status": "PASS",
+          "errors": [],
+          "frame_count": 60,
+          "complete": true
+        },
+        "elapsed_seconds": 3.8017449000035413,
+        "finished_utc": "2026-10-07T06:25:09.599365+00:00",
+        "episode_id": "train_smoke_01",
+        "dataset_version": "d4-smoke-v1",
+        "route_id": "town01_train_p000"
+      }
+    },
+    {
+      "episode_id": "train_smoke_02",
+      "route_id": "town01_train_p000",
+      "scene_group_id": "town01_scene_p000",
+      "split": "train",
+      "status": "COMPLETE",
+      "frame_count": 60,
+      "first_frame": 219425,
+      "last_frame": 219484,
+      "configuration_sha256": "8f0c4099b9288961d70cf376eb3939ac1d5e46c862c9e08ba73544baf115692d",
+      "route_sha256": "db6697561d2362961a434592a6ef6df98fa43ad3cb6a132508971290dfe9c2c1",
+      "frames_jsonl_sha256": "a58b3645c9c32297820ceb784c8843401e75bdb85fa1a4632b39ac6763c8ae3d",
+      "metadata_sha256": "8002647deaa86461f60ebc7dc7c4c5724ae97e84ea7b8dd4b29fa976291a4f37",
+      "capture_report": {
+        "schema_version": 1,
+        "status": "PASS",
+        "scope": "stationary-D4-smoke",
+        "frames_written": 60,
+        "started_utc": "2026-10-07T06:29:16.341386+00:00",
+        "metrics": {
+          "captured_frames": 60,
+          "capture_wall_seconds": 3.5668172999976377,
+          "simulation_advance_seconds": 3.0,
+          "timing_scope": "capture-loop-including-validation-png-and-disk-write-excluding-warmup"
+        },
+        "cleanup": {
+          "status": "PASS",
+          "errors": [],
+          "owned_actor_ids": [
+            176,
+            177
+          ],
+          "sensor_stopped": true,
+          "settings_restored": true,
+          "weather_restored": true,
+          "owned_actors_absent": true,
+          "cleanup_reference_frame": 219484,
+          "absence_observed_frame": 219486,
+          "absence_waited_ticks": 1,
+          "absence_verification": "fresh-snapshot-and-current-actor-list",
+          "owned_actors_absent_in_snapshot": true,
+          "owned_actors_absent_in_current_list": true
+        },
+        "validation": {
+          "status": "PASS",
+          "errors": [],
+          "frame_count": 60,
+          "complete": true
+        },
+        "elapsed_seconds": 3.966141000000789,
+        "finished_utc": "2026-10-07T06:29:20.305786+00:00",
+        "episode_id": "train_smoke_02",
+        "dataset_version": "d4-smoke-v1",
+        "route_id": "town01_train_p000"
+      }
+    },
+    {
+      "episode_id": "dev_smoke_01",
+      "route_id": "town01_dev_p004",
+      "scene_group_id": "town01_scene_p004",
+      "split": "dev",
+      "status": "COMPLETE",
+      "frame_count": 60,
+      "first_frame": 222576,
+      "last_frame": 222635,
+      "configuration_sha256": "3530aa4e8c357ce649488423e46c741d0ab018554dadff64fb51e98ded25cab5",
+      "route_sha256": "5f41650a2aa204b1a40bc32cd7238614598971883bdb36514a7213adf55113c4",
+      "frames_jsonl_sha256": "f41a67aa81731cb89d23fa8330993d923ab29efe0a1ea1e7d102ec2acbee9864",
+      "metadata_sha256": "ba5126bd4cccb12a83adf220f433d01c82d40bd68e3a8f35c74751ec08d3b2b5",
+      "capture_report": {
+        "schema_version": 1,
+        "status": "PASS",
+        "scope": "stationary-D4-smoke",
+        "frames_written": 60,
+        "started_utc": "2026-10-07T06:29:29.749277+00:00",
+        "metrics": {
+          "captured_frames": 60,
+          "capture_wall_seconds": 3.7579097999987425,
+          "simulation_advance_seconds": 3.0,
+          "timing_scope": "capture-loop-including-validation-png-and-disk-write-excluding-warmup"
+        },
+        "cleanup": {
+          "status": "PASS",
+          "errors": [],
+          "owned_actor_ids": [
+            178,
+            179
+          ],
+          "sensor_stopped": true,
+          "settings_restored": true,
+          "weather_restored": true,
+          "owned_actors_absent": true,
+          "cleanup_reference_frame": 222635,
+          "absence_observed_frame": 222637,
+          "absence_waited_ticks": 1,
+          "absence_verification": "fresh-snapshot-and-current-actor-list",
+          "owned_actors_absent_in_snapshot": true,
+          "owned_actors_absent_in_current_list": true
+        },
+        "validation": {
+          "status": "PASS",
+          "errors": [],
+          "frame_count": 60,
+          "complete": true
+        },
+        "elapsed_seconds": 4.759323800000857,
+        "finished_utc": "2026-10-07T06:29:34.505353+00:00",
+        "episode_id": "dev_smoke_01",
+        "dataset_version": "d4-smoke-v1",
+        "route_id": "town01_dev_p004"
+      }
+    }
+  ],
+  "split_verification": {
+    "status": "PASS",
+    "scope": "D5-stationary-smoke-split-not-training-pilot",
+    "errors": [],
+    "episode_count": 3,
+    "frame_count": 180,
+    "written": false,
+    "final_test": {
+      "town": "Town02",
+      "collection_status": "UNCOLLECTED",
+      "verification_status": "UNVERIFIED"
+    },
+    "contract_version": "vlf-dataset-d5-v1",
+    "dataset_version": "d4-smoke-v1",
+    "manifest_sha256": "e3f09a78d8c0e992a0683548f3687da2536d5e0b0c2b22f52eae02a03983decb",
+    "split_counts": {
+      "train": 120,
+      "dev": 60
+    },
+    "minimum_cross_split_scene_distance_m": 220.74915987529928,
+    "leakage_checks": {
+      "complete_disk_integrity": true,
+      "episode_assignment": true,
+      "route_assignment": true,
+      "scene_group_assignment": true,
+      "spatial_and_temporal_adjacency": true,
+      "fixed_target_route_identity": true,
+      "no_final_test_samples": true
+    }
+  },
+  "negative_checks": {
+    "same_route_cross_split": {
+      "status": "FAIL",
+      "scope": "D5-stationary-smoke-split-not-training-pilot",
+      "errors": [
+        {
+          "code": "route-split-leakage"
+        }
+      ],
+      "episode_count": 0,
+      "frame_count": 0,
+      "written": false,
+      "final_test": {
+        "town": "Town02",
+        "collection_status": "UNCOLLECTED",
+        "verification_status": "UNVERIFIED"
+      }
+    },
+    "manifest_overwrite": {
+      "status": "FAIL",
+      "scope": "D5-stationary-smoke-split-not-training-pilot",
+      "errors": [
+        {
+          "code": "existing-manifest-content-conflict"
+        }
+      ],
+      "episode_count": 0,
+      "frame_count": 0,
+      "written": false,
+      "final_test": {
+        "town": "Town02",
+        "collection_status": "UNCOLLECTED",
+        "verification_status": "UNVERIFIED"
+      }
+    },
+    "existing_episode_refused": {
+      "status": "FAIL",
+      "error": {
+        "stage": "configuration",
+        "code": "episode-destination-already-exists",
+        "type": "RouteError"
+      }
+    },
+    "original_episode_unchanged": true,
+    "tampered_png_rejected": {
+      "status": "FAIL",
+      "errors": [
+        {
+          "code": "image-hash-mismatch",
+          "frame": 141695
+        }
+      ],
+      "frame_count": 60,
+      "complete": true
+    }
+  },
+  "labels": {
+    "state": "NOT_GENERATED",
+    "value": null,
+    "generation_day": "D6"
+  },
+  "final_test": {
+    "town": "Town02",
+    "status": "RESERVED_UNCOLLECTED_UNVERIFIED"
+  },
+  "server_shutdown": {
+    "owned_processes_stopped": true,
+    "state_file_absent": true,
+    "ports_2000_2001_no_tcp_listeners": true
+  },
+  "kaggle": {
+    "submitted_this_work": false,
+    "new_notebooks_created": 0
+  },
+  "remote_ci": {
+    "executed": false,
+    "known_blocker": "Actions has been disabled for this user."
+  },
+  "quality_checks": {
+    "unit_tests": {
+      "status": "PASS",
+      "count": 204,
+      "skipped": 0,
+      "runtime": "CPython 3.12.7 x64",
+      "wall_seconds": 4.879
+    },
+    "pip_check": "PASS",
+    "strict_environment_preflight": "PASS",
+    "powershell_syntax": "PASS",
+    "offline_D3_D4_D5_configs": "CONFIG_VALIDATED",
+    "final_native_disk_revalidation": {
+      "status": "PASS",
+      "episodes": 3,
+      "frames": 180,
+      "manifest_unchanged": true,
+      "png_validation": "all-chunk-CRC-bounded-zlib-stream-exact-scanlines"
+    },
+    "external_json_schema_validation": {
+      "status": "PASS",
+      "runtime": "CPython 3.12.7 x64",
+      "jsonschema_version": "4.26.0",
+      "original_frame_rows": 180,
+      "manifest_rows": 180,
+      "errors": 0,
+      "qa_corrupt_copy_excluded": true,
+      "runtime_dependency_added": false
+    }
+  }
+}

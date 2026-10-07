@@ -133,6 +133,32 @@ D3에서는 고정 차량·전방 카메라, synchronous mode 및 0.05초 timest
 
 D4에서는 같은 frame의 이미지·차량 snapshot·자세를 보존하는 episode logger를 구현한다. 이번 D3은 로컬에서 진행하며 기존 Kaggle 3개 노트북 재사용 원칙을 유지한다.
 
+## D4 이미지·차량 자세 episode logger
+
+- 실제 날짜: **2026-10-07 (Asia/Seoul)**
+- 상태: **D4 gate PASS**
+- 구현: bounded sensor queue, 같은 frame의 snapshot pose·kinematics와 RGB transform, PNG·JSONL·metadata 저장, 적용·cleanup·무결성에 따른 완료/실패 상태 관리
+- 실제 검증: 로컬 CARLA 0.9.16의 에피소드 3개에서 RGB 180장·snapshot 180개 정합 및 independent disk validation PASS. 모든 session cleanup과 수집 후 asynchronous RPC 3 tick PASS, 소유 서버 종료 및 두 port 해제 확인
+- 실패 검사: 기존 episode 재수집 거부·원본 불변, 복사본 PNG 한 byte 손상 거부
+- 산출물: [D4 재현 안내](EPISODE_LOGGER_D4.md), [설정](../configs/collection_d4.json), [실제 요약](evidence/carla_dataset_d4_d5_2026-10-07_summary.json)
+
+전체 데이터는 `results/local/dataset-d4-smoke-v1/`에 보존하고 검토용 metadata·첫/마지막 행·PNG 2장만 Git에 저장한다. 정지 상태의 짧은 logger 시험이며 학습용 주행 데이터, 라벨·controller 또는 장시간 안정성 완료로 해석하지 않는다.
+
+## D5 경로·라벨·데이터 분할 계약과 평가 초안
+
+- 실제 날짜: **2026-10-07 (Asia/Seoul)**
+- 상태: **D5 gate PASS**
+- 구현: 실제 Town01 고정 spawn 0·4의 분기 없는 35m route catalog와 OpenDRIVE hash, 5개 ego waypoint 계약·JSON Schema, episode/route/scene group 단위 manifest 생성기, 평가 지표·종료·집계 명세 초안
+- 실제 분할: 3개 완료 에피소드 180행 중 train 120/dev 60, 같은 train 경로의 반복은 동일 split, route·차량 위치를 포함한 양쪽 최소 거리 약 220.75m로 75m buffer 통과
+- 실패 검사: 동일 route의 train/dev 교차 배정 거부, 기존 manifest의 다른 내용 덮어쓰기 거부, 손상·미완료·누락 image는 manifest에 포함하지 않음
+- 산출물: [데이터 계약](DATA_CONTRACT_D5.md), [평가 명세](EVALUATION_SPEC_D5.md), [실제 route](../configs/routes_d5.json), [실제 manifest](evidence/carla_dataset_d4_d5_2026-10-07_split_manifest.csv), [검증 요약](evidence/carla_dataset_d4_d5_2026-10-07_summary.json)
+
+모든 실제 frame의 `label_state`는 `NOT_GENERATED`이고 `label`은 `null`이다. D5는 생성될 라벨의 좌표·단위·거리·route provenance 계약을 확정한다. D6에서 해당 frame의 ego 변환·직선/곡선 라벨 생성·overlay를 구현한다. Town02 final test는 미수집·미검증으로 예약하고 D42 freeze 전에 사용하지 않는다. 평가기 구현은 D14, 최종 기준 freeze는 D42 작업이다.
+
+이번 D4/D5는 로컬에서 진행했다. Kaggle 제출이나 새 노트북 생성은 없으며 기존 ID 재사용 원칙을 유지한다. GitHub 계정의 Actions 제한은 계속 남아 있고 원격 CI 성공으로 표시하지 않는다.
+
+최종 전체 로컬 검증 **204 PASS·0 skip**, `pip check`, strict 환경 사전 검사와 PowerShell syntax PASS. PNG 내부 CRC·bounded zlib stream·scanline 검사를 보강한 뒤 실제 원본 3개와 기존 manifest를 다시 읽어 PASS를 확인했다. JSON Schema 외부 검사는 Python 3.12.7·jsonschema 4.26.0으로 원본 frame 180개와 CSV 행 180개에서 오류 0개였다. 이 도구는 검토 환경에서만 사용했고 프로젝트 runtime dependency로 추가하지 않았다.
+
 ### 이후 기록 양식
 
 ```text

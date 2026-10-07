@@ -1,0 +1,1536 @@
+{
+  "schema_version": 1,
+  "status": "SURVEY_VERIFIED",
+  "carla_version": "0.9.16",
+  "town": "Town01",
+  "dataset_scope": "stationary-smoke-not-training-pilot",
+  "route_selection": "first-valid-index-then-first-separated-valid-index",
+  "min_separation_m": 150,
+  "measured_corridor_separation_m": 221.109922416773,
+  "routes": [
+    {
+      "schema_version": 1,
+      "route_id": "town01_train_p000",
+      "scene_group_id": "town01_scene_p000",
+      "town": "Town01",
+      "carla_version": "0.9.16",
+      "spawn_point_index": 0,
+      "start": {
+        "road_id": 19,
+        "section_id": 0,
+        "lane_id": -1,
+        "s": 64.58412170410159,
+        "world_location": {
+          "x": 334.7345886230469,
+          "y": 273.74285888671875,
+          "z": 0.0
+        },
+        "world_rotation": {
+          "pitch": 0.0,
+          "yaw": 90.03459930419922,
+          "roll": 0.0
+        },
+        "lane_width_m": 4.0,
+        "arc_distance_m": 0.0,
+        "is_junction": false,
+        "successor_count": 1
+      },
+      "horizon_m": 15.0,
+      "min_required_route_m": 35.0,
+      "route_length_m": 35.0,
+      "sample_step_m": 1.0,
+      "selection_scope": "D5-topology-only-not-frame-labels",
+      "map_package": "Carla/Maps/Town01",
+      "opendrive_sha256": "97a7f6ac67812567e5c8ee0599cd823b23f80f30f3f97c502212e38b72e2b709",
+      "centerline_anchor_sequence": [
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 64.58412170410159,
+          "world_location": {
+            "x": 334.7345886230469,
+            "y": 273.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 0.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 65.58412170410159,
+          "world_location": {
+            "x": 334.7339782714844,
+            "y": 274.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 1.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 66.58412170410159,
+          "world_location": {
+            "x": 334.7333679199219,
+            "y": 275.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 2.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 67.58412170410159,
+          "world_location": {
+            "x": 334.7327575683594,
+            "y": 276.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 3.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 68.58412170410159,
+          "world_location": {
+            "x": 334.732177734375,
+            "y": 277.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 4.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 69.58412170410159,
+          "world_location": {
+            "x": 334.7315673828125,
+            "y": 278.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 5.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 70.58412170410159,
+          "world_location": {
+            "x": 334.73095703125,
+            "y": 279.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 6.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 71.58412170410159,
+          "world_location": {
+            "x": 334.7303466796875,
+            "y": 280.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 7.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 72.58412170410159,
+          "world_location": {
+            "x": 334.729736328125,
+            "y": 281.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 8.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 73.58412170410159,
+          "world_location": {
+            "x": 334.7291564941406,
+            "y": 282.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 9.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 74.58412170410159,
+          "world_location": {
+            "x": 334.7285461425781,
+            "y": 283.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 10.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 75.58412170410159,
+          "world_location": {
+            "x": 334.7279357910156,
+            "y": 284.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 11.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 76.58412170410159,
+          "world_location": {
+            "x": 334.7273254394531,
+            "y": 285.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 12.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 77.58412170410159,
+          "world_location": {
+            "x": 334.7267150878906,
+            "y": 286.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 13.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 78.58412170410159,
+          "world_location": {
+            "x": 334.72613525390625,
+            "y": 287.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 14.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 79.58412170410159,
+          "world_location": {
+            "x": 334.72552490234375,
+            "y": 288.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 15.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 80.58412170410159,
+          "world_location": {
+            "x": 334.72491455078125,
+            "y": 289.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 16.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 81.58412170410159,
+          "world_location": {
+            "x": 334.72430419921875,
+            "y": 290.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 17.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 82.58412170410159,
+          "world_location": {
+            "x": 334.72369384765625,
+            "y": 291.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 18.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 83.58412170410159,
+          "world_location": {
+            "x": 334.7231140136719,
+            "y": 292.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 19.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 84.58412170410159,
+          "world_location": {
+            "x": 334.7225036621094,
+            "y": 293.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 20.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 85.58412170410159,
+          "world_location": {
+            "x": 334.7218933105469,
+            "y": 294.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 21.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 86.58412170410159,
+          "world_location": {
+            "x": 334.7212829589844,
+            "y": 295.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 22.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 87.58412170410159,
+          "world_location": {
+            "x": 334.720703125,
+            "y": 296.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 23.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 88.58412170410159,
+          "world_location": {
+            "x": 334.7200927734375,
+            "y": 297.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 24.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 89.58412170410159,
+          "world_location": {
+            "x": 334.719482421875,
+            "y": 298.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 25.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 90.58412170410159,
+          "world_location": {
+            "x": 334.7188720703125,
+            "y": 299.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 26.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 91.58412170410159,
+          "world_location": {
+            "x": 334.71826171875,
+            "y": 300.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 27.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 92.58412170410159,
+          "world_location": {
+            "x": 334.7176818847656,
+            "y": 301.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 28.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 93.58412170410159,
+          "world_location": {
+            "x": 334.7170715332031,
+            "y": 302.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 29.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 94.58412170410159,
+          "world_location": {
+            "x": 334.7164611816406,
+            "y": 303.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 30.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 95.58412170410159,
+          "world_location": {
+            "x": 334.7158508300781,
+            "y": 304.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 31.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 96.58412170410159,
+          "world_location": {
+            "x": 334.7152404785156,
+            "y": 305.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 32.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 97.58412170410159,
+          "world_location": {
+            "x": 334.71466064453125,
+            "y": 306.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 33.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 98.58412170410159,
+          "world_location": {
+            "x": 334.71405029296875,
+            "y": 307.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 34.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 19,
+          "section_id": 0,
+          "lane_id": -1,
+          "s": 99.58412170410159,
+          "world_location": {
+            "x": 334.71343994140625,
+            "y": 308.74285888671875,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.03459930419922,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 35.0,
+          "is_junction": false,
+          "successor_count": 1
+        }
+      ],
+      "route_sha256": "db6697561d2362961a434592a6ef6df98fa43ad3cb6a132508971290dfe9c2c1"
+    },
+    {
+      "schema_version": 1,
+      "route_id": "town01_dev_p004",
+      "scene_group_id": "town01_scene_p004",
+      "town": "Town01",
+      "carla_version": "0.9.16",
+      "spawn_point_index": 4,
+      "start": {
+        "road_id": 10,
+        "section_id": 0,
+        "lane_id": 1,
+        "s": 132.2301885986328,
+        "world_location": {
+          "x": 299.39996337890625,
+          "y": 55.47453308105469,
+          "z": 0.0
+        },
+        "world_rotation": {
+          "pitch": 360.0,
+          "yaw": 179.99301147460938,
+          "roll": 0.0
+        },
+        "lane_width_m": 4.0,
+        "arc_distance_m": 0.0,
+        "is_junction": false,
+        "successor_count": 1
+      },
+      "horizon_m": 15.0,
+      "min_required_route_m": 35.0,
+      "route_length_m": 35.0,
+      "sample_step_m": 1.0,
+      "selection_scope": "D5-topology-only-not-frame-labels",
+      "map_package": "Carla/Maps/Town01",
+      "opendrive_sha256": "97a7f6ac67812567e5c8ee0599cd823b23f80f30f3f97c502212e38b72e2b709",
+      "centerline_anchor_sequence": [
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 132.2301885986328,
+          "world_location": {
+            "x": 299.39996337890625,
+            "y": 55.47453308105469,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 0.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 131.2301885986328,
+          "world_location": {
+            "x": 298.39996337890625,
+            "y": 55.47465515136719,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 1.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 130.2301885986328,
+          "world_location": {
+            "x": 297.39996337890625,
+            "y": 55.47477722167969,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 2.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 129.2301885986328,
+          "world_location": {
+            "x": 296.39996337890625,
+            "y": 55.47489929199219,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 3.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 128.2301885986328,
+          "world_location": {
+            "x": 295.39996337890625,
+            "y": 55.47502136230469,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 4.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 127.2301885986328,
+          "world_location": {
+            "x": 294.3999328613281,
+            "y": 55.47514343261719,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 5.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 126.2301885986328,
+          "world_location": {
+            "x": 293.3999328613281,
+            "y": 55.47526550292969,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 6.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 125.2301885986328,
+          "world_location": {
+            "x": 292.3999328613281,
+            "y": 55.47538757324219,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 7.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 124.2301885986328,
+          "world_location": {
+            "x": 291.3999328613281,
+            "y": 55.47550964355469,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 8.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 123.2301885986328,
+          "world_location": {
+            "x": 290.3999328613281,
+            "y": 55.47563171386719,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 9.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 122.2301885986328,
+          "world_location": {
+            "x": 289.3999328613281,
+            "y": 55.47575378417969,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 10.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 121.2301885986328,
+          "world_location": {
+            "x": 288.3999328613281,
+            "y": 55.47587585449219,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 11.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 120.2301885986328,
+          "world_location": {
+            "x": 287.3999328613281,
+            "y": 55.47599411010742,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 12.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 119.2301885986328,
+          "world_location": {
+            "x": 286.3999328613281,
+            "y": 55.47611618041992,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 13.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 118.2301885986328,
+          "world_location": {
+            "x": 285.3999328613281,
+            "y": 55.47623825073242,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 14.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 117.2301885986328,
+          "world_location": {
+            "x": 284.3999328613281,
+            "y": 55.47636032104492,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 15.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 116.2301885986328,
+          "world_location": {
+            "x": 283.3999328613281,
+            "y": 55.47648239135742,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 16.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 115.2301885986328,
+          "world_location": {
+            "x": 282.3999328613281,
+            "y": 55.47660446166992,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 17.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 114.2301885986328,
+          "world_location": {
+            "x": 281.3999328613281,
+            "y": 55.47672653198242,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 18.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 113.2301885986328,
+          "world_location": {
+            "x": 280.3999328613281,
+            "y": 55.47684860229492,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 19.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 112.2301885986328,
+          "world_location": {
+            "x": 279.3999328613281,
+            "y": 55.47697067260742,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 20.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 111.2301885986328,
+          "world_location": {
+            "x": 278.3999328613281,
+            "y": 55.47709274291992,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 21.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 110.2301885986328,
+          "world_location": {
+            "x": 277.3999328613281,
+            "y": 55.47721481323242,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 22.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 109.2301885986328,
+          "world_location": {
+            "x": 276.3999328613281,
+            "y": 55.47733688354492,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 23.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 108.2301885986328,
+          "world_location": {
+            "x": 275.3999328613281,
+            "y": 55.47745895385742,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 24.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 107.2301885986328,
+          "world_location": {
+            "x": 274.3999328613281,
+            "y": 55.47758102416992,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 25.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 106.2301885986328,
+          "world_location": {
+            "x": 273.3999328613281,
+            "y": 55.47770309448242,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 26.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 105.2301885986328,
+          "world_location": {
+            "x": 272.3999328613281,
+            "y": 55.47782516479492,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 27.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 104.2301885986328,
+          "world_location": {
+            "x": 271.3999328613281,
+            "y": 55.47794723510742,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 28.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 103.2301885986328,
+          "world_location": {
+            "x": 270.3999328613281,
+            "y": 55.47806930541992,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 29.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 102.2301885986328,
+          "world_location": {
+            "x": 269.3999328613281,
+            "y": 55.478187561035156,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 30.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 101.2301885986328,
+          "world_location": {
+            "x": 268.3999328613281,
+            "y": 55.478309631347656,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 31.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 100.2301885986328,
+          "world_location": {
+            "x": 267.3999328613281,
+            "y": 55.478431701660156,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 32.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 99.2301885986328,
+          "world_location": {
+            "x": 266.3999328613281,
+            "y": 55.478553771972656,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 33.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 98.2301885986328,
+          "world_location": {
+            "x": 265.3999328613281,
+            "y": 55.478675842285156,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 34.0,
+          "is_junction": false,
+          "successor_count": 1
+        },
+        {
+          "road_id": 10,
+          "section_id": 0,
+          "lane_id": 1,
+          "s": 97.2301885986328,
+          "world_location": {
+            "x": 264.3999328613281,
+            "y": 55.478797912597656,
+            "z": 0.0
+          },
+          "world_rotation": {
+            "pitch": 360.0,
+            "yaw": 179.99301147460938,
+            "roll": 0.0
+          },
+          "lane_width_m": 4.0,
+          "arc_distance_m": 35.0,
+          "is_junction": false,
+          "successor_count": 1
+        }
+      ],
+      "route_sha256": "5f41650a2aa204b1a40bc32cd7238614598971883bdb36514a7213adf55113c4"
+    }
+  ],
+  "rejected_candidate_counts": {
+    "route-branch-or-lane-end": 2,
+    "near-existing-scene": 1
+  },
+  "final_test": {
+    "town": "Town02",
+    "status": "RESERVED_UNCOLLECTED_UNVERIFIED"
+  }
+}

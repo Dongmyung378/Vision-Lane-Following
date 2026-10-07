@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vision-lane-following.local/schemas/waypoint_label.schema.json",
+  "title": "Future generated waypoint label (D5 contract, D6 generation pending)",
+  "description": "This is a generated label only. D5 stores label=null and label_state=NOT_GENERATED in the frame envelope. Runtime validation additionally checks route interpolation and the same-frame ego transform.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "ego_frame", "route_id", "target_lane", "coordinate_origin", "axes", "units", "distance_reference", "horizon_arc_m", "reference_arc_m", "waypoints_world_m", "waypoints_ego_m"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "ego_frame": {"type": "integer", "minimum": 0},
+    "route_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"},
+    "target_lane": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["road_id", "section_id", "lane_id"],
+      "properties": {
+        "road_id": {"type": "integer", "minimum": 0},
+        "section_id": {"type": "integer", "minimum": 0},
+        "lane_id": {"type": "integer", "not": {"const": 0}}
+      }
+    },
+    "coordinate_origin": {"const": "vehicle_actor_transform"},
+    "axes": {"const": "x-forward_y-right"},
+    "units": {"const": "m"},
+    "distance_reference": {"const": "target-lane-centerline-arc-length"},
+    "horizon_arc_m": {"type": "array", "const": [3, 6, 9, 12, 15]},
+    "reference_arc_m": {"type": "number", "minimum": 0},
+    "waypoints_world_m": {
+      "type": "array", "minItems": 5, "maxItems": 5,
+      "items": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}}
+    },
+    "waypoints_ego_m": {
+      "type": "array", "minItems": 5, "maxItems": 5,
+      "items": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}}
+    }
+  }
+}

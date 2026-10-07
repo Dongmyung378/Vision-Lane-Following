@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vision-lane-following.local/schemas/split_manifest.schema.json",
+  "title": "JSON representation of one D5 split_manifest.csv row",
+  "description": "CSV header order is dataset_version,sample_id,route_id,episode_id,scene_group_id,split. Runtime checks episode integrity, unique sample identity, one split per route/episode/scene, and spatial adjacency. Town02 final test is reserved and has no D5 rows.",
+  "type": "object", "additionalProperties": false,
+  "required": ["dataset_version", "sample_id", "route_id", "episode_id", "scene_group_id", "split"],
+  "properties": {
+    "dataset_version": {"$ref": "#/$defs/identifier"},
+    "sample_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}:[0-9]{10,}$"},
+    "route_id": {"$ref": "#/$defs/identifier"},
+    "episode_id": {"$ref": "#/$defs/identifier"},
+    "scene_group_id": {"$ref": "#/$defs/identifier"},
+    "split": {"enum": ["train", "dev"]}
+  },
+  "$defs": {"identifier": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"}}
+}
