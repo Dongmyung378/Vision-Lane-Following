@@ -217,6 +217,40 @@ Native pipeline과 다운로드 후 최신 CPU helper의 **9개 negative QA**는
 
 다음 단계는 **D8 Pure Pursuit controller 구현과 privileged GT waypoint 검증**이다. D13 moving training pilot·recovery 수집, D14 주행 metric 구현·평가는 아직 진행하지 않았다. D6/D7 정지 게이트는 주행 완주율·모델 정확도·inference latency를 검증하지 않는다. Town02 final test는 사용하지 않았고 `UNCOLLECTED`/`UNVERIFIED`를 유지한다.
 
+## D8 Pure Pursuit와 공통 속도 제어
+
+- 실제 날짜: **2026-10-08 (Asia/Seoul)**
+- 상태: **D8 gate PASS**
+- 구현: actor-origin waypoint를 따르는 rear-axle 회전 원, native wheel의 world-cm 위치에서 측정한 wheelbase·rear/front axle·front track·steering gain, Ackermann 안쪽 전륜 변환, 속도 의존 lookahead·조향 변화율 제한과 PI antiwindup
+- 속도: nominal 상한 25km/h, 같은 다섯 waypoint의 preview와 요청 곡률에 2.0m/s² 계획값으로 감속; 20Hz synchronous timestep
+- 검증: controller v4/schema 4의 analytic circle·Ackermann plant·입력/상태·속도 검사 **39 PASS**, Kaggle native 15조건과 실제 좌우 전륜 조향 부호 확인
+- 산출물: [controller 문서](controller_d8.md), [설정](../configs/controller_d8.json), [구현](../carla_tools/controller.py)
+
+## D9 정답 waypoint 직선·좌우 곡선 주행
+
+- 실제 날짜: **2026-10-08 (Asia/Seoul)**
+- 상태: **D9 gate PASS**
+- 실행: 기존 `dongmyungpark/vlf-carla-rgb-smoke-20261005`, 제목 `VLF CARLA RGB smoke 20261005`의 **version 11**, Kaggle T4·CARLA 0.9.16·Town01. 새 notebook과 로컬 GPU 실행 없음
+- 실제 결과: 세 route × 다섯 조건 **15/15 PASS**, 원래 35m route의 reference 19m 이상 주행 후 service brake·저속 확인·주차까지 검증; 주행 trace **1,540 frame**, RGB **105장**
+- 정합: 같은 RGB·snapshot·actor-origin GT label과 다음 frame 적용 control을 strict readback·controller replay로 확인; 원래 route와 15m 미래 horizon 유지
+- 안전: collision/lane invasion/callback 오류 **0건**; 전체 주행·정지 최소 차체 여유 **0.24783m ≥0.15m**, stop 완료 **0.50~0.70 simulation seconds**
+- 산출물: [검증 명세와 실제 결과](DRIVING_RECOVERY_D9_D10.md), [요약 JSON](evidence/carla_driving_d8_d10_2026-10-08_summary.json), [metric CSV](evidence/carla_driving_d8_d10_2026-10-08_metrics.csv), [그래프](evidence/carla_driving_d8_d10_2026-10-08_recovery.png)
+
+## D10 작은 초기 lateral·yaw 편차 복구
+
+- 실제 날짜: **2026-10-08 (Asia/Seoul)**
+- 상태: **D10 gate PASS**
+- 조건: catalog 시작점의 접근 구간에서 횡방향 **±0.3m** 또는 yaw **±5°**, 초기 실제 readback 확인 및 원래 목표 차선 유지
+- 실제 복구: **12/12 PASS**, 횡오차 ≤0.2m·heading error ≤3°를 연속 1초 유지한 완료 시점 **2.15~2.35초 ≤5초**. 이후 곡선 주행·감속의 차체·속도·센서 기준도 별도로 확인
+- 독립 검증: 전체 artifact CPU gate PASS, **16개 변조 QA 모두 거부**, 실제 Town01 `Map`의 주행·정지 차체 모서리 **6,980개 PASS**; 원본 hash 불변 및 제출·원격 readback·로컬 runtime **28개 source hash 일치**
+- 종료: 15개 owned actor cleanup·world/weather 복원, 이후 RPC 진행 PASS; Kaggle `COMPLETE`와 `server_stopped=true`, 로컬 server·RPC port 중지 확인
+- 최종 코드 품질: 일반 전체 suite **450 PASS·0 skip**, Python dependency·고정 설치 preflight PASS. 두 앞선 OS 파일 쓰기 실패는 로그를 보존했고, 독립·진단·최종 일반 실행은 PASS; 정확한 OS 원인은 미확인
+- 해결한 실제 실패: spawn 정렬, 곡선 제동·차체 모서리 계산, 동기 batch control 적용, 곡률 preview 감속, Ackermann inner-wheel 정규화와 actor-origin/rear 궤적 원 기하. 실패 version 5~10의 증거도 Git에 보존
+
+**D8~D10 최종 gate: 통과.** 검증 범위는 privileged GT controller의 짧은 개발 route와 초기 오차 복구다. Camera-only 모델·B0/M1 비교·학습 pilot·D14 전체 평가·실시간 latency는 이후 작업이며 Town02 final은 `UNCOLLECTED`/`UNVERIFIED`를 유지한다. GitHub Actions는 계정 제한으로 원격 실행이 막혀 있어 local/native PASS와 구분한다.
+
+다음 구현은 **D11 OpenCV B0의 RGB 차선 검출·nominal camera 보정·차량 좌표 waypoint overlay**다.
+
 ### 이후 기록 양식
 
 ```text

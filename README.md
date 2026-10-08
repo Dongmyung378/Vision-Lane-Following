@@ -4,7 +4,7 @@ Camera-based lane following in CARLA with reproducible closed-loop evaluation.
 
 전방 RGB 영상에서 차선 중심 waypoint를 예측하고 controller로 차량을 조향합니다. 차선 검출 정확도뿐 아니라 실제 주행의 완주율, 횡방향 오차, 차선 침범, 충돌 및 처리 시간을 평가합니다.
 
-**진행 상태: D1~D7 완료.** CARLA 0.9.16의 수집·경로·라벨 계약을 구현했습니다. 기존 Kaggle T4 notebook의 version 4에서 Town01 직선·좌곡선·우곡선 에피소드 3개, RGB 180장과 waypoint 900점을 저장하고 동일 frame의 영상·자세·라벨·색상 정합을 검증했습니다. 전체 다운로드의 CPU 재검증도 통과했습니다. 다음 구현은 D8 Pure Pursuit controller입니다.
+**진행 상태: D1~D10 완료.** CARLA 0.9.16의 수집·경로·라벨 계약과 Pure Pursuit controller를 구현했습니다. 기존 Kaggle T4 notebook의 version 11에서 Town01 직선·좌곡선·우곡선의 15조건 주행·정지와 12개 초기 편차 복구를 검증했습니다. 실제 1,540개 주행 frame·RGB 105장, 전체 다운로드의 CPU 재검증과 손상·지도 검사가 모두 통과했습니다. 다음 단계는 D11 OpenCV B0 waypoint 생성입니다.
 
 ## 시스템과 입력 범위
 
@@ -87,7 +87,33 @@ Version 3에서 세 번째 case의 weather readback이 실패한 기록을 보�
 .\.venv\Scripts\python.exe scripts/verify_week1.py --manifest results/local/kaggle-week1-output-v4/week1/week1_manifest.json --output results/local/week1-v4-cpu-gate.json
 ```
 
-D8에는 Pure Pursuit controller와 privileged GT waypoint 동작을 검증합니다. Moving training pilot은 D13, 주행 metric 구현은 D14이며 Town02는 아직 사용하지 않았습니다.
+Moving training pilot은 D13, 전체 주행 평가기는 D14이며 Town02는 아직 사용하지 않았습니다.
+
+## D8 controller와 D9·D10 주행·복귀
+
+Pure Pursuit와 nominal 상한 25km/h의 PI 속도 제어를 구현했습니다. 같은 다섯 waypoint의 preview 곡률로 곡선 진입 전 목표 속도를 낮춥니다. Native wheel world-cm 좌표와 측정 pose로 wheelbase·rear axle·전륜 간격·최대 조향각을 계산합니다. Controller v4는 actor-origin 경로를 따르는 원 기하로 rear curvature를 계산하고, 가상 중앙 조향각을 CARLA의 안쪽 전륜 각도로 Ackermann 변환합니다. 원래 waypoint 라벨을 유지하며 lookahead, 조향 변화율 제한, 곡률 기반 속도 계획, 속도 포화와 antiwindup을 설정과 진단 로그에 기록합니다.
+
+Town01의 직선·좌곡선·우곡선마다 중앙 상태, 횡편차 ±0.3m, 방향 편차 ±5°의 **15개 조건**을 검사합니다. 목표 차선을 처음 정한 route로 유지하며, 동일 frame의 RGB·pose·GT label에서 만든 명령이 다음 frame에 적용됐는지 readback합니다. 복귀 기준은 횡오차 ≤0.2m·방향오차 ≤3°를 연속 1초 유지하고 5초 안에 그 유지 구간을 끝내는 것입니다. Collision/lane-invasion sensor, 차체 bounding box의 차선 여유와 종료 후 이벤트도 확인합니다.
+
+**D8~D10 gate PASS:** 기존 Kaggle notebook의 version 11, T4에서 15조건을 모두 통과했습니다. 초기 편차 복구 12개는 simulation 2.15~2.35초에 완료했고, 주행·감속·주차의 차체 최소 차선 여유는 0.24783m로 0.15m 기준을 만족했습니다. 충돌·차선 침범·callback 오류는 0건이며 소유 actor와 서버 종료도 확인했습니다. 전체 1,540 frame·RGB 105장을 다운로드해 CPU gate, 16개 손상 검사, 실제 Map의 6,980개 차체 모서리 검사를 통과했습니다. Source hash와 notebook ID·제목도 일치합니다.
+
+초기 spawn, 곡선 정지, 제어 전달, 복귀 유지, Ackermann 입력과 actor-origin 계산의 실패 증거를 보존하고 수정했습니다. 35m route의 마지막 frame에도 15m의 label horizon을 확보하도록 종료 기준은 reference 19m입니다. 초기 편차는 catalog 시작점의 접근 구간에서 적용했습니다. 이번 결과는 GT waypoint를 사용하는 짧은 privileged controller 개발 QA이며 camera-only 모델이나 학습 pilot은 이후 단계입니다.
+
+![Kaggle 실제 15조건의 초기 복귀·곡선 오차·속도 기록](docs/evidence/carla_driving_d8_d10_2026-10-08_recovery.png)
+
+회색 band는 초기 복귀 유지 기준이며 전체 곡선 주행의 heading 상한이 아닙니다. 상세 판정과 15조건 CSV는 [D9/D10 검증 기록](docs/DRIVING_RECOVERY_D9_D10.md), 실제 source·gate·정리 결과는 [증거 요약](docs/evidence/carla_driving_d8_d10_2026-10-08_summary.json)에 있습니다.
+
+```powershell
+# 실행 중인 전용 Town01 서버에서 15개 조건을 수집합니다.
+.\.venv\Scripts\python.exe scripts/run_driving_pipeline.py --output-dir results/local/driving-new-run
+
+# 원본 artifacts의 CPU 재검증에는 CARLA 서버와 GPU가 필요하지 않습니다.
+.\.venv\Scripts\python.exe scripts/verify_driving.py --manifest results/local/kaggle-d10-output-v11/driving/driving_manifest.json --output results/local/driving-v11-cpu-gate.json
+.\.venv\Scripts\python.exe scripts/audit_driving.py --native results/local/kaggle-d10-output-v11 --output results/local/driving-v11-cpu-negative.json
+.\.venv\Scripts\python.exe scripts/audit_driving_map.py --native results/local/kaggle-d10-output-v11/driving --output results/local/driving-v11-cpu-map-gate.json
+```
+
+구현과 좌표·속도 제어는 [D8 controller](docs/controller_d8.md), 고정 route 주행과 복귀 판정·기존 Kaggle 재사용은 [D9/D10 검증](docs/DRIVING_RECOVERY_D9_D10.md)에 설명합니다.
 
 ## 환경 진단 실행
 
@@ -135,7 +161,7 @@ Kaggle T4 두 개에서 작은 모델의 CUDA 학습을 확인했고, 기존 EGL
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 ```
 
-최신 로컬 단위 검증 **309개가 통과했습니다(0 skip)**. 버전·설정·RGB frame/시간·snapshot/mount 정합, 불완전한 복구와 actor 캐시, PNG CRC·압축 데이터·hash, 미완료 episode, 라벨 좌표·curve arc·원본 보존·투영·색상 witness·weather 재시도, 장면 누수·manifest 충돌, ZIP 경로 및 Windows process 소유 검사를 포함합니다. 기존 D4/D5의 실제 180장과 manifest 재검증 결과는 그대로 보존합니다. GitHub Actions는 Windows와 Linux 검증을 구성했으나 계정의 Actions 사용 제한으로 원격 CI는 실행되지 않았습니다.
+최신 로컬 단위·통합 검증 **450개가 통과했습니다(0 skip)**. 기존 수집·라벨·split 검사와 함께 wheel geometry, actor-origin 원 기하와 전륜 간격 기반 Ackermann 변환, 좌우 조향·속도 제어, 곡률 preview 속도 계획, 동기 batch 응답과 frame별 제어 적용, 고정 경로 추적·복귀 유지, 실제 정지 후 주차, 늦은 센서 이벤트와 callback 처리 종료, 초기 spawn 정렬, 기존 Kaggle 재사용과 bundle/bootstrap, CPU 손상 검사·지도 모서리 audit를 포함합니다. 기존 D4/D5·D6/D7의 실제 결과는 그대로 보존합니다. GitHub Actions는 Windows와 Linux 검증을 구성했으나 계정의 Actions 사용 제한으로 원격 CI는 실행되지 않았습니다.
 
 ## 프로젝트 문서
 
@@ -149,6 +175,8 @@ Kaggle T4 두 개에서 작은 모델의 CUDA 학습을 확인했고, 기존 EGL
 - [D5 평가 명세](docs/EVALUATION_SPEC_D5.md): 공통 controller, 주행 지표·종료 규칙·provisional threshold 및 후속 freeze.
 - [D6 waypoint 라벨](docs/WAYPOINT_LABELS_D6.md): fixed-route physical arc, actor-origin 라벨 sidecar, 원본 보존과 동일 frame overlay; [실제 geometry route](configs/routes_d6_geometry.json).
 - [D7 Week 1 게이트](docs/WEEK1_GATE_D7.md): native 3-case 기하·색상 검증, 기존 Kaggle 재사용 및 CPU 재검증.
+- [D8 Pure Pursuit와 속도 제어](docs/controller_d8.md): native wheel 측정, rear axle, lookahead·조향 제한과 PI antiwindup.
+- [D9/D10 주행·복귀 검증](docs/DRIVING_RECOVERY_D9_D10.md): 고정 목표 route, 15개 조건, 센서·차체 검사와 CPU 재검증.
 - [Kaggle CARLA 검증](docs/KAGGLE_CARLA_VERIFICATION.md): 실제 T4 학습, Vulkan, CARLA RGB 실행 결과와 재현 방법.
 - [진행 기록](docs/progress.md): 완료 근거와 다음 작업.
 

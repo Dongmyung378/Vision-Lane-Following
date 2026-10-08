@@ -23,15 +23,24 @@ SOURCES = (
 )
 
 
-def prepare(existing_metadata: Path, output_dir: Path) -> dict:
+def prepare(existing_metadata: Path, output_dir: Path, *, workload="week1") -> dict:
+    if workload not in ("week1", "driving"):
+        raise ValueError("unsupported-existing-notebook-workload")
     metadata = json.loads(existing_metadata.read_text(encoding="utf-8"))
+    if not isinstance(metadata, dict):
+        raise ValueError("existing-notebook-metadata-not-object")
     if metadata.get("id") != NOTEBOOK_ID or metadata.get("title") != NOTEBOOK_TITLE:
         raise ValueError("existing-notebook-id-or-title-mismatch")
     if output_dir.exists():
         raise ValueError("output-directory-already-exists")
     sources = {}
     manifest = {}
-    for relative in SOURCES:
+    selected = SOURCES
+    if workload == "driving":
+        selected += ("carla_tools/controller.py", "carla_tools/driving_route.py", "carla_tools/driving.py",
+                     "carla_tools/driving_validation.py", "scripts/run_driving_pipeline.py", "scripts/verify_driving.py",
+                     "configs/controller_d8.json", "configs/driving_validation_d10.json", "configs/routes_d6_geometry.json")
+    for relative in selected:
         source = (ROOT / relative).read_text(encoding="utf-8")
         if relative.endswith(".py"):
             compile(source, relative, "exec")
@@ -45,7 +54,7 @@ def prepare(existing_metadata: Path, output_dir: Path) -> dict:
     child = "import ctypes,ctypes.util,struct,json\n" + ast.get_source_segment(vulkan, function) + "\nprint(json.dumps(vulkan_devices()))\n"
     code = (bootstrap + "\nPROBE_SOURCE = " + repr(sources["scripts/carla_rgb_probe.py"]) +
             "\nVULKAN_CHILD_SOURCE = " + repr(child) + "\nPROJECT_SOURCES = " + repr(sources) +
-            "\nWORKLOAD = 'week1'\nraise SystemExit(main())\n")
+            "\nWORKLOAD = " + repr(workload) + "\nraise SystemExit(main())\n")
     compile(code, "week1.py", "exec")
     # Copy only submission fields. Credentials and machine-local configuration
     # cannot enter the package through an arbitrary metadata key.
@@ -62,7 +71,7 @@ def prepare(existing_metadata: Path, output_dir: Path) -> dict:
     output_dir.mkdir(parents=True, exist_ok=False)
     (output_dir / "week1.py").write_text(code, encoding="utf-8", newline="\n")
     (output_dir / "kernel-metadata.json").write_text(json.dumps(submission, indent=2) + "\n", encoding="utf-8", newline="\n")
-    bundle = {"notebook_id": submission["id"], "title": submission["title"], "workload": "D6-D7-week1",
+    bundle = {"notebook_id": submission["id"], "title": submission["title"], "workload": "D6-D7-week1" if workload == "week1" else "D8-D10-privileged-driving",
               "code_sha256": hashlib.sha256(code.encode("utf-8")).hexdigest(), "source_sha256": manifest,
               "submitted": False, "creates_new_notebook": False}
     (output_dir / "bundle_manifest.json").write_text(json.dumps(bundle, indent=2) + "\n", encoding="utf-8", newline="\n")

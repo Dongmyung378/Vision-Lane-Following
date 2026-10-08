@@ -1,0 +1,946 @@
+{
+  "scope": "review-excerpt-not-a-complete-dataset",
+  "source": {
+    "episode_id": "right_curve__left_offset",
+    "geometry_case": "right_curve",
+    "condition": {
+      "name": "left_offset",
+      "lateral_m": -0.3,
+      "yaw_deg": 0.0
+    },
+    "route_id": "town01_geometry_p174",
+    "route_sha256": "690cdae535ad13b7f79f41c9b9430c3b81f75d8fc91953534fc5ea0e1db4a978",
+    "town": "Town01",
+    "opendrive_sha256": "97a7f6ac67812567e5c8ee0599cd823b23f80f30f3f97c502212e38b72e2b709",
+    "metadata_sha256": "271137dda7780dcb0437036d7d5afc7b1fc8818b7d1263f69a29d9539beecb37",
+    "trace_sha256": "6bffe8e378ee6ea3b1a42a127175bd0857fcd511a5d792f0eaf21a14ad458b57",
+    "controller_config_sha256": "5bf476e20014e3b1964729983f2218160135ddb9a35fec884029990bbe96cc13",
+    "configuration_except_spawn_sha256": "62907585eac89067cfdaaf38a224b610892f4f043d2594a203c0872a8fc0dc6e",
+    "vehicle_geometry_sha256": "11fcbe98013c7b26c1f8d1a7e9608e1b1f89d7394145fa6ea5c11bc6c1cdd201",
+    "vehicle_geometry": {
+      "wheelbase_m": 3.0046486300085418,
+      "rear_axle_x_m": -1.3864075593947882,
+      "front_axle_x_m": 1.6182410706137533,
+      "max_steer_angle_deg": 69.99999237060547,
+      "steering_curve": [
+        [
+          0.0,
+          1.0
+        ],
+        [
+          100.0,
+          1.0
+        ]
+      ],
+      "front_track_m": 1.666836039174275,
+      "rear_axle_y_m": 2.205780111785849e-06,
+      "front_axle_y_m": -3.263603238101709e-06
+    },
+    "calibration_sha256": "1b57d7aaa6a0e763cd9c6eef16e1fb9702bb855cded98a513a01b6aeff6dcd1e"
+  },
+  "vehicle_geometry": {
+    "wheelbase_m": 3.0046486300085418,
+    "rear_axle_x_m": -1.3864075593947882,
+    "front_axle_x_m": 1.6182410706137533,
+    "max_steer_angle_deg": 69.99999237060547,
+    "steering_curve": [
+      [
+        0.0,
+        1.0
+      ],
+      [
+        100.0,
+        1.0
+      ]
+    ],
+    "front_track_m": 1.666836039174275,
+    "rear_axle_y_m": 2.205780111785849e-06,
+    "front_axle_y_m": -3.263603238101709e-06
+  },
+  "geometry_evidence": {
+    "measurement_vehicle_transform": {
+      "location": {
+        "x": 392.6459655761719,
+        "y": 308.2102355957031,
+        "z": 0.0013810539385303855
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": 89.97552490234375,
+        "roll": 0.0
+      },
+      "matrix": [
+        [
+          0.000427202379796654,
+          -0.9999998807907104,
+          -0.0,
+          392.6459655761719
+        ],
+        [
+          0.9999998807907104,
+          0.000427202379796654,
+          0.0,
+          308.2102355957031
+        ],
+        [
+          0.0,
+          -0.0,
+          1.0,
+          0.0013810539385303855
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "wheels": [
+      {
+        "position_cm": {
+          "x": 39348.0078125,
+          "y": 30982.8125,
+          "z": 36.96278381347656
+        },
+        "max_steer_angle_deg": 69.99999237060547
+      },
+      {
+        "position_cm": {
+          "x": 39181.32421875,
+          "y": 30982.8828125,
+          "z": 36.962791442871094
+        },
+        "max_steer_angle_deg": 69.99999237060547
+      },
+      {
+        "position_cm": {
+          "x": 39347.87890625,
+          "y": 30682.34765625,
+          "z": 36.962791442871094
+        },
+        "max_steer_angle_deg": 0.0
+      },
+      {
+        "position_cm": {
+          "x": 39181.1953125,
+          "y": 30682.41796875,
+          "z": 36.96279525756836
+        },
+        "max_steer_angle_deg": 0.0
+      }
+    ],
+    "original_steering_curve": [
+      [
+        0.0,
+        1.0
+      ],
+      [
+        20.0,
+        0.8999999761581421
+      ],
+      [
+        60.0,
+        0.800000011920929
+      ],
+      [
+        120.0,
+        0.699999988079071
+      ]
+    ],
+    "applied_steering_curve": [
+      [
+        0.0,
+        1.0
+      ],
+      [
+        100.0,
+        1.0
+      ]
+    ],
+    "position_units": "world-centimetres",
+    "measurement_after_warmup": true,
+    "steering_normalization": "measured-front-steer-limit-times-constant-factor"
+  },
+  "first_row": {
+    "schema_version": 1,
+    "frame": 5548,
+    "world_frame": 5548,
+    "snapshot_frame": 5548,
+    "sensor_frame": 5548,
+    "timestamp": 112.0566883843203,
+    "snapshot_timestamp": 112.0566883843203,
+    "sensor_timestamp": 112.0566883843203,
+    "delta_seconds": 0.05000000074505806,
+    "tick_to_rgb_ms": 9.003306999943561,
+    "index": 0,
+    "vehicle": {
+      "transform": {
+        "location": {
+          "x": 392.6459655761719,
+          "y": 308.2102355957031,
+          "z": 0.0013399315066635609
+        },
+        "rotation": {
+          "pitch": 0.0,
+          "yaw": 89.97552490234375,
+          "roll": 0.0
+        },
+        "matrix": [
+          [
+            0.000427202379796654,
+            -0.9999998807907104,
+            -0.0,
+            392.6459655761719
+          ],
+          [
+            0.9999998807907104,
+            0.000427202379796654,
+            0.0,
+            308.2102355957031
+          ],
+          [
+            0.0,
+            -0.0,
+            1.0,
+            0.0013399315066635609
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "velocity": {
+        "x": 1.118111327969018e-07,
+        "y": 2.2114429398811808e-08,
+        "z": -5.993842933094129e-05
+      },
+      "applied_control": {
+        "throttle": 0.0,
+        "brake": 1.0,
+        "steer": 0.0,
+        "hand_brake": true,
+        "reverse": false
+      }
+    },
+    "camera": {
+      "transform": {
+        "location": {
+          "x": 392.6466064453125,
+          "y": 309.7102355957031,
+          "z": 2.4013400077819824
+        },
+        "rotation": {
+          "pitch": -12.0,
+          "yaw": 89.97552490234375,
+          "roll": 0.0
+        },
+        "matrix": [
+          [
+            0.0004178670060355216,
+            -0.9999998807907104,
+            8.882037218427286e-05,
+            392.6466064453125
+          ],
+          [
+            0.9781475067138672,
+            0.000427202379796654,
+            0.2079116702079773,
+            309.7102355957031
+          ],
+          [
+            -0.20791170001029968,
+            -0.0,
+            0.9781476259231567,
+            2.4013400077819824
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      }
+    },
+    "speed_mps": 5.9938537698526215e-05,
+    "tracking": {
+      "frame": 5548,
+      "timestamp": 112.0566883843203,
+      "reference_arc_m": 6.092716147487943e-06,
+      "progress_m": 0.0,
+      "maximum_progress_m": 0.0,
+      "lateral_error_m": -0.2999878177431587,
+      "centerline_distance_xy_m": 0.2999878177431571,
+      "heading_error_deg": 3.2324105632142164e-06,
+      "route_tangent_yaw_deg": 89.97552166993319,
+      "reference_world_m": [
+        392.3459777858061,
+        308.21036375873115,
+        0.0
+      ],
+      "lane_width_m": 4.0,
+      "route_sha256": "690cdae535ad13b7f79f41c9b9430c3b81f75d8fc91953534fc5ea0e1db4a978",
+      "label": {
+        "schema_version": 1,
+        "ego_frame": 5548,
+        "route_id": "town01_geometry_p174",
+        "target_lane": {
+          "road_id": 8,
+          "section_id": 0,
+          "lane_id": 1
+        },
+        "coordinate_origin": "vehicle_actor_transform",
+        "axes": "x-forward_y-right",
+        "units": "m",
+        "distance_reference": "target-lane-centerline-arc-length",
+        "horizon_arc_m": [
+          3,
+          6,
+          9,
+          12,
+          15
+        ],
+        "reference_arc_m": 6.092716147487943e-06,
+        "waypoints_world_m": [
+          [
+            392.3471679704472,
+            311.21036349330376,
+            0.0
+          ],
+          [
+            392.34832763879194,
+            314.21036324184905,
+            0.0
+          ],
+          [
+            392.34948730705594,
+            317.2103629903901,
+            0.0
+          ],
+          [
+            392.33111539252565,
+            320.2098628439322,
+            0.0
+          ],
+          [
+            391.4274525111771,
+            323.04240475802214,
+            0.0
+          ]
+        ],
+        "waypoints_ego_m": [
+          [
+            2.9999998929092766,
+            0.3000792318828001
+          ],
+          [
+            5.999999779239807,
+            0.300201170708242
+          ],
+          [
+            8.99999966556604,
+            0.30032310961445663
+          ],
+          [
+            11.999491313014332,
+            0.31997641543027827
+          ],
+          [
+            14.831646842505492,
+            1.2248492577004075
+          ]
+        ]
+      }
+    },
+    "body_lane_margin_m": 0.618200310914411,
+    "native_wheel_angles_deg": {
+      "front_left": 0.0,
+      "front_right": 0.0
+    },
+    "image": {
+      "path": "images/00005548.png",
+      "sha256": "c7826ce7a4f5af1e53f013dad8cba9ad5c426a3e461d8f93d9271fb1eca72150",
+      "width": 640,
+      "height": 360,
+      "color_provenance": {
+        "source_format": "BGRA8",
+        "output_format": "RGB8",
+        "source_sha256": "c174d67f1c7f300b827909c5e0869a3c3ce8224bf5c2e1ac2ba48ae2d0b23b61",
+        "rgb_sha256": "96b6035547f277c091ceb4aaca80a295e7c27bf2132718c7ca49ccf3955fb566",
+        "sample_pixels": [
+          {
+            "index": 0,
+            "bgra": [
+              255,
+              255,
+              255,
+              255
+            ]
+          },
+          {
+            "index": 98320,
+            "bgra": [
+              5,
+              123,
+              255,
+              255
+            ]
+          },
+          {
+            "index": 115200,
+            "bgra": [
+              16,
+              45,
+              28,
+              255
+            ]
+          },
+          {
+            "index": 230399,
+            "bgra": [
+              53,
+              53,
+              53,
+              255
+            ]
+          }
+        ]
+      }
+    },
+    "command": {
+      "throttle": 0.65,
+      "brake": 0.0,
+      "steer": 0.08696522107625415,
+      "hand_brake": false,
+      "reverse": false,
+      "diagnostics": {
+        "controller_version": "vlf-pure-pursuit-d8-v4",
+        "configuration_sha256": "5bf476e20014e3b1964729983f2218160135ddb9a35fec884029990bbe96cc13",
+        "step_index": 0,
+        "dt_seconds": 0.05,
+        "waypoint_origin": "vehicle_actor_transform",
+        "control_origin": "measured-rear-axle",
+        "rear_axle_x_m": -1.3864075593947882,
+        "rear_axle_y_m": 2.205780111785849e-06,
+        "target_rear_axle_xy_m": [
+          4.386407452304065,
+          0.3000770261026883
+        ],
+        "target_actor_xy_m": [
+          2.999999892909276,
+          0.3000792318828001
+        ],
+        "lookahead_requested_m": 4.0,
+        "lookahead_effective_m": 4.396659704733045,
+        "lookahead_selection": "first-available-target",
+        "lookahead_segment_index": 0,
+        "curvature_per_m": 0.03447504302522916,
+        "curvature_geometry": "actor-origin-path-circle-with-measured-rear-offset",
+        "actor_circle_denominator_m2": 17.408490638471388,
+        "steering_rad": 0.10321726974597915,
+        "steering_normalization": "ackermann-inner-front-wheel-angle",
+        "front_track_m": 1.666836039174275,
+        "native_inner_steering_rad": 0.10624804939525846,
+        "native_inner_steering_deg": 6.087564811845809,
+        "ackermann_inner_radius_nonpositive": false,
+        "steering_curve_factor": 1.0,
+        "effective_max_steering_rad": 1.2217303432379762,
+        "steer_unclipped": 0.08696522107625415,
+        "steer_clipped": 0.08696522107625415,
+        "steer_rate_limited": false,
+        "target_speed_kmh": 25.0,
+        "nominal_target_speed_mps": 6.944444444444445,
+        "preview_curvatures_per_m": [
+          8.974773107349598e-12,
+          0.0021706475383706596,
+          0.10097272601999283
+        ],
+        "preview_curvature_per_m": 0.10097272601999283,
+        "speed_limit_curvature_per_m": 0.10097272601999283,
+        "max_lateral_acceleration_mps2": 2.0,
+        "curvature_speed_cap_mps": 4.450542546405565,
+        "effective_target_speed_mps": 4.450542546405565,
+        "effective_target_speed_kmh": 16.021953167060033,
+        "curvature_speed_limited": true,
+        "speed_mps": 5.9938537698526215e-05,
+        "speed_error_mps": 4.450482607867866,
+        "speed_integral_m": 0.0,
+        "speed_pi_effort": 2.00271717354054,
+        "speed_pi_antiwindup": true,
+        "speed_pi_saturated": true
+      }
+    },
+    "terminal": false,
+    "command_source_frame": 5548,
+    "command_target_frame": 5549
+  },
+  "last_row": {
+    "schema_version": 1,
+    "frame": 5669,
+    "world_frame": 5669,
+    "snapshot_frame": 5669,
+    "sensor_frame": 5669,
+    "timestamp": 118.10668847447232,
+    "snapshot_timestamp": 118.10668847447232,
+    "sensor_timestamp": 118.10668847447232,
+    "delta_seconds": 0.05000000074505806,
+    "tick_to_rgb_ms": 14.887779999980921,
+    "index": 121,
+    "vehicle": {
+      "transform": {
+        "location": {
+          "x": 388.3439025878906,
+          "y": 325.6514587402344,
+          "z": 0.0001211357448482886
+        },
+        "rotation": {
+          "pitch": -0.016050944104790688,
+          "yaw": 140.78842163085938,
+          "roll": -0.110595703125
+        },
+        "matrix": [
+          [
+            -0.7748166918754578,
+            -0.6321851015090942,
+            0.001003223704174161,
+            388.3439025878906
+          ],
+          [
+            0.6321858167648315,
+            -0.7748149633407593,
+            0.0016726976027712226,
+            325.6514587402344
+          ],
+          [
+            -0.00028014183044433594,
+            0.0019302578875795007,
+            0.9999980926513672,
+            0.0001211357448482886
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "velocity": {
+        "x": -3.342222213745117,
+        "y": 1.7194355726242065,
+        "z": -0.0001974678016267717
+      },
+      "applied_control": {
+        "throttle": 0.22209377586841583,
+        "brake": 0.0,
+        "steer": 0.3495327830314636,
+        "hand_brake": false,
+        "reverse": false
+      }
+    },
+    "camera": {
+      "transform": {
+        "location": {
+          "x": 387.18408203125,
+          "y": 326.6037292480469,
+          "z": 2.3996963500976562
+        },
+        "rotation": {
+          "pitch": -12.016030311584473,
+          "yaw": 140.8119354248047,
+          "roll": -0.11307284235954285
+        },
+        "matrix": [
+          [
+            -0.7580937147140503,
+            -0.632185161113739,
+            -0.1601121872663498,
+            387.18408203125
+          ],
+          [
+            0.6180233359336853,
+            -0.7748149633407593,
+            0.13307499885559082,
+            326.6037292480469
+          ],
+          [
+            -0.2081853449344635,
+            0.0019302517175674438,
+            0.9780874848365784,
+            2.3996963500976562
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      }
+    },
+    "speed_mps": 3.7585779296763793,
+    "tracking": {
+      "frame": 5669,
+      "timestamp": 118.10668847447232,
+      "reference_arc_m": 19.12300606198872,
+      "progress_m": 19.12299996927257,
+      "maximum_progress_m": 19.12299996927257,
+      "lateral_error_m": 0.11221541808334301,
+      "centerline_distance_xy_m": 0.11221541808333589,
+      "heading_error_deg": -12.764004542642425,
+      "route_tangent_yaw_deg": 153.5524261735018,
+      "reference_world_m": [
+        388.3938809508791,
+        325.7519299465007,
+        0.0
+      ],
+      "lane_width_m": 4.0,
+      "route_sha256": "690cdae535ad13b7f79f41c9b9430c3b81f75d8fc91953534fc5ea0e1db4a978",
+      "label": {
+        "schema_version": 1,
+        "ego_frame": 5669,
+        "route_id": "town01_geometry_p174",
+        "target_lane": {
+          "road_id": 8,
+          "section_id": 0,
+          "lane_id": 1
+        },
+        "coordinate_origin": "vehicle_actor_transform",
+        "axes": "x-forward_y-right",
+        "units": "m",
+        "distance_reference": "target-lane-centerline-arc-length",
+        "horizon_arc_m": [
+          3,
+          6,
+          9,
+          12,
+          15
+        ],
+        "reference_arc_m": 19.12300606198872,
+        "waypoints_world_m": [
+          [
+            385.52591278831557,
+            326.5718997884266,
+            0.0
+          ],
+          [
+            382.52718480141016,
+            326.6099853515625,
+            0.0
+          ],
+          [
+            379.52718480141016,
+            326.6099853515625,
+            0.0
+          ],
+          [
+            376.52718480141016,
+            326.6099853515625,
+            0.0
+          ],
+          [
+            373.52718480141027,
+            326.6099853515625,
+            0.0
+          ]
+        ],
+        "waypoints_ego_m": [
+          [
+            2.765315344016004,
+            1.0683194366603306
+          ],
+          [
+            5.112856995502416,
+            2.9345613292553376
+          ],
+          [
+            7.43730707112879,
+            4.831116633782621
+          ],
+          [
+            9.761757146755164,
+            6.7276719383099035
+          ],
+          [
+            12.086207222381448,
+            8.624227242837113
+          ]
+        ]
+      }
+    },
+    "body_lane_margin_m": 0.28775747477891955,
+    "native_wheel_angles_deg": {
+      "front_left": 19.96723175048828,
+      "front_right": 24.4672908782959
+    },
+    "image": {
+      "path": "images/00005669.png",
+      "sha256": "6dcb277cf4ad03403b9f6a126f1e199fc0dc60ba045be01513c9fbc68d17d9df",
+      "width": 640,
+      "height": 360,
+      "color_provenance": {
+        "source_format": "BGRA8",
+        "output_format": "RGB8",
+        "source_sha256": "31552d15cc12fb0f54599129efcd0e06d4e04011b87854cec7d6347cb8f5da83",
+        "rgb_sha256": "f574a1fa11a7a26470eb18cc894c1ebaaacc0e9a2c8b42696dda8545c6bd066e",
+        "sample_pixels": [
+          {
+            "index": 0,
+            "bgra": [
+              16,
+              25,
+              17,
+              255
+            ]
+          },
+          {
+            "index": 67823,
+            "bgra": [
+              5,
+              255,
+              255,
+              255
+            ]
+          },
+          {
+            "index": 115200,
+            "bgra": [
+              9,
+              29,
+              12,
+              255
+            ]
+          },
+          {
+            "index": 230399,
+            "bgra": [
+              59,
+              59,
+              59,
+              255
+            ]
+          }
+        ]
+      }
+    },
+    "command": {
+      "throttle": 0.22243586563416076,
+      "brake": 0.0,
+      "steer": 0.3482544880052333,
+      "hand_brake": false,
+      "reverse": false,
+      "diagnostics": {
+        "controller_version": "vlf-pure-pursuit-d8-v4",
+        "configuration_sha256": "5bf476e20014e3b1964729983f2218160135ddb9a35fec884029990bbe96cc13",
+        "step_index": 121,
+        "dt_seconds": 0.05,
+        "waypoint_origin": "vehicle_actor_transform",
+        "control_origin": "measured-rear-axle",
+        "rear_axle_x_m": -1.3864075593947882,
+        "rear_axle_y_m": 2.205780111785849e-06,
+        "target_rear_axle_xy_m": [
+          4.599941418940787,
+          1.4246406938480345
+        ],
+        "target_actor_xy_m": [
+          3.213533859545999,
+          1.4246428996281462
+        ],
+        "lookahead_requested_m": 4.8155022753867325,
+        "lookahead_effective_m": 4.815502275386732,
+        "lookahead_selection": "circle-segment-interpolation",
+        "lookahead_segment_index": 0,
+        "curvature_per_m": 0.13397725777857422,
+        "curvature_geometry": "actor-origin-path-circle-with-measured-rear-offset",
+        "actor_circle_denominator_m2": 21.26693624350291,
+        "steering_rad": 0.38270666296424505,
+        "steering_normalization": "ackermann-inner-front-wheel-angle",
+        "front_track_m": 1.666836039174275,
+        "native_inner_steering_rad": 0.4254730751647993,
+        "native_inner_steering_deg": 24.377811503395446,
+        "ackermann_inner_radius_nonpositive": false,
+        "steering_curve_factor": 1.0,
+        "effective_max_steering_rad": 1.2217303432379762,
+        "steer_unclipped": 0.3482544880052333,
+        "steer_clipped": 0.3482544880052333,
+        "steer_rate_limited": false,
+        "target_speed_kmh": 25.0,
+        "nominal_target_speed_mps": 6.944444444444445,
+        "preview_curvatures_per_m": [
+          0.004233993591455171,
+          2.6316440704210994e-16,
+          6.579110176053127e-17
+        ],
+        "preview_curvature_per_m": 0.004233993591455171,
+        "speed_limit_curvature_per_m": 0.13397725777857422,
+        "max_lateral_acceleration_mps2": 2.0,
+        "curvature_speed_cap_mps": 3.8636649272216403,
+        "effective_target_speed_mps": 3.8636649272216403,
+        "effective_target_speed_kmh": 13.909193737997905,
+        "curvature_speed_limited": true,
+        "speed_mps": 3.7585779296763793,
+        "speed_error_mps": 0.10508699754526107,
+        "speed_integral_m": 1.167644778258622,
+        "speed_pi_effort": 0.22243586563416076,
+        "speed_pi_antiwindup": false,
+        "speed_pi_saturated": false
+      }
+    },
+    "terminal": true,
+    "command_source_frame": 5669,
+    "command_target_frame": null
+  },
+  "overlay": [
+    {
+      "index": 0,
+      "horizon_arc_m": 3,
+      "world_xyz_m": [
+        392.3471679704472,
+        311.21036349330376,
+        0.0
+      ],
+      "camera_carla_xyz_m": [
+        1.9664879206516908,
+        0.3000792973773326,
+        -2.036997527167295
+      ],
+      "camera_optical_xyz_m": [
+        0.3000792973773326,
+        2.036997527167295,
+        1.9664879206516908
+      ],
+      "depth_m": 1.9664879206516908,
+      "uv_pixels": [
+        368.83090007942883,
+        511.47379236253647
+      ],
+      "pixel": null,
+      "status": "OUTSIDE_IMAGE",
+      "coordinate_clamped": false
+    },
+    {
+      "index": 1,
+      "horizon_arc_m": 6,
+      "world_xyz_m": [
+        392.34832763879194,
+        314.21036324184905,
+        0.0
+      ],
+      "camera_carla_xyz_m": [
+        4.900930679420636,
+        0.30020123620277445,
+        -1.4132624658215576
+      ],
+      "camera_optical_xyz_m": [
+        0.30020123620277445,
+        1.4132624658215576,
+        4.900930679420636
+      ],
+      "depth_m": 4.900930679420636,
+      "uv_pixels": [
+        339.60125573460346,
+        272.2771650213099
+      ],
+      "pixel": [
+        339,
+        272
+      ],
+      "status": "VISIBLE",
+      "coordinate_clamped": false
+    },
+    {
+      "index": 2,
+      "horizon_arc_m": 9,
+      "world_xyz_m": [
+        392.34948730705594,
+        317.2103629903901,
+        0.0
+      ],
+      "camera_carla_xyz_m": [
+        7.8353734381853775,
+        0.3003231751089891,
+        -0.7895274044767134
+      ],
+      "camera_optical_xyz_m": [
+        0.3003231751089891,
+        0.7895274044767134,
+        7.8353734381853775
+      ],
+      "depth_m": 7.8353734381853775,
+      "uv_pixels": [
+        332.26532682750263,
+        212.24463663739047
+      ],
+      "pixel": [
+        332,
+        212
+      ],
+      "status": "VISIBLE",
+      "coordinate_clamped": false
+    },
+    {
+      "index": 3,
+      "horizon_arc_m": 12,
+      "world_xyz_m": [
+        392.33111539252565,
+        320.2098628439322,
+        0.0
+      ],
+      "camera_carla_xyz_m": [
+        10.769319064299319,
+        0.31997648092481074,
+        -0.16589801193846876
+      ],
+      "camera_optical_xyz_m": [
+        0.31997648092481074,
+        0.16589801193846876,
+        10.769319064299319
+      ],
+      "depth_m": 10.769319064299319,
+      "uv_pixels": [
+        329.5077946232807,
+        184.92950051004584
+      ],
+      "pixel": [
+        329,
+        184
+      ],
+      "status": "VISIBLE",
+      "coordinate_clamped": false
+    },
+    {
+      "index": 4,
+      "horizon_arc_m": 15,
+      "world_xyz_m": [
+        391.4274525111771,
+        323.04240475802214,
+        0.0
+      ],
+      "camera_carla_xyz_m": [
+        13.539585264326199,
+        1.22484932319494,
+        0.4229402446806161
+      ],
+      "camera_optical_xyz_m": [
+        1.22484932319494,
+        -0.4229402446806161,
+        13.539585264326199
+      ],
+      "depth_m": 13.539585264326199,
+      "uv_pixels": [
+        348.9485811987969,
+        170.00406026805044
+      ],
+      "pixel": [
+        348,
+        170
+      ],
+      "status": "VISIBLE",
+      "coordinate_clamped": false
+    }
+  ]
+}

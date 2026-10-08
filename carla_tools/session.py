@@ -84,7 +84,7 @@ class CollectionSession:
     def __init__(self, cfg: Any, carla_module: Any = None):
         self.cfg = cfg
         self._carla = carla_module
-        self.world = self.vehicle = self.camera = None
+        self.client = self.world = self.vehicle = self.camera = None
         self.manifest: dict[str, Any] = {}
         self.cleanup_report: dict[str, Any] = {"status": "NOT_RUN", "errors": []}
         self._original_settings = self._original_weather = self._mount = None
@@ -96,6 +96,7 @@ class CollectionSession:
         self._camera_attributes: dict[str, str] = {}
         self._control_expected: dict[str, Any] = {}
         self._owned: list[Any] = []
+        self._extra_sensors: list[Any] = []
         self._settings_touched = self._weather_touched = self._entered = self._closed = False
 
     @property
@@ -123,6 +124,7 @@ class CollectionSession:
             self._carla = carla
             stage = "version-check"
             client = carla.Client(cfg.connection.host, cfg.connection.port)
+            self.client = client
             client.set_timeout(cfg.connection.timeout_seconds)
             client_version, server_version = client.get_client_version(), client.get_server_version()
             if client_version != CARLA_VERSION or server_version != CARLA_VERSION:
@@ -248,6 +250,21 @@ class CollectionSession:
                 return False
             time.sleep(min(0.02, remaining))
 
+    def register_owned_sensor(self, sensor):
+        """Register an attached sensor created by this active session's caller."""
+        if not self._entered or self._closed or self.vehicle is None or self.camera is None:
+            raise SessionError("session-not-active", "sensor-ownership")
+        actor_id = getattr(sensor, "id", None)
+        parent = getattr(sensor, "parent", None)
+        if (type(actor_id) is not int or actor_id <= 0
+                or not getattr(sensor, "type_id", "").startswith("sensor.")
+                or parent is None or parent.id != self.vehicle.id
+                or any(actor.id == actor_id for actor in self._owned)):
+            raise SessionError("attached-sensor-ownership-invalid", "sensor-ownership")
+        self._owned.append(sensor)
+        self._extra_sensors.append(sensor)
+        return sensor
+
     def _verify_actor_metadata(self):
         if self.vehicle.type_id != self.cfg.vehicle.blueprint or self.camera.type_id != self.cfg.camera.blueprint:
             raise SessionError("actor-blueprint-readback-mismatch", "actor-readback")
@@ -327,6 +344,9 @@ class CollectionSession:
         reference_available = not self._owned or attempt("cleanup-reference-frame", capture_reference_frame)
         if self.camera is not None:
             report["sensor_stopped"] = attempt("sensor-stop", lambda: self.camera.stop() if self.camera.is_listening else None)
+        for sensor in self._extra_sensors:
+            stopped = attempt("sensor-stop", lambda sensor=sensor: sensor.stop() if sensor.is_listening else None)
+            report["sensor_stopped"] = stopped and report["sensor_stopped"] is True
         for actor in reversed(self._owned):
             attempt("owned-actor-destroy", actor.destroy)
         if self._weather_touched:

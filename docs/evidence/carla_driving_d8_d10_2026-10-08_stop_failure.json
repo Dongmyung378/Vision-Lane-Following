@@ -1,0 +1,1343 @@
+{
+  "schema_version": 1,
+  "status": "FAIL",
+  "scope": "preserved-native-failure-not-completion-evidence",
+  "notebook_id": "dongmyungpark/vlf-carla-rgb-smoke-20261005",
+  "notebook_version": 6,
+  "bootstrap": {
+    "schema_version": 1,
+    "status": "FAIL",
+    "stage": "D8-D10-privileged-driving-and-recovery-gate",
+    "carla_rgb_verified": false,
+    "python": "3.13.15",
+    "stages": [
+      {
+        "name": "vulkan-preflight",
+        "elapsed_seconds": 0.02
+      },
+      {
+        "name": "python312-client",
+        "elapsed_seconds": 2.05
+      },
+      {
+        "name": "server-download",
+        "elapsed_seconds": 6.3
+      },
+      {
+        "name": "server-extraction",
+        "elapsed_seconds": 220.36
+      },
+      {
+        "name": "server-launch",
+        "elapsed_seconds": 447.28
+      },
+      {
+        "name": "D8-D10-privileged-driving-and-recovery-gate",
+        "elapsed_seconds": 461.72
+      }
+    ],
+    "max_seconds": 1200,
+    "workload": "driving",
+    "vulkan_attempts": [
+      {
+        "library": "libGLX_nvidia.so.0",
+        "path": "/usr/local/nvidia/lib64/libGLX_nvidia.so.580.178.04",
+        "vulkan": {
+          "status": "instance_failed",
+          "vk_result": -9,
+          "devices": []
+        },
+        "status": "instance_failed"
+      },
+      {
+        "library": "libEGL_nvidia.so.0",
+        "path": "/usr/local/nvidia/lib64/libEGL_nvidia.so.580.178.04",
+        "vulkan": {
+          "status": "nvidia_hardware",
+          "devices": [
+            {
+              "name": "Tesla T4",
+              "vendor_id": 4318,
+              "device_type": 2,
+              "api_version": 4211000
+            },
+            {
+              "name": "Tesla T4",
+              "vendor_id": 4318,
+              "device_type": 2,
+              "api_version": 4211000
+            }
+          ]
+        },
+        "status": "nvidia_hardware"
+      }
+    ],
+    "vulkan": {
+      "status": "nvidia_hardware",
+      "devices": [
+        {
+          "name": "Tesla T4",
+          "vendor_id": 4318,
+          "device_type": 2,
+          "api_version": 4211000
+        },
+        {
+          "name": "Tesla T4",
+          "vendor_id": 4318,
+          "device_type": 2,
+          "api_version": 4211000
+        }
+      ]
+    },
+    "selected_vulkan_library": "/usr/local/nvidia/lib64/libEGL_nvidia.so.580.178.04",
+    "download_attempts": [
+      {
+        "url": "https://downloads.carlasim.com/Linux/CARLA_0.9.16.tar.gz",
+        "http_status": 200,
+        "content_length": 8346095504,
+        "status": "selected"
+      }
+    ],
+    "download_url": "https://downloads.carlasim.com/Linux/CARLA_0.9.16.tar.gz",
+    "download_bytes": 8346095504,
+    "startup_map": "Town01",
+    "error": "carla_driving-failed",
+    "elapsed_seconds": 492.14,
+    "server_stopped": true
+  },
+  "pipeline": {
+    "schema_version": 1,
+    "status": "FAIL",
+    "scope": "D8-D10-privileged-controller-development-QA",
+    "started_utc": "2026-10-08T11:38:09.120266+00:00",
+    "cases": [
+      {
+        "schema_version": 1,
+        "status": "PASS",
+        "scope": "D8-D10-privileged-controller-development-QA",
+        "case": "straight",
+        "condition": "center",
+        "episode_directory": "straight__center",
+        "step_count": 83,
+        "validation": {
+          "status": "PASS",
+          "gate_version": "vlf-privileged-driving-d10-v1",
+          "scope": "D8-D10-privileged-controller-development-QA",
+          "errors": [],
+          "source": {
+            "episode_id": "straight__center",
+            "geometry_case": "straight",
+            "condition": {
+              "name": "center",
+              "lateral_m": 0.0,
+              "yaw_deg": 0.0
+            },
+            "route_id": "town01_geometry_p000",
+            "route_sha256": "d71fc9745c5ba6e9a08dce82ce846d91350a2ee009d094792a5c6825b1d6ec27",
+            "town": "Town01",
+            "opendrive_sha256": "97a7f6ac67812567e5c8ee0599cd823b23f80f30f3f97c502212e38b72e2b709",
+            "metadata_sha256": "d72108723de092d22fab7c7f1a4d7a545a5305a1ddedc7ef1869b1934fdc3f5a",
+            "trace_sha256": "8877e5a56cb72d9860bd0f5f28651b564c384658445bbe423f6d39a5c98c2ebc",
+            "controller_config_sha256": "dc43258377ff5a3cb9c293b086bd4116716cf6791f7076e05d30ed7984cf737c",
+            "configuration_except_spawn_sha256": "62907585eac89067cfdaaf38a224b610892f4f043d2594a203c0872a8fc0dc6e",
+            "vehicle_geometry_sha256": "321274e37a498d69cbb19b185fb9a4865271e1bd294dd3757e9b0296dea714b8",
+            "vehicle_geometry": {
+              "wheelbase_m": 3.004649020874484,
+              "rear_axle_x_m": -1.3864138463963855,
+              "front_axle_x_m": 1.6182351744780987,
+              "max_steer_angle_deg": 69.99999237060547,
+              "steering_curve": [
+                [
+                  0.0,
+                  1.0
+                ],
+                [
+                  100.0,
+                  1.0
+                ]
+              ],
+              "rear_axle_y_m": -5.7904126435914804e-06,
+              "front_axle_y_m": -3.876279697612173e-06
+            },
+            "calibration_sha256": "1b57d7aaa6a0e763cd9c6eef16e1fb9702bb855cded98a513a01b6aeff6dcd1e"
+          },
+          "metrics": {
+            "step_count": 83,
+            "image_count": 6,
+            "first_frame": 227,
+            "last_frame": 309,
+            "simulation_seconds": 4.100000061094761,
+            "final_reference_m": 19.22177529678113,
+            "progress_m": 19.221775278153544,
+            "initial_lateral_error_m": 3.0517572441353613e-05,
+            "initial_heading_error_deg": 4.4601904392038705e-07,
+            "final_lateral_error_m": 0.0008717132313778257,
+            "final_heading_error_deg": -0.01168778640283108,
+            "maximum_abs_lateral_error_m": 0.0009091360493255165,
+            "mean_abs_lateral_error_m": 0.0005607149987391779,
+            "maximum_speed_mps": 6.567880695828089,
+            "minimum_body_lane_margin_m": 0.9168993283511073,
+            "recovery_completed_seconds": 1.0000000149011612,
+            "collision_count": 0,
+            "lane_invasion_count": 0
+          },
+          "checks": {
+            "same_frame_original_route_labels": true,
+            "controller_replay": true,
+            "command_application": true,
+            "sampled_rgb_color_verified": true,
+            "body_lane_margin": true,
+            "owned_actors_cleaned_and_world_restored": true,
+            "events_observed_through_post_stop": true,
+            "sources_unchanged": true
+          },
+          "final_test_used": false,
+          "model_training_verified": false
+        }
+      },
+      {
+        "schema_version": 1,
+        "status": "PASS",
+        "scope": "D8-D10-privileged-controller-development-QA",
+        "case": "straight",
+        "condition": "left_offset",
+        "episode_directory": "straight__left_offset",
+        "step_count": 83,
+        "validation": {
+          "status": "PASS",
+          "gate_version": "vlf-privileged-driving-d10-v1",
+          "scope": "D8-D10-privileged-controller-development-QA",
+          "errors": [],
+          "source": {
+            "episode_id": "straight__left_offset",
+            "geometry_case": "straight",
+            "condition": {
+              "name": "left_offset",
+              "lateral_m": -0.3,
+              "yaw_deg": 0.0
+            },
+            "route_id": "town01_geometry_p000",
+            "route_sha256": "d71fc9745c5ba6e9a08dce82ce846d91350a2ee009d094792a5c6825b1d6ec27",
+            "town": "Town01",
+            "opendrive_sha256": "97a7f6ac67812567e5c8ee0599cd823b23f80f30f3f97c502212e38b72e2b709",
+            "metadata_sha256": "73095daa5bc578245ed3c12595ea989150b969a2905c19041a5a1d7b2aa2f132",
+            "trace_sha256": "be6475d74cdbe6a15bfe7da8778df968196aa19dd2bf6da7fee7202ba5accc7a",
+            "controller_config_sha256": "dc43258377ff5a3cb9c293b086bd4116716cf6791f7076e05d30ed7984cf737c",
+            "configuration_except_spawn_sha256": "62907585eac89067cfdaaf38a224b610892f4f043d2594a203c0872a8fc0dc6e",
+            "vehicle_geometry_sha256": "ef6d86405e2b1f4cafa7011e9d1ff92de5eec1d9dc2e4401232e3fda5868ccd1",
+            "vehicle_geometry": {
+              "wheelbase_m": 3.0046490208744556,
+              "rear_axle_x_m": -1.3864016281906744,
+              "front_axle_x_m": 1.6182473926837815,
+              "max_steer_angle_deg": 69.99999237060547,
+              "steering_curve": [
+                [
+                  0.0,
+                  1.0
+                ],
+                [
+                  100.0,
+                  1.0
+                ]
+              ],
+              "rear_axle_y_m": 1.251267977409043e-05,
+              "front_axle_y_m": 1.4426812748491447e-05
+            },
+            "calibration_sha256": "1b57d7aaa6a0e763cd9c6eef16e1fb9702bb855cded98a513a01b6aeff6dcd1e"
+          },
+          "metrics": {
+            "step_count": 83,
+            "image_count": 6,
+            "first_frame": 593,
+            "last_frame": 675,
+            "simulation_seconds": 4.100000061094761,
+            "final_reference_m": 19.217019584928394,
+            "progress_m": 19.217019584928394,
+            "initial_lateral_error_m": -0.29998784885037305,
+            "initial_heading_error_deg": 4.4601904392038705e-07,
+            "final_lateral_error_m": 0.009114363693389835,
+            "final_heading_error_deg": -0.17231705886376858,
+            "maximum_abs_lateral_error_m": 0.29998784885037305,
+            "mean_abs_lateral_error_m": 0.12191354912067542,
+            "maximum_speed_mps": 6.567883336559825,
+            "minimum_body_lane_margin_m": 0.6051285385867218,
+            "recovery_completed_seconds": 2.350000035017729,
+            "collision_count": 0,
+            "lane_invasion_count": 0
+          },
+          "checks": {
+            "same_frame_original_route_labels": true,
+            "controller_replay": true,
+            "command_application": true,
+            "sampled_rgb_color_verified": true,
+            "body_lane_margin": true,
+            "owned_actors_cleaned_and_world_restored": true,
+            "events_observed_through_post_stop": true,
+            "sources_unchanged": true
+          },
+          "final_test_used": false,
+          "model_training_verified": false
+        }
+      },
+      {
+        "schema_version": 1,
+        "status": "PASS",
+        "scope": "D8-D10-privileged-controller-development-QA",
+        "case": "straight",
+        "condition": "right_offset",
+        "episode_directory": "straight__right_offset",
+        "step_count": 83,
+        "validation": {
+          "status": "PASS",
+          "gate_version": "vlf-privileged-driving-d10-v1",
+          "scope": "D8-D10-privileged-controller-development-QA",
+          "errors": [],
+          "source": {
+            "episode_id": "straight__right_offset",
+            "geometry_case": "straight",
+            "condition": {
+              "name": "right_offset",
+              "lateral_m": 0.3,
+              "yaw_deg": 0.0
+            },
+            "route_id": "town01_geometry_p000",
+            "route_sha256": "d71fc9745c5ba6e9a08dce82ce846d91350a2ee009d094792a5c6825b1d6ec27",
+            "town": "Town01",
+            "opendrive_sha256": "97a7f6ac67812567e5c8ee0599cd823b23f80f30f3f97c502212e38b72e2b709",
+            "metadata_sha256": "96954ad829d46bee2954bf57581fcd83856815d31a52b668da486816edb9db52",
+            "trace_sha256": "b983e73e4a77d6f077319ed9ad0b5d7c5ab6e15105636e09963c357fb8f7f266",
+            "controller_config_sha256": "dc43258377ff5a3cb9c293b086bd4116716cf6791f7076e05d30ed7984cf737c",
+            "configuration_except_spawn_sha256": "62907585eac89067cfdaaf38a224b610892f4f043d2594a203c0872a8fc0dc6e",
+            "vehicle_geometry_sha256": "5eec2f47899e3d783324e4c6ac31bd7825f575e5eee3423a0eb1a63f8aabab1a",
+            "vehicle_geometry": {
+              "wheelbase_m": 3.0046490208744556,
+              "rear_axle_x_m": -1.3864065199436482,
+              "front_axle_x_m": 1.6182425009308077,
+              "max_steer_angle_deg": 69.99999237060547,
+              "steering_curve": [
+                [
+                  0.0,
+                  1.0
+                ],
+                [
+                  100.0,
+                  1.0
+                ]
+              ],
+              "rear_axle_y_m": -2.132774608309962e-06,
+              "front_axle_y_m": -2.1864166227514303e-07
+            },
+            "calibration_sha256": "1b57d7aaa6a0e763cd9c6eef16e1fb9702bb855cded98a513a01b6aeff6dcd1e"
+          },
+          "metrics": {
+            "step_count": 83,
+            "image_count": 6,
+            "first_frame": 959,
+            "last_frame": 1041,
+            "simulation_seconds": 4.100000061094761,
+            "final_reference_m": 19.23119909818967,
+            "progress_m": 19.23119909446551,
+            "initial_lateral_error_m": 0.2999878488503725,
+            "initial_heading_error_deg": 4.4601904392038705e-07,
+            "final_lateral_error_m": -0.009174324025087019,
+            "final_heading_error_deg": 0.17147108810888767,
+            "maximum_abs_lateral_error_m": 0.2999878488503725,
+            "mean_abs_lateral_error_m": 0.12184819074446067,
+            "maximum_speed_mps": 6.567750997878763,
+            "minimum_body_lane_margin_m": 0.6059625655669514,
+            "recovery_completed_seconds": 2.350000035017729,
+            "collision_count": 0,
+            "lane_invasion_count": 0
+          },
+          "checks": {
+            "same_frame_original_route_labels": true,
+            "controller_replay": true,
+            "command_application": true,
+            "sampled_rgb_color_verified": true,
+            "body_lane_margin": true,
+            "owned_actors_cleaned_and_world_restored": true,
+            "events_observed_through_post_stop": true,
+            "sources_unchanged": true
+          },
+          "final_test_used": false,
+          "model_training_verified": false
+        }
+      },
+      {
+        "schema_version": 1,
+        "status": "PASS",
+        "scope": "D8-D10-privileged-controller-development-QA",
+        "case": "straight",
+        "condition": "left_yaw",
+        "episode_directory": "straight__left_yaw",
+        "step_count": 83,
+        "validation": {
+          "status": "PASS",
+          "gate_version": "vlf-privileged-driving-d10-v1",
+          "scope": "D8-D10-privileged-controller-development-QA",
+          "errors": [],
+          "source": {
+            "episode_id": "straight__left_yaw",
+            "geometry_case": "straight",
+            "condition": {
+              "name": "left_yaw",
+              "lateral_m": 0.0,
+              "yaw_deg": -5.0
+            },
+            "route_id": "town01_geometry_p000",
+            "route_sha256": "d71fc9745c5ba6e9a08dce82ce846d91350a2ee009d094792a5c6825b1d6ec27",
+            "town": "Town01",
+            "opendrive_sha256": "97a7f6ac67812567e5c8ee0599cd823b23f80f30f3f97c502212e38b72e2b709",
+            "metadata_sha256": "5b958491543782e1864a4e04e98c8db4501454f43bc1e9c435e2943374c2113c",
+            "trace_sha256": "917f5e2e157ac032ec1bb206aed27f317a7f0d7f48ffa4f6abe73b7d36483b49",
+            "controller_config_sha256": "dc43258377ff5a3cb9c293b086bd4116716cf6791f7076e05d30ed7984cf737c",
+            "configuration_except_spawn_sha256": "62907585eac89067cfdaaf38a224b610892f4f043d2594a203c0872a8fc0dc6e",
+            "vehicle_geometry_sha256": "76229e67b9b96293542af6a33a1e74bbb18fa4eb6ab8531cc6bd9bf89bb2fa5b",
+            "vehicle_geometry": {
+              "wheelbase_m": 3.004652673909142,
+              "rear_axle_x_m": -1.386418512274112,
+              "front_axle_x_m": 1.61823416163503,
+              "max_steer_angle_deg": 69.99999237060547,
+              "steering_curve": [
+                [
+                  0.0,
+                  1.0
+                ],
+                [
+                  100.0,
+                  1.0
+                ]
+              ],
+              "rear_axle_y_m": -2.3233443512182816e-05,
+              "front_axle_y_m": -1.6330339908776637e-05
+            },
+            "calibration_sha256": "1b57d7aaa6a0e763cd9c6eef16e1fb9702bb855cded98a513a01b6aeff6dcd1e"
+          },
+          "metrics": {
+            "step_count": 83,
+            "image_count": 6,
+            "first_frame": 1316,
+            "last_frame": 1398,
+            "simulation_seconds": 4.100000061094761,
+            "final_reference_m": 19.219886578882704,
+            "progress_m": 19.21988656025512,
+            "initial_lateral_error_m": 3.0517572441353613e-05,
+            "initial_heading_error_deg": -5.000007183375487,
+            "final_lateral_error_m": 0.006396548753273436,
+            "final_heading_error_deg": 0.04780623215185642,
+            "maximum_abs_lateral_error_m": 0.0876641807225181,
+            "mean_abs_lateral_error_m": 0.033287340078687624,
+            "maximum_speed_mps": 6.567895831150472,
+            "minimum_body_lane_margin_m": 0.7110594238196501,
+            "recovery_completed_seconds": 2.2000000327825546,
+            "collision_count": 0,
+            "lane_invasion_count": 0
+          },
+          "checks": {
+            "same_frame_original_route_labels": true,
+            "controller_replay": true,
+            "command_application": true,
+            "sampled_rgb_color_verified": true,
+            "body_lane_margin": true,
+            "owned_actors_cleaned_and_world_restored": true,
+            "events_observed_through_post_stop": true,
+            "sources_unchanged": true
+          },
+          "final_test_used": false,
+          "model_training_verified": false
+        }
+      },
+      {
+        "schema_version": 1,
+        "status": "PASS",
+        "scope": "D8-D10-privileged-controller-development-QA",
+        "case": "straight",
+        "condition": "right_yaw",
+        "episode_directory": "straight__right_yaw",
+        "step_count": 83,
+        "validation": {
+          "status": "PASS",
+          "gate_version": "vlf-privileged-driving-d10-v1",
+          "scope": "D8-D10-privileged-controller-development-QA",
+          "errors": [],
+          "source": {
+            "episode_id": "straight__right_yaw",
+            "geometry_case": "straight",
+            "condition": {
+              "name": "right_yaw",
+              "lateral_m": 0.0,
+              "yaw_deg": 5.0
+            },
+            "route_id": "town01_geometry_p000",
+            "route_sha256": "d71fc9745c5ba6e9a08dce82ce846d91350a2ee009d094792a5c6825b1d6ec27",
+            "town": "Town01",
+            "opendrive_sha256": "97a7f6ac67812567e5c8ee0599cd823b23f80f30f3f97c502212e38b72e2b709",
+            "metadata_sha256": "b1f5e67e1ff63cab7f7cca1d9548232a46b2c090f20463caf48706f500f24e1c",
+            "trace_sha256": "c4fa35bf431c42b01cc68394628549c6180e9d981bd313e624445c568ccb45ec",
+            "controller_config_sha256": "dc43258377ff5a3cb9c293b086bd4116716cf6791f7076e05d30ed7984cf737c",
+            "configuration_except_spawn_sha256": "62907585eac89067cfdaaf38a224b610892f4f043d2594a203c0872a8fc0dc6e",
+            "vehicle_geometry_sha256": "c1b69a1b29f9607f2f926e6766283621e22be545087abc14c8ea4bf8e05f20c2",
+            "vehicle_geometry": {
+              "wheelbase_m": 3.0046419168452907,
+              "rear_axle_x_m": -1.3864130682898956,
+              "front_axle_x_m": 1.618228848555395,
+              "max_steer_angle_deg": 69.99999237060547,
+              "steering_curve": [
+                [
+                  0.0,
+                  1.0
+                ],
+                [
+                  100.0,
+                  1.0
+                ]
+              ],
+              "rear_axle_y_m": -1.510278734251358e-05,
+              "front_axle_y_m": -2.846927426247703e-06
+            },
+            "calibration_sha256": "1b57d7aaa6a0e763cd9c6eef16e1fb9702bb855cded98a513a01b6aeff6dcd1e"
+          },
+          "metrics": {
+            "step_count": 83,
+            "image_count": 6,
+            "first_frame": 1680,
+            "last_frame": 1762,
+            "simulation_seconds": 4.100000061094761,
+            "final_reference_m": 19.219054818096367,
+            "progress_m": 19.219054799468783,
+            "initial_lateral_error_m": 3.0517572441353613e-05,
+            "initial_heading_error_deg": 5.000000446019044,
+            "final_lateral_error_m": -0.006359293581833259,
+            "final_heading_error_deg": -0.04901078444970608,
+            "maximum_abs_lateral_error_m": 0.08781245682522788,
+            "mean_abs_lateral_error_m": 0.033357079541777704,
+            "maximum_speed_mps": 6.567901326731728,
+            "minimum_body_lane_margin_m": 0.7109986938232966,
+            "recovery_completed_seconds": 2.2000000327825546,
+            "collision_count": 0,
+            "lane_invasion_count": 0
+          },
+          "checks": {
+            "same_frame_original_route_labels": true,
+            "controller_replay": true,
+            "command_application": true,
+            "sampled_rgb_color_verified": true,
+            "body_lane_margin": true,
+            "owned_actors_cleaned_and_world_restored": true,
+            "events_observed_through_post_stop": true,
+            "sources_unchanged": true
+          },
+          "final_test_used": false,
+          "model_training_verified": false
+        }
+      },
+      {
+        "schema_version": 1,
+        "status": "FAIL",
+        "scope": "D8-D10-privileged-controller-development-QA",
+        "case": "left_curve",
+        "condition": "center",
+        "episode_directory": "left_curve__center",
+        "error": {
+          "code": "driving-late-collision-or-lane-event",
+          "stage": "cleanup",
+          "exception_type": "DrivingError"
+        },
+        "step_count": 83
+      }
+    ],
+    "stage": "native-left_curve-center",
+    "gpu_before": {
+      "status": "available",
+      "devices": [
+        {
+          "name": "Tesla T4",
+          "total_mib": 15360,
+          "used_mib": 1674,
+          "utilization_percent": 27
+        },
+        {
+          "name": "Tesla T4",
+          "total_mib": 15360,
+          "used_mib": 1,
+          "utilization_percent": 0
+        }
+      ]
+    },
+    "error": {
+      "code": "native-driving-trial-failed",
+      "exception_type": "DrivingError",
+      "stage": "native-left_curve-center"
+    },
+    "elapsed_seconds": 27.08369416100004,
+    "finished_utc": "2026-10-08T11:38:36.203984+00:00"
+  },
+  "episode": {
+    "status": "FAILED",
+    "condition": {
+      "name": "center",
+      "lateral_m": 0.0,
+      "yaw_deg": 0.0
+    },
+    "vehicle_geometry": {
+      "wheelbase_m": 3.0046387231609595,
+      "rear_axle_x_m": -1.3864050530040402,
+      "front_axle_x_m": 1.6182336701569193,
+      "max_steer_angle_deg": 69.99999237060547,
+      "steering_curve": [
+        [
+          0.0,
+          1.0
+        ],
+        [
+          100.0,
+          1.0
+        ]
+      ],
+      "rear_axle_y_m": -5.21910104467338e-07,
+      "front_axle_y_m": -1.0004563760768193e-07
+    },
+    "geometry_evidence": {
+      "measurement_vehicle_transform": {
+        "location": {
+          "x": -1.9889367818832397,
+          "y": 309.4587097167969,
+          "z": 0.00139360420871526
+        },
+        "rotation": {
+          "pitch": 0.0,
+          "yaw": 90.00748443603516,
+          "roll": 0.0
+        },
+        "matrix": [
+          [
+            -0.00013057788601145148,
+            -1.0,
+            0.0,
+            -1.9889367818832397
+          ],
+          [
+            1.0,
+            -0.00013057788601145148,
+            -0.0,
+            309.4587097167969
+          ],
+          [
+            0.0,
+            -0.0,
+            1.0,
+            0.00139360420871526
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "wheels": [
+        {
+          "position_cm": {
+            "x": -115.57337188720703,
+            "y": 31107.705078125,
+            "z": 36.96278381347656
+          },
+          "max_steer_angle_deg": 69.99999237060547
+        },
+        {
+          "position_cm": {
+            "x": -282.2562255859375,
+            "y": 31107.68359375,
+            "z": 36.96278762817383
+          },
+          "max_steer_angle_deg": 69.99999237060547
+        },
+        {
+          "position_cm": {
+            "x": -115.53409576416016,
+            "y": 30807.2421875,
+            "z": 36.96278762817383
+          },
+          "max_steer_angle_deg": 0.0
+        },
+        {
+          "position_cm": {
+            "x": -282.2169494628906,
+            "y": 30807.21875,
+            "z": 36.96278381347656
+          },
+          "max_steer_angle_deg": 0.0
+        }
+      ],
+      "original_steering_curve": [
+        [
+          0.0,
+          1.0
+        ],
+        [
+          20.0,
+          0.8999999761581421
+        ],
+        [
+          60.0,
+          0.800000011920929
+        ],
+        [
+          120.0,
+          0.699999988079071
+        ]
+      ],
+      "applied_steering_curve": [
+        [
+          0.0,
+          1.0
+        ],
+        [
+          100.0,
+          1.0
+        ]
+      ],
+      "position_units": "world-centimetres",
+      "measurement_after_warmup": true,
+      "steering_normalization": "measured-front-steer-limit-times-constant-factor"
+    },
+    "error": {
+      "code": "driving-late-collision-or-lane-event",
+      "stage": "cleanup",
+      "exception_type": "DrivingError"
+    },
+    "events": [
+      {
+        "kind": "lane",
+        "frame": 2125,
+        "timestamp": 52.98561856733431,
+        "markings": [
+          {
+            "type": "NONE",
+            "color": "White",
+            "lane_change": "NONE",
+            "width_m": 0.0
+          }
+        ]
+      }
+    ],
+    "event_callback_errors": [],
+    "cleanup": {
+      "status": "PASS",
+      "errors": [],
+      "owned_actor_ids": [
+        194,
+        195,
+        196,
+        197
+      ],
+      "sensor_stopped": true,
+      "settings_restored": true,
+      "weather_restored": true,
+      "owned_actors_absent": true,
+      "cleanup_reference_frame": 2128,
+      "absence_observed_frame": 2130,
+      "absence_waited_ticks": 1,
+      "absence_verification": "fresh-snapshot-and-current-actor-list",
+      "owned_actors_absent_in_snapshot": true,
+      "owned_actors_absent_in_current_list": true
+    },
+    "drive_end_frame": 2118,
+    "post_stop_frame": 2128
+  },
+  "observed_first_row": {
+    "schema_version": 1,
+    "frame": 2036,
+    "world_frame": 2036,
+    "snapshot_frame": 2036,
+    "sensor_frame": 2036,
+    "timestamp": 48.535618501024146,
+    "snapshot_timestamp": 48.535618501024146,
+    "sensor_timestamp": 48.535618501024146,
+    "delta_seconds": 0.05000000074505806,
+    "tick_to_rgb_ms": 8.107220000056259,
+    "index": 0,
+    "vehicle": {
+      "transform": {
+        "location": {
+          "x": -1.9889367818832397,
+          "y": 309.4587097167969,
+          "z": 0.0013527488335967064
+        },
+        "rotation": {
+          "pitch": 0.0,
+          "yaw": 90.00748443603516,
+          "roll": 0.0
+        },
+        "matrix": [
+          [
+            -0.00013057788601145148,
+            -1.0,
+            0.0,
+            -1.9889367818832397
+          ],
+          [
+            1.0,
+            -0.00013057788601145148,
+            -0.0,
+            309.4587097167969
+          ],
+          [
+            0.0,
+            -0.0,
+            1.0,
+            0.0013527488335967064
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "velocity": {
+        "x": 8.504877513360043e-08,
+        "y": -1.2292158402260611e-09,
+        "z": -5.4864882258698344e-05
+      },
+      "applied_control": {
+        "throttle": 0.0,
+        "brake": 1.0,
+        "steer": 0.0,
+        "hand_brake": true,
+        "reverse": false
+      }
+    },
+    "camera": {
+      "transform": {
+        "location": {
+          "x": -1.9891326427459717,
+          "y": 310.9587097167969,
+          "z": 2.401352882385254
+        },
+        "rotation": {
+          "pitch": -12.0,
+          "yaw": 90.00749206542969,
+          "roll": -4.3642367586471664e-07
+        },
+        "matrix": [
+          [
+            -0.00012784104910679162,
+            -1.0,
+            -2.7165837309439667e-05,
+            -1.9891326427459717
+          ],
+          [
+            0.9781476259231567,
+            -0.00013069550914224237,
+            0.20791170001029968,
+            310.9587097167969
+          ],
+          [
+            -0.20791170001029968,
+            7.4505797087454084e-09,
+            0.9781476259231567,
+            2.401352882385254
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      }
+    },
+    "speed_mps": 5.486494819159092e-05,
+    "tracking": {
+      "frame": 2036,
+      "timestamp": 48.535618501024146,
+      "reference_arc_m": 0.0,
+      "progress_m": 0.0,
+      "maximum_progress_m": 0.0,
+      "lateral_error_m": -2.3841857706662347e-07,
+      "centerline_distance_xy_m": 2.384185791015625e-07,
+      "heading_error_deg": -1.4512523591747595e-06,
+      "route_tangent_yaw_deg": 90.00748588728752,
+      "reference_world_m": [
+        -1.9889370203018188,
+        309.4587097167969,
+        0.0
+      ],
+      "lane_width_m": 4.0,
+      "route_sha256": "3890bc8e6f0fee22d7230570cb010ccee231a70829ced9fd3e88b6e4e170c9c2",
+      "label": {
+        "schema_version": 1,
+        "ego_frame": 2036,
+        "route_id": "town01_geometry_p108",
+        "target_lane": {
+          "road_id": 15,
+          "section_id": 0,
+          "lane_id": -1
+        },
+        "coordinate_origin": "vehicle_actor_transform",
+        "axes": "x-forward_y-right",
+        "units": "m",
+        "distance_reference": "target-lane-centerline-arc-length",
+        "horizon_arc_m": [
+          3,
+          6,
+          9,
+          12,
+          15
+        ],
+        "reference_arc_m": 0.0,
+        "waypoints_world_m": [
+          [
+            -1.9893287420239598,
+            312.45870969122205,
+            0.0
+          ],
+          [
+            -1.9897204637460397,
+            315.4587096656472,
+            0.0
+          ],
+          [
+            -1.9825235929226843,
+            318.45862547161056,
+            0.0
+          ],
+          [
+            -1.5548018607871648,
+            321.42182443675335,
+            0.0
+          ],
+          [
+            -0.4886443177252621,
+            324.2194644185463,
+            0.0
+          ]
+        ],
+        "waypoints_ego_m": [
+          [
+            3.0000000256065062,
+            2.2648602522276108e-07
+          ],
+          [
+            6.000000051181823,
+            2.145534102891743e-07
+          ],
+          [
+            8.999914917393028,
+            -0.007588378934100155
+          ],
+          [
+            11.963058031536239,
+            -0.43569703932631937
+          ],
+          [
+            14.76055879673105,
+            -1.5022198923028656
+          ]
+        ]
+      }
+    },
+    "body_lane_margin_m": 0.918274544098032,
+    "native_wheel_angles_deg": {
+      "front_left": 0.0,
+      "front_right": 0.0
+    },
+    "image": {
+      "path": "images/00002036.png",
+      "sha256": "b83734e1174ffa0f72ea75ee72c1413771bf5464165629ff129aa59236fc85b6",
+      "width": 640,
+      "height": 360,
+      "color_provenance": {
+        "source_format": "BGRA8",
+        "output_format": "RGB8",
+        "source_sha256": "531ce1c22b0cf5bf3ba614e4bb66bbb3af307753dd51ae74d6453e45c389dba4",
+        "rgb_sha256": "f0402faedc9214e77a8ad934403d6d80d1383846b0d3534b6abbc23aedcbc77e",
+        "sample_pixels": [
+          {
+            "index": 0,
+            "bgra": [
+              255,
+              255,
+              255,
+              255
+            ]
+          },
+          {
+            "index": 99200,
+            "bgra": [
+              5,
+              128,
+              255,
+              255
+            ]
+          },
+          {
+            "index": 115200,
+            "bgra": [
+              33,
+              33,
+              33,
+              255
+            ]
+          },
+          {
+            "index": 230399,
+            "bgra": [
+              45,
+              45,
+              45,
+              255
+            ]
+          }
+        ]
+      }
+    },
+    "command": {
+      "throttle": 0.65,
+      "brake": 0.0,
+      "steer": 1.9132025758628725e-07,
+      "hand_brake": false,
+      "reverse": false,
+      "diagnostics": {
+        "controller_version": "vlf-pure-pursuit-d8-v1",
+        "configuration_sha256": "dc43258377ff5a3cb9c293b086bd4116716cf6791f7076e05d30ed7984cf737c",
+        "step_index": 0,
+        "dt_seconds": 0.05,
+        "waypoint_origin": "vehicle_actor_transform",
+        "control_origin": "measured-rear-axle",
+        "rear_axle_x_m": -1.3864050530040402,
+        "rear_axle_y_m": -5.21910104467338e-07,
+        "target_rear_axle_xy_m": [
+          4.386405078610546,
+          7.483961296900991e-07
+        ],
+        "target_actor_xy_m": [
+          3.0000000256065062,
+          2.2648602522276108e-07
+        ],
+        "lookahead_requested_m": 4.0,
+        "lookahead_effective_m": 4.38640507861061,
+        "lookahead_selection": "first-available-target",
+        "lookahead_segment_index": 0,
+        "curvature_per_m": 7.779363361308693e-08,
+        "steering_rad": 2.3374176396927274e-07,
+        "steering_curve_factor": 1.0,
+        "effective_max_steering_rad": 1.2217303432379762,
+        "steer_unclipped": 1.9132025758628725e-07,
+        "steer_clipped": 1.9132025758628725e-07,
+        "steer_rate_limited": false,
+        "target_speed_kmh": 25.0,
+        "speed_mps": 5.486494819159092e-05,
+        "speed_error_mps": 6.944389579496253,
+        "speed_integral_m": 0.0,
+        "speed_pi_effort": 3.124975310773314,
+        "speed_pi_antiwindup": true,
+        "speed_pi_saturated": true
+      }
+    },
+    "terminal": false,
+    "command_source_frame": 2036,
+    "command_target_frame": 2037
+  },
+  "observed_last_row": {
+    "schema_version": 1,
+    "frame": 2118,
+    "world_frame": 2118,
+    "snapshot_frame": 2118,
+    "sensor_frame": 2118,
+    "timestamp": 52.63561856211891,
+    "snapshot_timestamp": 52.63561856211891,
+    "sensor_timestamp": 52.63561856211891,
+    "delta_seconds": 0.05000000074505806,
+    "tick_to_rgb_ms": 13.49123399995733,
+    "index": 82,
+    "vehicle": {
+      "transform": {
+        "location": {
+          "x": 1.9323481321334839,
+          "y": 327.68475341796875,
+          "z": 1.2836462701670825e-05
+        },
+        "rotation": {
+          "pitch": 0.004309849347919226,
+          "yaw": 49.739830017089844,
+          "roll": 0.10308758169412613
+        },
+        "matrix": [
+          [
+            0.6462594866752625,
+            -0.7631164193153381,
+            -0.0014216264244168997,
+            1.9323481321334839
+          ],
+          [
+            0.7631177306175232,
+            0.6462585926055908,
+            0.0011053584748879075,
+            327.68475341796875
+          ],
+          [
+            7.522106170654297e-05,
+            -0.001799216726794839,
+            0.9999983906745911,
+            1.2836462701670825e-05
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "velocity": {
+        "x": 4.7089080810546875,
+        "y": 4.52224063873291,
+        "z": 0.0004991149762645364
+      },
+      "applied_control": {
+        "throttle": 0.3836367726325989,
+        "brake": 0.0,
+        "steer": -0.22663220763206482,
+        "hand_brake": false,
+        "reverse": false
+      }
+    },
+    "camera": {
+      "transform": {
+        "location": {
+          "x": 2.8983254432678223,
+          "y": 328.83209228515625,
+          "z": 2.4001219272613525
+        },
+        "rotation": {
+          "pitch": -11.9956693649292,
+          "yaw": 49.71792221069336,
+          "roll": 0.10538902133703232
+        },
+        "matrix": [
+          [
+            0.6324326395988464,
+            -0.7631165385246277,
+            0.132974311709404,
+            2.8983254432678223
+          ],
+          [
+            0.7462120056152344,
+            0.6462584733963013,
+            0.1597423106431961,
+            328.83209228515625
+          ],
+          [
+            -0.2078377604484558,
+            -0.0017992182401940227,
+            0.9781616926193237,
+            2.4001219272613525
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      }
+    },
+    "speed_mps": 6.52874229538472,
+    "tracking": {
+      "frame": 2118,
+      "timestamp": 52.63561856211891,
+      "reference_arc_m": 19.22774118597315,
+      "progress_m": 19.22774118597315,
+      "maximum_progress_m": 19.22774118597315,
+      "lateral_error_m": 0.10537870481878783,
+      "centerline_distance_xy_m": 0.10537870481877543,
+      "heading_error_deg": 5.7570966877560465,
+      "route_tangent_yaw_deg": 43.982733329333804,
+      "reference_world_m": [
+        2.005527484139872,
+        327.60892826469353,
+        0.0
+      ],
+      "lane_width_m": 4.0,
+      "route_sha256": "3890bc8e6f0fee22d7230570cb010ccee231a70829ced9fd3e88b6e4e170c9c2",
+      "label": {
+        "schema_version": 1,
+        "ego_frame": 2118,
+        "route_id": "town01_geometry_p108",
+        "target_lane": {
+          "road_id": 15,
+          "section_id": 0,
+          "lane_id": -1
+        },
+        "coordinate_origin": "vehicle_actor_transform",
+        "axes": "x-forward_y-right",
+        "units": "m",
+        "distance_reference": "target-lane-centerline-arc-length",
+        "horizon_arc_m": [
+          3,
+          6,
+          9,
+          12,
+          15
+        ],
+        "reference_arc_m": 19.22774118597315,
+        "waypoints_world_m": [
+          [
+            4.442832132200749,
+            329.3410496211092,
+            0.0
+          ],
+          [
+            7.264130787330416,
+            330.3315304784422,
+            0.0
+          ],
+          [
+            10.250396280249984,
+            330.54009464096134,
+            0.0
+          ],
+          [
+            13.250395819245261,
+            330.5417120723889,
+            0.0
+          ],
+          [
+            16.250395358972373,
+            330.54332790530674,
+            0.0
+          ]
+        ],
+        "waypoints_ego_m": [
+          [
+            2.886373099995334,
+            -0.8453958846046558
+          ],
+          [
+            5.465517624685064,
+            -2.3582684472636113
+          ],
+          [
+            7.554579039605085,
+            -4.502350295207745
+          ],
+          [
+            9.494591492302638,
+            -6.790653922395465
+          ],
+          [
+            11.43460272562201,
+            -9.078958583192325
+          ]
+        ]
+      }
+    },
+    "body_lane_margin_m": 0.572450776568981,
+    "native_wheel_angles_deg": {
+      "front_left": -15.864252090454102,
+      "front_right": -13.792381286621094
+    },
+    "image": {
+      "path": "images/00002118.png",
+      "sha256": "db332989393a78be116f1ee74fb78a095daf7fc6430ddef12a4ba08b6589c904",
+      "width": 640,
+      "height": 360,
+      "color_provenance": {
+        "source_format": "BGRA8",
+        "output_format": "RGB8",
+        "source_sha256": "319aba6d5ec1645680531691f25fd9474c666ac2d005da8fc69ded865a255034",
+        "rgb_sha256": "1a374534d522fec6132806eeddb7fc3d6aa40ecc6040c640735a5a2a100d0f32",
+        "sample_pixels": [
+          {
+            "index": 0,
+            "bgra": [
+              255,
+              255,
+              255,
+              255
+            ]
+          },
+          {
+            "index": 73011,
+            "bgra": [
+              5,
+              5,
+              255,
+              255
+            ]
+          },
+          {
+            "index": 115200,
+            "bgra": [
+              54,
+              54,
+              54,
+              255
+            ]
+          },
+          {
+            "index": 230399,
+            "bgra": [
+              36,
+              36,
+              36,
+              255
+            ]
+          }
+        ]
+      }
+    },
+    "command": {
+      "throttle": 0.3920131136758695,
+      "brake": 0.0,
+      "steer": -0.2289979722230519,
+      "hand_brake": false,
+      "reverse": false,
+      "diagnostics": {
+        "controller_version": "vlf-pure-pursuit-d8-v1",
+        "configuration_sha256": "dc43258377ff5a3cb9c293b086bd4116716cf6791f7076e05d30ed7984cf737c",
+        "step_index": 82,
+        "dt_seconds": 0.05,
+        "waypoint_origin": "vehicle_actor_transform",
+        "control_origin": "measured-rear-axle",
+        "rear_axle_x_m": -1.3864050530040402,
+        "rear_axle_y_m": -5.21910104467338e-07,
+        "target_rear_axle_xy_m": [
+          5.559374252341583,
+          -1.6000858886754568
+        ],
+        "target_actor_xy_m": [
+          4.172969199337543,
+          -1.6000864105855612
+        ],
+        "lookahead_requested_m": 5.785059803384652,
+        "lookahead_effective_m": 5.785059803384652,
+        "lookahead_selection": "circle-segment-interpolation",
+        "lookahead_segment_index": 0,
+        "curvature_per_m": -0.09562194761367572,
+        "steering_rad": -0.27977377120486974,
+        "steering_curve_factor": 1.0,
+        "effective_max_steering_rad": 1.2217303432379762,
+        "steer_unclipped": -0.2289979722230519,
+        "steer_clipped": -0.2289979722230519,
+        "steer_rate_limited": false,
+        "target_speed_kmh": 25.0,
+        "speed_mps": 6.52874229538472,
+        "speed_error_mps": 0.415702149059725,
+        "speed_integral_m": 1.366314310659955,
+        "speed_pi_effort": 0.3920131136758695,
+        "speed_pi_antiwindup": false,
+        "speed_pi_saturated": false
+      }
+    },
+    "terminal": true,
+    "command_source_frame": 2118,
+    "command_target_frame": null
+  },
+  "diagnosis": "Unpainted lane boundary event occurred 7 ticks after the driving goal, during steering-zero handbrake stop. Five straight conditions passed. Post-stop poses were not recorded in this version.",
+  "correction": "Maintain last applied steering during bounded service-brake stop, park only at low speed, record every stop pose/control/velocity and verify each transformed box corner against original curved route. Keep recovery/event thresholds and controller gains."
+}

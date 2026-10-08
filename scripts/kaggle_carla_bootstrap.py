@@ -93,7 +93,7 @@ def main() -> int:
                 "carla_apt_install", 180, env)
 
     try:
-        if sys.platform != "linux" or not PROBE_SOURCE or not VULKAN_CHILD_SOURCE or WORKLOAD not in ("rgb", "week1"):
+        if sys.platform != "linux" or not PROBE_SOURCE or not VULKAN_CHILD_SOURCE or WORKLOAD not in ("rgb", "week1", "driving"):
             raise BootstrapFailure("linux-and-embedded-probes-required")
         report["workload"] = WORKLOAD
         stage("vulkan-preflight")
@@ -227,7 +227,7 @@ def main() -> int:
         binary = server / "CarlaUE4/Binaries/Linux/CarlaUE4-Linux-Shipping"
         if not launcher.is_file() or not binary.is_file():
             raise BootstrapFailure("official-package-layout-mismatch")
-        if WORKLOAD == "week1":
+        if WORKLOAD in ("week1", "driving"):
             # Pin the unpacked package only; reuse the current Town01 in the
             # session instead of reloading a different map during capture.
             ini = server / "CarlaUE4/Config/DefaultEngine.ini"
@@ -292,8 +292,9 @@ def main() -> int:
                 raise BootstrapFailure("server-rpc-ready-timeout")
             time.sleep(1)
 
-        if WORKLOAD == "week1":
-            stage("D6-D7-geometry-labels-and-week1-gate")
+        if WORKLOAD in ("week1", "driving"):
+            driving = WORKLOAD == "driving"
+            stage("D8-D10-privileged-driving-and-recovery-gate" if driving else "D6-D7-geometry-labels-and-week1-gate")
             project = scratch / "project"
             project.mkdir()
             if not PROJECT_SOURCES:
@@ -304,13 +305,15 @@ def main() -> int:
                     raise BootstrapFailure("embedded-project-path-invalid")
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_text(source, encoding="utf-8")
-            command([python, str(project / "scripts/run_week1_pipeline.py"),
-                     "--output-dir", str(output / "week1")], "carla_week1", 480, env)
-            gate = json.loads((output / "week1/week1_report.json").read_text(encoding="utf-8"))
+            artifact = "driving" if driving else "week1"
+            script = "run_driving_pipeline.py" if driving else "run_week1_pipeline.py"
+            command([python, str(project / "scripts" / script), "--output-dir", str(output / artifact)],
+                    "carla_driving" if driving else "carla_week1", 600 if driving else 480, env)
+            gate = json.loads((output / artifact / (artifact + "_report.json")).read_text(encoding="utf-8"))
             if gate.get("status") != "PASS" or gate.get("gate", {}).get("status") != "PASS":
-                raise BootstrapFailure("week1-evidence-not-pass")
-            report["week1_verified"] = True
-            report["week1"] = {key: gate[key] for key in ("status", "episode_count", "frame_count", "gate")}
+                raise BootstrapFailure(artifact + "-evidence-not-pass")
+            report[artifact + "_verified"] = True
+            report[artifact] = {key: gate[key] for key in ("status", "episode_count", "frame_count", "gate")}
         else:
             stage("rgb-probe")
             probe_file = scratch / "carla_rgb_probe.py"

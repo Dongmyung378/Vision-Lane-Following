@@ -1,6 +1,8 @@
 # D5 Closed-loop 평가 명세 초안
 
-작성일: 2026-10-07 (Asia/Seoul). **상태: DRAFT / thresholds PROVISIONAL / metric implementation NOT_IMPLEMENTED.** 이 문서는 D14 평가 구현에 사용할 의미와 기록 항목을 정리한다. 아직 주행 결과, metric 계산기 또는 최종 threshold 동결 증거가 아니다. Train/dev 실험으로 정의·수치를 검증하고 D42에 version/hash와 함께 동결한 뒤 D43부터 final을 실행한다.
+작성일: 2026-10-07 (Asia/Seoul). **상태: DRAFT / thresholds PROVISIONAL / full evaluator NOT_IMPLEMENTED.** 이 문서는 D14 평가 구현에 사용할 의미와 기록 항목을 정리한다. 최종 threshold 동결 증거가 아니다. Train/dev 실험으로 정의·수치를 검증하고 D42에 version/hash와 함께 동결한 뒤 D43부터 final을 실행한다.
+
+2026-10-08 구현 업데이트: D8–D10에서 fixed-route progress·lateral/heading error, 작은 초기 편차의 연속 복귀 판정, native 이벤트와 차체 여유를 검사하는 개발 QA를 구현했다. [D9/D10 기록](DRIVING_RECOVERY_D9_D10.md)에 코드와 실제 검증 상태를 분리해 기록한다. 아래 전체 benchmark의 event dedup·실패 포함 aggregation·latency·공통 B0/M1 평가기는 D14 이후에 구현한다.
 
 ## 비교와 episode 단위
 
@@ -75,6 +77,6 @@ D42 freeze manifest에는 checkpoint·code/config/dataset/split/route/metric def
 
 D14 구현 전 fixed-route projection, 실패 포함 completion/error aggregation, zero-distance rate, terminal-event count, duplicate-event merge, simultaneous termination, recovery duration, normalized steering difference, timing 경계를 unit fixture와 privileged reference에서 확인한다. 이후 moving-route 실행으로 올바른지 검증한다.
 
-현재 구현된 것은 D4의 frame capture/disk integrity와 D5의 contract/split guard다. **이 문서에 정의된 route progress·closed-loop metrics·termination 계산 코드는 아직 구현하지 않았다.** Schema와 정지 smoke PASS를 lane following 성공, final benchmark 또는 성능 threshold 동결로 표시하지 않는다.
+현재 D4/D5의 capture·contract/split과 D8–D10의 privileged controller 개발 QA가 구현되어 있다. **이 문서의 전체 closed-loop 평가기와 실패 포함 집계는 아직 구현하지 않았다.** Schema·정지 smoke 및 짧은 개발 route PASS를 final benchmark 또는 성능 threshold 동결로 표시하지 않는다.
 
 공식 simulator 동작 근거: [CARLA 0.9.16 collision/lane invasion 센서](https://carla.readthedocs.io/en/0.9.16/ref_sensors/), [Map/Waypoint](https://carla.readthedocs.io/en/0.9.16/core_map/), [동기화와 timestep](https://carla.readthedocs.io/en/0.9.16/adv_synchrony_timestep/). 위 수치·집계·평가 예산은 검토할 프로젝트 설계안이다.
