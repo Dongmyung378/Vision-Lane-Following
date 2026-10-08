@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "notebook_id": "dongmyungpark/vlf-carla-rgb-smoke-20261005",
+  "notebook_version": 3,
+  "status": "FAIL",
+  "scope": "preserved-native-failure-not-completion-evidence",
+  "collection": {
+    "schema_version": 1,
+    "status": "FAIL",
+    "scope": "D6-static-geometry-QA-not-training-split",
+    "dataset_version": "d6-geometry-v1",
+    "frames_per_case": 60,
+    "cases": [
+      {
+        "case": "straight",
+        "episode_id": "geometry_straight_01",
+        "status": "PASS",
+        "episode_directory": "geometry_straight_01",
+        "route_sha256": "d71fc9745c5ba6e9a08dce82ce846d91350a2ee009d094792a5c6825b1d6ec27",
+        "configuration_sha256": "8f0c4099b9288961d70cf376eb3939ac1d5e46c862c9e08ba73544baf115692d",
+        "capture_report": "geometry_straight_01_capture_report.json",
+        "live_route_verified": true,
+        "frames_written": 60,
+        "cleanup_status": "PASS",
+        "disk_validation_status": "PASS"
+      },
+      {
+        "case": "left_curve",
+        "episode_id": "geometry_left_curve_01",
+        "status": "PASS",
+        "episode_directory": "geometry_left_curve_01",
+        "route_sha256": "3890bc8e6f0fee22d7230570cb010ccee231a70829ced9fd3e88b6e4e170c9c2",
+        "configuration_sha256": "5c3c0af740837d96d311b092c10c085cbe501843ee29a240f2effe0e0a60c18c",
+        "capture_report": "geometry_left_curve_01_capture_report.json",
+        "live_route_verified": true,
+        "frames_written": 60,
+        "cleanup_status": "PASS",
+        "disk_validation_status": "PASS"
+      },
+      {
+        "case": "right_curve",
+        "episode_id": "geometry_right_curve_01",
+        "status": "FAIL",
+        "episode_directory": "geometry_right_curve_01",
+        "route_sha256": "690cdae535ad13b7f79f41c9b9430c3b81f75d8fc91953534fc5ea0e1db4a978",
+        "configuration_sha256": "244e3fcd1e6315962d3202453ecb4c983da3aa9e58f79d435c2550b5ad0347b8",
+        "capture_report": "geometry_right_curve_01_capture_report.json",
+        "live_route_verified": true,
+        "frames_written": 0,
+        "cleanup_status": "PASS",
+        "disk_validation_status": null,
+        "error": {
+          "code": "weather-readback-mismatch",
+          "stage": "weather",
+          "exception_type": "SessionError"
+        }
+      }
+    ],
+    "labels_generated": false,
+    "training_split_created": false,
+    "server_lifecycle_owned": false,
+    "report_written": true,
+    "started_utc": "2026-10-08T05:30:55.728865+00:00",
+    "error": {
+      "stage": "episode-capture",
+      "code": "geometry-case-capture-failed",
+      "exception_type": "GeometryCollectionError"
+    },
+    "elapsed_seconds": 23.81373148299997,
+    "finished_utc": "2026-10-08T05:31:19.542621+00:00"
+  },
+  "failed_capture": {
+    "schema_version": 1,
+    "status": "FAIL",
+    "scope": "stationary-D4-smoke",
+    "frames_written": 0,
+    "started_utc": "2026-10-08T05:31:19.342989+00:00",
+    "error": {
+      "code": "weather-readback-mismatch",
+      "stage": "weather",
+      "exception_type": "SessionError"
+    },
+    "capture_succeeded": false,
+    "cleanup": {
+      "status": "PASS",
+      "errors": [],
+      "owned_actor_ids": [],
+      "sensor_stopped": null,
+      "settings_restored": true,
+      "weather_restored": true,
+      "owned_actors_absent": true,
+      "cleanup_reference_frame": null,
+      "absence_observed_frame": null,
+      "absence_waited_ticks": 0,
+      "absence_verification": "fresh-snapshot-and-current-actor-list",
+      "owned_actors_absent_in_snapshot": true,
+      "owned_actors_absent_in_current_list": true
+    },
+    "elapsed_seconds": 0.19458204199997908,
+    "finished_utc": "2026-10-08T05:31:19.537595+00:00"
+  },
+  "server_stopped": true,
+  "diagnosis": "Immediate weather readback follows an asynchronous setter; exact stale field was not recorded.",
+  "fix": "Single setter call with bounded 2-second exact readback polling for setup and restoration.",
+  "official_source": "https://github.com/carla-simulator/carla/blob/0.9.16/LibCarla/source/carla/client/detail/Client.cpp#L239-L245"
+}

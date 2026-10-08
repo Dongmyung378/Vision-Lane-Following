@@ -14,6 +14,7 @@ import json
 import os
 import platform
 import pwd
+import re
 import shutil
 import signal
 import subprocess
@@ -27,6 +28,8 @@ from pathlib import Path
 
 PROBE_SOURCE = ""
 VULKAN_CHILD_SOURCE = ""
+PROJECT_SOURCES = {}
+WORKLOAD = "rgb"
 CARLA_URL = "https://downloads.carlasim.com/Linux/CARLA_0.9.16.tar.gz"
 CARLA_MIRROR = "https://carla-releases.s3.us-east-005.backblazeb2.com/Linux/CARLA_0.9.16.tar.gz"
 CARLA_PACKAGE_BYTES = 8346095504
@@ -90,8 +93,9 @@ def main() -> int:
                 "carla_apt_install", 180, env)
 
     try:
-        if sys.platform != "linux" or not PROBE_SOURCE or not VULKAN_CHILD_SOURCE:
+        if sys.platform != "linux" or not PROBE_SOURCE or not VULKAN_CHILD_SOURCE or WORKLOAD not in ("rgb", "week1"):
             raise BootstrapFailure("linux-and-embedded-probes-required")
+        report["workload"] = WORKLOAD
         stage("vulkan-preflight")
         if not ctypes.util.find_library("vulkan"):
             install_userspace(["libvulkan1"])
@@ -223,6 +227,19 @@ def main() -> int:
         binary = server / "CarlaUE4/Binaries/Linux/CarlaUE4-Linux-Shipping"
         if not launcher.is_file() or not binary.is_file():
             raise BootstrapFailure("official-package-layout-mismatch")
+        if WORKLOAD == "week1":
+            # Pin the unpacked package only; reuse the current Town01 in the
+            # session instead of reloading a different map during capture.
+            ini = server / "CarlaUE4/Config/DefaultEngine.ini"
+            text = ini.read_text(encoding="utf-8")
+            pattern = re.compile(r"^([ \t]*GameDefaultMap[ \t]*=[ \t]*)([^\r\n]*)(\r?)$", re.MULTILINE)
+            matches = list(pattern.finditer(text))
+            official = "/Game/Carla/Maps/Town10HD_Opt.Town10HD_Opt"
+            desired = "/Game/Carla/Maps/Town01.Town01"
+            if len(matches) != 1 or matches[0][2] not in (official, desired):
+                raise BootstrapFailure("package-startup-map-ambiguous")
+            ini.write_text(pattern.sub(lambda m: m[1] + desired + m[3], text), encoding="utf-8")
+            report["startup_map"] = "Town01"
         result = subprocess.run(["ldd", str(binary)], capture_output=True, text=True,
                                 timeout=remaining(30))
         (output / "carla_ldd.log").write_text(result.stdout + result.stderr, encoding="utf-8")
@@ -275,16 +292,36 @@ def main() -> int:
                 raise BootstrapFailure("server-rpc-ready-timeout")
             time.sleep(1)
 
-        stage("rgb-probe")
-        probe_file = scratch / "carla_rgb_probe.py"
-        probe_file.write_text(PROBE_SOURCE, encoding="utf-8")
-        probe_output = output / "carla_probe"
-        command([python, str(probe_file), "--output-dir", str(probe_output),
-                 "--host", "127.0.0.1", "--port", "2000", "--timeout", "15",
-                 "--frames", "20", "--warmup", "5"], "carla_rgb_probe", 240, env)
-        rgb = json.loads((probe_output / "carla_rgb_report.json").read_text(encoding="utf-8"))
-        if rgb.get("status") != "PASS" or not (probe_output / "carla_rgb_preview.png").is_file():
-            raise BootstrapFailure("rgb-evidence-not-pass")
+        if WORKLOAD == "week1":
+            stage("D6-D7-geometry-labels-and-week1-gate")
+            project = scratch / "project"
+            project.mkdir()
+            if not PROJECT_SOURCES:
+                raise BootstrapFailure("embedded-project-required")
+            for relative, source in PROJECT_SOURCES.items():
+                path = project / relative
+                if path.resolve().is_relative_to(project.resolve()) is not True:
+                    raise BootstrapFailure("embedded-project-path-invalid")
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(source, encoding="utf-8")
+            command([python, str(project / "scripts/run_week1_pipeline.py"),
+                     "--output-dir", str(output / "week1")], "carla_week1", 480, env)
+            gate = json.loads((output / "week1/week1_report.json").read_text(encoding="utf-8"))
+            if gate.get("status") != "PASS" or gate.get("gate", {}).get("status") != "PASS":
+                raise BootstrapFailure("week1-evidence-not-pass")
+            report["week1_verified"] = True
+            report["week1"] = {key: gate[key] for key in ("status", "episode_count", "frame_count", "gate")}
+        else:
+            stage("rgb-probe")
+            probe_file = scratch / "carla_rgb_probe.py"
+            probe_file.write_text(PROBE_SOURCE, encoding="utf-8")
+            probe_output = output / "carla_probe"
+            command([python, str(probe_file), "--output-dir", str(probe_output),
+                     "--host", "127.0.0.1", "--port", "2000", "--timeout", "15",
+                     "--frames", "20", "--warmup", "5"], "carla_rgb_probe", 240, env)
+            rgb = json.loads((probe_output / "carla_rgb_report.json").read_text(encoding="utf-8"))
+            if rgb.get("status") != "PASS" or not (probe_output / "carla_rgb_preview.png").is_file():
+                raise BootstrapFailure("rgb-evidence-not-pass")
         report["carla_rgb_verified"] = True
         report["status"] = "PASS"
         stage("verified")

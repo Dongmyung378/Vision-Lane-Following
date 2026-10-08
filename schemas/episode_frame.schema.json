@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://vision-lane-following.local/schemas/episode_frame.schema.json",
-  "title": "D4/D5 same-frame RGB and privileged-state record",
+  "title": "D4-D7 same-frame RGB, color provenance and privileged-state record",
   "description": "Model input is RGB only. Pose, camera and route fields are privileged metadata. Runtime checks equality of frame/timestamps, rigid transforms, path/frame matching, disk integrity and generated geometry.",
   "type": "object",
   "additionalProperties": false,
@@ -19,6 +19,25 @@
     "delta_seconds": {"type": "number", "exclusiveMinimum": 0},
     "tick_to_rgb_ms": {"type": "number", "minimum": 0},
     "mount_matrix_max_abs_error": {"type": "number", "minimum": 0, "maximum": 0.001},
+    "color_provenance": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source_format", "output_format", "source_sha256", "rgb_sha256", "sample_pixels"],
+      "properties": {
+        "source_format": {"const": "BGRA8"}, "output_format": {"const": "RGB8"},
+        "source_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "rgb_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "sample_pixels": {
+          "type": "array", "minItems": 1, "maxItems": 4,
+          "items": {
+            "type": "object", "additionalProperties": false, "required": ["index", "bgra"],
+            "properties": {
+              "index": {"type": "integer", "minimum": 0},
+              "bgra": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "integer", "minimum": 0, "maximum": 255}}
+            }
+          }
+        }
+      }
+    },
     "rgb": {
       "type": "object", "additionalProperties": false,
       "required": ["width", "height", "rgb_bytes", "channel_min", "channel_max", "spatially_nonconstant"],

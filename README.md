@@ -4,7 +4,7 @@ Camera-based lane following in CARLA with reproducible closed-loop evaluation.
 
 전방 RGB 영상에서 차선 중심 waypoint를 예측하고 controller로 차량을 조향합니다. 차선 검출 정확도뿐 아니라 실제 주행의 완주율, 횡방향 오차, 차선 침범, 충돌 및 처리 시간을 평가합니다.
 
-**진행 상태: D1~D5 완료.** CARLA 0.9.16의 고정 수집 설정과 이미지·차량 snapshot logger를 구현했습니다. 로컬 RTX 3060 Laptop 6GB에서 실제 에피소드 3개·RGB 180장과 자세를 저장하고 파일 정합·복구를 검증했습니다. 경로·waypoint 데이터 계약, 장면 누수를 막는 train/dev manifest와 평가 명세 초안을 고정했습니다. 다음 단계는 D6 waypoint 라벨 생성과 overlay 검증입니다.
+**진행 상태: D1~D7 완료.** CARLA 0.9.16의 수집·경로·라벨 계약을 구현했습니다. 기존 Kaggle T4 notebook의 version 4에서 Town01 직선·좌곡선·우곡선 에피소드 3개, RGB 180장과 waypoint 900점을 저장하고 동일 frame의 영상·자세·라벨·색상 정합을 검증했습니다. 전체 다운로드의 CPU 재검증도 통과했습니다. 다음 구현은 D8 Pure Pursuit controller입니다.
 
 ## 시스템과 입력 범위
 
@@ -65,7 +65,29 @@ RGB PNG, SHA-256, frame·시간, 같은 snapshot의 차량 자세·속도·가�
 .\.venv\Scripts\python.exe scripts/build_split_manifest.py --episodes results/local/dataset-d4-smoke-v1/train_smoke_01 results/local/dataset-d4-smoke-v1/train_smoke_02 results/local/dataset-d4-smoke-v1/dev_smoke_01 --assignments configs/split_assignments_d5.json --output results/local/dataset-d4-smoke-v1/split_manifest.csv
 ```
 
-이 데이터는 정지 상태의 짧은 수집 시험이며, 학습 pilot은 D13에 수집합니다. Waypoint는 `NOT_GENERATED`·`null`로 표시하고 D6에 생성합니다. Town02 final test는 예약만 했으며 미수집·미검증 상태입니다. 기록 구조와 재현 순서는 [D4 logger](docs/EPISODE_LOGGER_D4.md), 좌표·라벨·분할 규칙은 [D5 데이터 계약](docs/DATA_CONTRACT_D5.md), 후속 평가 구현 기준은 [평가 명세 초안](docs/EVALUATION_SPEC_D5.md)에 있습니다.
+이 D4/D5 데이터는 로컬 RTX 3060 Laptop 6GB에서 수집한 정지 상태의 짧은 logger·split 시험이며, 학습 pilot은 D13에 수집합니다. 원본 frame은 계속 `NOT_GENERATED`·`null`로 보존합니다. D6 라벨은 원본을 수정하지 않고 별도 sidecar에 생성합니다. Town02 final test는 예약만 했으며 미수집·미검증 상태입니다. 기록 구조와 재현 순서는 [D4 logger](docs/EPISODE_LOGGER_D4.md), 좌표·라벨·분할 규칙은 [D5 데이터 계약](docs/DATA_CONTRACT_D5.md), 후속 평가 구현 기준은 [평가 명세 초안](docs/EVALUATION_SPEC_D5.md)에 있습니다.
+
+## D6 waypoint와 D7 Week 1 정합 게이트
+
+2026-10-08 Kaggle T4에서 Town01 직선·좌곡선·우곡선을 각각 60 frame 수집했습니다. 기존 ID `dongmyungpark/vlf-carla-rgb-smoke-20261005`, 제목 `VLF CARLA RGB smoke 20261005`의 **version 4**를 실행했으며 새 notebook을 만들지 않았습니다. 이번 native rendering은 Kaggle에서 수행하고 로컬 GPU는 사용하지 않았습니다. Bootstrap·원격 게이트·전체 다운로드의 CPU 재검증이 모두 PASS하고 소유 server 종료를 확인했습니다. 원본 source와 label SHA-256도 원격 결과와 일치했습니다.
+
+Curve 타깃은 dense lane-centerline XYZ polyline 길이를 누적하고 0.25m anchor로 보간한 physical arc를 사용합니다. CARLA `next(d)` 인수와 실제 차선 중심선 거리를 같게 취급하지 않으며 analytic arc 정확도를 주장하지 않습니다. 원본 RGB·pose·`NOT_GENERATED` 상태는 유지하고 고정 목표 route의 `GENERATED` 라벨을 새 sidecar에 저장합니다.
+
+실제 원격 결과는 **3 episodes·180 RGB frames·900 waypoint points**, frame당 `5 × 2` m 좌표입니다. 모든 frame에서 다섯 점이 camera 전방이고 네 점이 영상 안에 보였습니다. 3m 점은 영상 밖의 원래 UV를 보존했으며 clamp하지 않았습니다. 같은 callback의 BGRA pixel witness와 저장 RGB를 전체 180 frame에서 검증했습니다. Actor 좌표 roundtrip 최대 오차는 약 `8.66e-12m`, camera/world roundtrip은 `7.29e-7m` 미만입니다. 이는 정지 geometry QA이며 학습용 주행 데이터나 lane-following 성능값이 아닙니다.
+
+Version 3에서 세 번째 case의 weather readback이 실패한 기록을 보존했습니다. Weather 적용과 복구는 엄격한 값 비교를 유지하며 최대 2초 동안 readback을 재시도하도록 수정했고 version 4에서 전체 실행을 통과했습니다. 재현과 판정 기준은 [D6 라벨·overlay](docs/WAYPOINT_LABELS_D6.md), [D7 게이트](docs/WEEK1_GATE_D7.md), 실제 결과는 [D6/D7 요약](docs/evidence/carla_week1_d6_d7_2026-10-08_summary.json)과 [weather 실패 기록](docs/evidence/carla_week1_d6_d7_2026-10-08_weather_failure.json)에 정리합니다.
+
+![Kaggle native 좌곡선의 동일 frame waypoint overlay](docs/evidence/carla_week1_d6_d7_2026-10-08_left_curve_overlay.png)
+
+[직선 overlay](docs/evidence/carla_week1_d6_d7_2026-10-08_straight_overlay.png)와 [우곡선 overlay](docs/evidence/carla_week1_d6_d7_2026-10-08_right_curve_overlay.png)도 보존합니다. Overlay는 visible 6/9/12/15m 점을 표시합니다.
+
+다운로드된 `week1` 전체 directory를 보존한 뒤 CPU에서 다시 읽어 3개 episode·180 frame 정합을 확인했습니다. 9개 변조 QA도 예상한 실패를 거부했고, 외부 JSON Schema 검사는 raw frame 180개와 derived label 180개에서 오류가 없었습니다. 아래 명령으로 동일 artifact를 재검증할 수 있으며 CARLA server와 GPU를 요구하지 않습니다.
+
+```powershell
+.\.venv\Scripts\python.exe scripts/verify_week1.py --manifest results/local/kaggle-week1-output-v4/week1/week1_manifest.json --output results/local/week1-v4-cpu-gate.json
+```
+
+D8에는 Pure Pursuit controller와 privileged GT waypoint 동작을 검증합니다. Moving training pilot은 D13, 주행 metric 구현은 D14이며 Town02는 아직 사용하지 않았습니다.
 
 ## 환경 진단 실행
 
@@ -113,7 +135,7 @@ Kaggle T4 두 개에서 작은 모델의 CUDA 학습을 확인했고, 기존 EGL
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 ```
 
-로컬 검증 **204개가 통과했습니다(0 skip)**. 버전·설정·RGB frame/시간·snapshot/mount 정합, 불완전한 복구와 actor 캐시, PNG CRC·압축 데이터·hash, 미완료 episode, 라벨 좌표 계약·장면 누수·manifest 충돌, ZIP 경로 및 Windows process 소유 검사를 포함합니다. 실제 180장 에피소드와 manifest도 최종 validator로 재검증했습니다. GitHub Actions는 Windows와 Linux 검증을 구성했으나 계정의 Actions 사용 제한으로 원격 CI는 실행되지 않았습니다.
+최신 로컬 단위 검증 **309개가 통과했습니다(0 skip)**. 버전·설정·RGB frame/시간·snapshot/mount 정합, 불완전한 복구와 actor 캐시, PNG CRC·압축 데이터·hash, 미완료 episode, 라벨 좌표·curve arc·원본 보존·투영·색상 witness·weather 재시도, 장면 누수·manifest 충돌, ZIP 경로 및 Windows process 소유 검사를 포함합니다. 기존 D4/D5의 실제 180장과 manifest 재검증 결과는 그대로 보존합니다. GitHub Actions는 Windows와 Linux 검증을 구성했으나 계정의 Actions 사용 제한으로 원격 CI는 실행되지 않았습니다.
 
 ## 프로젝트 문서
 
@@ -125,6 +147,8 @@ Kaggle T4 두 개에서 작은 모델의 CUDA 학습을 확인했고, 기존 EGL
 - [D4 episode logger](docs/EPISODE_LOGGER_D4.md): 같은 frame의 이미지·자세 저장, 완료 조건·파일 검사와 실제 180장 수집.
 - [D5 데이터 계약](docs/DATA_CONTRACT_D5.md): 고정 route, ego waypoint schema, 장면 단위 train/dev 분할과 final 예약.
 - [D5 평가 명세](docs/EVALUATION_SPEC_D5.md): 공통 controller, 주행 지표·종료 규칙·provisional threshold 및 후속 freeze.
+- [D6 waypoint 라벨](docs/WAYPOINT_LABELS_D6.md): fixed-route physical arc, actor-origin 라벨 sidecar, 원본 보존과 동일 frame overlay; [실제 geometry route](configs/routes_d6_geometry.json).
+- [D7 Week 1 게이트](docs/WEEK1_GATE_D7.md): native 3-case 기하·색상 검증, 기존 Kaggle 재사용 및 CPU 재검증.
 - [Kaggle CARLA 검증](docs/KAGGLE_CARLA_VERIFICATION.md): 실제 T4 학습, Vulkan, CARLA RGB 실행 결과와 재현 방법.
 - [진행 기록](docs/progress.md): 완료 근거와 다음 작업.
 

@@ -1,0 +1,1489 @@
+{
+  "scope": "review-excerpts-not-a-complete-dataset",
+  "source": {
+    "dataset_version": "d6-geometry-v1",
+    "episode_id": "geometry_left_curve_01",
+    "route_id": "town01_geometry_p108",
+    "scene_group_id": "town01_geometry_scene_p108",
+    "town": "Town01",
+    "configuration_sha256": "5c3c0af740837d96d311b092c10c085cbe501843ee29a240f2effe0e0a60c18c",
+    "frame_count": 60,
+    "first_frame": 1323,
+    "last_frame": 1382,
+    "route_sha256": "3890bc8e6f0fee22d7230570cb010ccee231a70829ced9fd3e88b6e4e170c9c2",
+    "metadata_sha256": "0cc397063228f2c958b497bf92ccfc5373b2b078ec0edf164d5c39bade714634",
+    "frames_jsonl_sha256": "56d94065e0f3b75cdb246636fdf751075b28c2fa7b6237c31ec9c43acf895e14"
+  },
+  "metrics": {
+    "frame_count": 60,
+    "first_frame": 1323,
+    "last_frame": 1382,
+    "waypoint_shape": [
+      5,
+      2
+    ],
+    "max_world_route_error_m": 0.0,
+    "max_ego_error_m": 0.0,
+    "max_world_roundtrip_error_m": 8.538698906254177e-12,
+    "max_reference_error_m": 0.0
+  },
+  "overlay": {
+    "schema_version": 1,
+    "status": "PASS",
+    "scope": "D6-same-frame-waypoint-reprojection-QA",
+    "projection_version": "vlf-pinhole-overlay-d6-v1",
+    "errors": [],
+    "dataset_version": "d6-geometry-v1",
+    "episode_id": "geometry_left_curve_01",
+    "route_id": "town01_geometry_p108",
+    "scene_group_id": "town01_geometry_scene_p108",
+    "town": "Town01",
+    "frame": 1323,
+    "sample_id": "geometry_left_curve_01:0000001323",
+    "timestamp": 16.96384805755224,
+    "source_image": {
+      "path": "images/00001323.png",
+      "sha256": "1fbc7fe4704605cdcef28244a932c0c8618e38880ce7dbe311b1f4cfc4ee0549",
+      "width": 640,
+      "height": 360
+    },
+    "source_label": {
+      "dataset_version": "d6-geometry-v1",
+      "episode_id": "geometry_left_curve_01",
+      "route_id": "town01_geometry_p108",
+      "scene_group_id": "town01_geometry_scene_p108",
+      "town": "Town01",
+      "configuration_sha256": "5c3c0af740837d96d311b092c10c085cbe501843ee29a240f2effe0e0a60c18c",
+      "frame_count": 60,
+      "first_frame": 1323,
+      "last_frame": 1382,
+      "route_sha256": "3890bc8e6f0fee22d7230570cb010ccee231a70829ced9fd3e88b6e4e170c9c2",
+      "metadata_sha256": "0cc397063228f2c958b497bf92ccfc5373b2b078ec0edf164d5c39bade714634",
+      "frames_jsonl_sha256": "56d94065e0f3b75cdb246636fdf751075b28c2fa7b6237c31ec9c43acf895e14"
+    },
+    "calibration": {
+      "intrinsics": {
+        "fx": 320.00000000000006,
+        "fy": 320.00000000000006,
+        "cx": 320.0,
+        "cy": 180.0
+      },
+      "K": [
+        [
+          320.00000000000006,
+          0.0,
+          320.0
+        ],
+        [
+          0.0,
+          320.00000000000006,
+          180.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "width": 640,
+      "height": 360,
+      "distortion": {
+        "lens_k": 0.0,
+        "lens_kcube": 0.0
+      },
+      "requested_mount_matrix": [
+        [
+          0.9781476259231567,
+          -0.0,
+          0.20791170001029968,
+          1.5
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.20791170001029968,
+          -0.0,
+          0.9781476259231567,
+          2.4000000953674316
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "coordinate_convention": "carla-x-forward-y-right-z-up",
+      "rotation_units": "degrees"
+    },
+    "labels_reference": {
+      "generation_version": "vlf-waypoint-generator-d6-v1",
+      "contract_version": "vlf-dataset-d5-v1",
+      "canonical_sidecar_sha256": "93bfe6e633a917c8bfaad0cc3439e472bf983019ef7614355e6d1eb097f3a1a6",
+      "row_index": 0,
+      "label_sha256": "b2e51dd56ee9e9fbff7c689f3f5954d82ceb95e7becb455b4bcf5cd902def058"
+    },
+    "source_frame": {
+      "index": 0,
+      "frame": 1323,
+      "world_frame": 1323,
+      "snapshot_frame": 1323,
+      "sensor_frame": 1323,
+      "timestamp": 16.96384805755224,
+      "snapshot_timestamp": 16.96384805755224,
+      "sensor_timestamp": 16.96384805755224
+    },
+    "camera_transform": {
+      "location": {
+        "x": -1.2800205945968628,
+        "y": 310.96002197265625,
+        "z": 2.4015023708343506
+      },
+      "rotation": {
+        "pitch": -12.0,
+        "yaw": 90.00004577636719,
+        "roll": -4.3642367586471664e-07
+      },
+      "matrix": [
+        [
+          -7.42381871532416e-07,
+          -1.0,
+          -1.5018110843811883e-07,
+          -1.2800205945968628
+        ],
+        [
+          0.9781476259231567,
+          -7.573834750473907e-07,
+          0.20791170001029968,
+          310.96002197265625
+        ],
+        [
+          -0.20791170001029968,
+          7.4505797087454084e-09,
+          0.9781476259231567,
+          2.4015023708343506
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "projection_convention": "CARLA(x-forward,y-right,z-up)->optical(y,-z,x);UV=K*optical/depth",
+    "raster_policy": "floor-visible-UV;outside-points-not-drawn;no-coordinate-clamping",
+    "points": [
+      {
+        "index": 0,
+        "horizon_arc_m": 3,
+        "world_xyz_m": [
+          -1.9893289013731814,
+          312.45992932457676,
+          0.0
+        ],
+        "camera_carla_xyz_m": [
+          1.9664317824623012,
+          0.7093071528786914,
+          -2.0371754487600042
+        ],
+        "camera_optical_xyz_m": [
+          0.7093071528786914,
+          2.0371754487600042,
+          1.9664317824623012
+        ],
+        "depth_m": 1.9664317824623012,
+        "uv_pixels": [
+          435.42647497131406,
+          511.5122087718286
+        ],
+        "pixel": null,
+        "status": "OUTSIDE_IMAGE",
+        "coordinate_clamped": false
+      },
+      {
+        "index": 1,
+        "horizon_arc_m": 6,
+        "world_xyz_m": [
+          -1.9897206230952615,
+          315.4599292990019,
+          0.0
+        ],
+        "camera_carla_xyz_m": [
+          4.900874635506573,
+          0.7096966024503657,
+          -1.413440353987592
+        ],
+        "camera_optical_xyz_m": [
+          0.7096966024503657,
+          1.413440353987592,
+          4.900874635506573
+        ],
+        "depth_m": 4.900874635506573,
+        "uv_pixels": [
+          366.3392618000813,
+          272.28983536920816
+        ],
+        "pixel": [
+          366,
+          272
+        ],
+        "status": "VISIBLE",
+        "coordinate_clamped": false
+      },
+      {
+        "index": 2,
+        "horizon_arc_m": 9,
+        "world_xyz_m": [
+          -1.982472030575559,
+          318.4598439908941,
+          0.0
+        ],
+        "camera_carla_xyz_m": [
+          7.835234063971732,
+          0.702445737844849,
+          -0.789722991599006
+        ],
+        "camera_optical_xyz_m": [
+          0.702445737844849,
+          0.789722991599006,
+          7.835234063971732
+        ],
+        "depth_m": 7.835234063971732,
+        "uv_pixels": [
+          348.68869446337993,
+          212.25319821314704
+        ],
+        "pixel": [
+          348,
+          212
+        ],
+        "status": "VISIBLE",
+        "coordinate_clamped": false
+      },
+      {
+        "index": 3,
+        "horizon_arc_m": 12,
+        "world_xyz_m": [
+          -1.5544849189315546,
+          321.4230021517724,
+          0.0
+        ],
+        "camera_carla_xyz_m": [
+          10.733639866539761,
+          0.27445638195381955,
+          -0.17364780524699155
+        ],
+        "camera_optical_xyz_m": [
+          0.27445638195381955,
+          0.17364780524699155,
+          10.733639866539761
+        ],
+        "depth_m": 10.733639866539761,
+        "uv_pixels": [
+          328.1823168391372,
+          185.1769295756101
+        ],
+        "pixel": [
+          328,
+          185
+        ],
+        "status": "VISIBLE",
+        "coordinate_clamped": false
+      },
+      {
+        "index": 4,
+        "horizon_arc_m": 15,
+        "world_xyz_m": [
+          -0.48807726892557207,
+          324.22054418867197,
+          0.0
+        ],
+        "camera_carla_xyz_m": [
+          13.470048176671616,
+          -0.7919533868642724,
+          0.40799375534079496
+        ],
+        "camera_optical_xyz_m": [
+          -0.7919533868642724,
+          -0.40799375534079496,
+          13.470048176671616
+        ],
+        "depth_m": 13.470048176671616,
+        "uv_pixels": [
+          301.186029888485,
+          170.30753268312998
+        ],
+        "pixel": [
+          301,
+          170
+        ],
+        "status": "VISIBLE",
+        "coordinate_clamped": false
+      }
+    ],
+    "visible_points": 4,
+    "all_points_in_front": true,
+    "legend": [
+      {
+        "horizon_arc_m": 3,
+        "color_rgb": [
+          255,
+          80,
+          80
+        ]
+      },
+      {
+        "horizon_arc_m": 6,
+        "color_rgb": [
+          255,
+          180,
+          0
+        ]
+      },
+      {
+        "horizon_arc_m": 9,
+        "color_rgb": [
+          60,
+          220,
+          100
+        ]
+      },
+      {
+        "horizon_arc_m": 12,
+        "color_rgb": [
+          60,
+          220,
+          255
+        ]
+      },
+      {
+        "horizon_arc_m": 15,
+        "color_rgb": [
+          200,
+          100,
+          255
+        ]
+      }
+    ],
+    "overlay": {
+      "path": "overlay.png",
+      "sha256": "ff534b8ee62bf810c89ebbb8d310d927fd07f2626c3c61d233291e706ed7e633",
+      "width": 640,
+      "height": 360
+    },
+    "color_provenance_certified": false
+  },
+  "raw_frames": [
+    {
+      "schema_version": 1,
+      "frame": 1323,
+      "world_frame": 1323,
+      "snapshot_frame": 1323,
+      "sensor_frame": 1323,
+      "timestamp": 16.96384805755224,
+      "snapshot_timestamp": 16.96384805755224,
+      "sensor_timestamp": 16.96384805755224,
+      "delta_seconds": 0.05000000074505806,
+      "tick_to_rgb_ms": 10.660303999998177,
+      "index": 0,
+      "image": {
+        "width": 640,
+        "height": 360,
+        "path": "images/00001323.png",
+        "sha256": "1fbc7fe4704605cdcef28244a932c0c8618e38880ce7dbe311b1f4cfc4ee0549"
+      },
+      "vehicle": {
+        "actor_id": 176,
+        "transform": {
+          "location": {
+            "x": -1.2800194025039673,
+            "y": 309.46002197265625,
+            "z": 0.0015024375170469284
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 90.00004577636719,
+            "roll": 0.0
+          },
+          "matrix": [
+            [
+              -7.589671326968528e-07,
+              -1.0,
+              0.0,
+              -1.2800194025039673
+            ],
+            [
+              1.0,
+              -7.589671326968528e-07,
+              -0.0,
+              309.46002197265625
+            ],
+            [
+              0.0,
+              -0.0,
+              1.0,
+              0.0015024375170469284
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        },
+        "velocity": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "angular_velocity": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "acceleration": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "control": {
+          "throttle": 0.0,
+          "steer": 0.0,
+          "brake": 1.0,
+          "hand_brake": true,
+          "reverse": false
+        },
+        "control_source": "client-cache-at-world-frame"
+      },
+      "camera": {
+        "actor_id": 177,
+        "transform": {
+          "location": {
+            "x": -1.2800205945968628,
+            "y": 310.96002197265625,
+            "z": 2.4015023708343506
+          },
+          "rotation": {
+            "pitch": -12.0,
+            "yaw": 90.00004577636719,
+            "roll": -4.3642367586471664e-07
+          },
+          "matrix": [
+            [
+              -7.42381871532416e-07,
+              -1.0,
+              -1.5018110843811883e-07,
+              -1.2800205945968628
+            ],
+            [
+              0.9781476259231567,
+              -7.573834750473907e-07,
+              0.20791170001029968,
+              310.96002197265625
+            ],
+            [
+              -0.20791170001029968,
+              7.4505797087454084e-09,
+              0.9781476259231567,
+              2.4015023708343506
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        }
+      },
+      "mount_matrix_max_abs_error": 9.71493560486536e-07,
+      "rgb": {
+        "width": 640,
+        "height": 360,
+        "rgb_bytes": 691200,
+        "channel_min": [
+          1,
+          1,
+          0
+        ],
+        "channel_max": [
+          255,
+          255,
+          255
+        ],
+        "spatially_nonconstant": true
+      },
+      "color_provenance": {
+        "source_format": "BGRA8",
+        "output_format": "RGB8",
+        "source_sha256": "0a3f15439183c30ef1182b06608eb83819dd6ac00b5ea5c883d9a4104325a0ab",
+        "rgb_sha256": "1ac111d425bd8f29f853da730414c22e493ec9682d06834165d6687844e67dc9",
+        "sample_pixels": [
+          {
+            "index": 0,
+            "bgra": [
+              255,
+              255,
+              255,
+              255
+            ]
+          },
+          {
+            "index": 99204,
+            "bgra": [
+              5,
+              109,
+              255,
+              255
+            ]
+          },
+          {
+            "index": 115200,
+            "bgra": [
+              50,
+              50,
+              50,
+              255
+            ]
+          },
+          {
+            "index": 230399,
+            "bgra": [
+              46,
+              46,
+              46,
+              255
+            ]
+          }
+        ]
+      },
+      "label_state": "NOT_GENERATED",
+      "label": null
+    },
+    {
+      "schema_version": 1,
+      "frame": 1324,
+      "world_frame": 1324,
+      "snapshot_frame": 1324,
+      "sensor_frame": 1324,
+      "timestamp": 17.0138480582973,
+      "snapshot_timestamp": 17.0138480582973,
+      "sensor_timestamp": 17.0138480582973,
+      "delta_seconds": 0.05000000074505806,
+      "tick_to_rgb_ms": 7.910247000040727,
+      "index": 1,
+      "image": {
+        "width": 640,
+        "height": 360,
+        "path": "images/00001324.png",
+        "sha256": "55eb1692f35f0cbbb363597b5a60093dc41b866d84095c56c2d21d94ea08ab6a"
+      },
+      "vehicle": {
+        "actor_id": 176,
+        "transform": {
+          "location": {
+            "x": -1.2800194025039673,
+            "y": 309.46002197265625,
+            "z": 0.0015024375170469284
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 90.00004577636719,
+            "roll": 0.0
+          },
+          "matrix": [
+            [
+              -7.589671326968528e-07,
+              -1.0,
+              0.0,
+              -1.2800194025039673
+            ],
+            [
+              1.0,
+              -7.589671326968528e-07,
+              -0.0,
+              309.46002197265625
+            ],
+            [
+              0.0,
+              -0.0,
+              1.0,
+              0.0015024375170469284
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        },
+        "velocity": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "angular_velocity": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "acceleration": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "control": {
+          "throttle": 0.0,
+          "steer": 0.0,
+          "brake": 1.0,
+          "hand_brake": true,
+          "reverse": false
+        },
+        "control_source": "client-cache-at-world-frame"
+      },
+      "camera": {
+        "actor_id": 177,
+        "transform": {
+          "location": {
+            "x": -1.2800205945968628,
+            "y": 310.96002197265625,
+            "z": 2.4015023708343506
+          },
+          "rotation": {
+            "pitch": -12.0,
+            "yaw": 90.00004577636719,
+            "roll": -4.3642367586471664e-07
+          },
+          "matrix": [
+            [
+              -7.42381871532416e-07,
+              -1.0,
+              -1.5018110843811883e-07,
+              -1.2800205945968628
+            ],
+            [
+              0.9781476259231567,
+              -7.573834750473907e-07,
+              0.20791170001029968,
+              310.96002197265625
+            ],
+            [
+              -0.20791170001029968,
+              7.4505797087454084e-09,
+              0.9781476259231567,
+              2.4015023708343506
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        }
+      },
+      "mount_matrix_max_abs_error": 9.71493560486536e-07,
+      "rgb": {
+        "width": 640,
+        "height": 360,
+        "rgb_bytes": 691200,
+        "channel_min": [
+          1,
+          1,
+          0
+        ],
+        "channel_max": [
+          255,
+          255,
+          255
+        ],
+        "spatially_nonconstant": true
+      },
+      "color_provenance": {
+        "source_format": "BGRA8",
+        "output_format": "RGB8",
+        "source_sha256": "21aea26257a96ccc85ee5f99ec47b9eda1439fe7a77da4c553179362dd7b7454",
+        "rgb_sha256": "fd2e225aa2374aac859e2bba9324b3886094e10c21a6440ea164ef5af66d516c",
+        "sample_pixels": [
+          {
+            "index": 0,
+            "bgra": [
+              255,
+              255,
+              255,
+              255
+            ]
+          },
+          {
+            "index": 99204,
+            "bgra": [
+              5,
+              109,
+              255,
+              255
+            ]
+          },
+          {
+            "index": 115200,
+            "bgra": [
+              50,
+              50,
+              50,
+              255
+            ]
+          },
+          {
+            "index": 230399,
+            "bgra": [
+              46,
+              46,
+              46,
+              255
+            ]
+          }
+        ]
+      },
+      "label_state": "NOT_GENERATED",
+      "label": null
+    },
+    {
+      "schema_version": 1,
+      "frame": 1381,
+      "world_frame": 1381,
+      "snapshot_frame": 1381,
+      "sensor_frame": 1381,
+      "timestamp": 19.86384810076561,
+      "snapshot_timestamp": 19.86384810076561,
+      "sensor_timestamp": 19.86384810076561,
+      "delta_seconds": 0.05000000074505806,
+      "tick_to_rgb_ms": 12.420304999977816,
+      "index": 58,
+      "image": {
+        "width": 640,
+        "height": 360,
+        "path": "images/00001381.png",
+        "sha256": "b2bae230a49603e2c91f9645f130c79316ca5b5847395c16e1c3b7d0be7b02be"
+      },
+      "vehicle": {
+        "actor_id": 176,
+        "transform": {
+          "location": {
+            "x": -1.2800194025039673,
+            "y": 309.46002197265625,
+            "z": 0.0015024375170469284
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 90.00004577636719,
+            "roll": 0.0
+          },
+          "matrix": [
+            [
+              -7.589671326968528e-07,
+              -1.0,
+              0.0,
+              -1.2800194025039673
+            ],
+            [
+              1.0,
+              -7.589671326968528e-07,
+              -0.0,
+              309.46002197265625
+            ],
+            [
+              0.0,
+              -0.0,
+              1.0,
+              0.0015024375170469284
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        },
+        "velocity": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "angular_velocity": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "acceleration": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "control": {
+          "throttle": 0.0,
+          "steer": 0.0,
+          "brake": 1.0,
+          "hand_brake": true,
+          "reverse": false
+        },
+        "control_source": "client-cache-at-world-frame"
+      },
+      "camera": {
+        "actor_id": 177,
+        "transform": {
+          "location": {
+            "x": -1.2800205945968628,
+            "y": 310.96002197265625,
+            "z": 2.4015023708343506
+          },
+          "rotation": {
+            "pitch": -12.0,
+            "yaw": 90.00004577636719,
+            "roll": -4.3642367586471664e-07
+          },
+          "matrix": [
+            [
+              -7.42381871532416e-07,
+              -1.0,
+              -1.5018110843811883e-07,
+              -1.2800205945968628
+            ],
+            [
+              0.9781476259231567,
+              -7.573834750473907e-07,
+              0.20791170001029968,
+              310.96002197265625
+            ],
+            [
+              -0.20791170001029968,
+              7.4505797087454084e-09,
+              0.9781476259231567,
+              2.4015023708343506
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        }
+      },
+      "mount_matrix_max_abs_error": 9.71493560486536e-07,
+      "rgb": {
+        "width": 640,
+        "height": 360,
+        "rgb_bytes": 691200,
+        "channel_min": [
+          1,
+          1,
+          0
+        ],
+        "channel_max": [
+          255,
+          255,
+          255
+        ],
+        "spatially_nonconstant": true
+      },
+      "color_provenance": {
+        "source_format": "BGRA8",
+        "output_format": "RGB8",
+        "source_sha256": "92d74f62de5499d9bd432a0005dd38a6963501a653d9741a3ff38e2d6ecc1b49",
+        "rgb_sha256": "c950684777dd4e8791b4eae5d6f64b1586f23d1fac92c9186eaaa1c203f8ce9f",
+        "sample_pixels": [
+          {
+            "index": 0,
+            "bgra": [
+              255,
+              255,
+              255,
+              255
+            ]
+          },
+          {
+            "index": 99204,
+            "bgra": [
+              5,
+              109,
+              255,
+              255
+            ]
+          },
+          {
+            "index": 115200,
+            "bgra": [
+              50,
+              50,
+              50,
+              255
+            ]
+          },
+          {
+            "index": 230399,
+            "bgra": [
+              46,
+              46,
+              46,
+              255
+            ]
+          }
+        ]
+      },
+      "label_state": "NOT_GENERATED",
+      "label": null
+    },
+    {
+      "schema_version": 1,
+      "frame": 1382,
+      "world_frame": 1382,
+      "snapshot_frame": 1382,
+      "sensor_frame": 1382,
+      "timestamp": 19.913848101510666,
+      "snapshot_timestamp": 19.913848101510666,
+      "sensor_timestamp": 19.913848101510666,
+      "delta_seconds": 0.05000000074505806,
+      "tick_to_rgb_ms": 11.84171799991418,
+      "index": 59,
+      "image": {
+        "width": 640,
+        "height": 360,
+        "path": "images/00001382.png",
+        "sha256": "6156eabb15cd6ff2cd32d6fbbd1ad3151ec8f5d0f2880ce580d0bb2b43d8e540"
+      },
+      "vehicle": {
+        "actor_id": 176,
+        "transform": {
+          "location": {
+            "x": -1.2800194025039673,
+            "y": 309.46002197265625,
+            "z": 0.0015024375170469284
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 90.00004577636719,
+            "roll": 0.0
+          },
+          "matrix": [
+            [
+              -7.589671326968528e-07,
+              -1.0,
+              0.0,
+              -1.2800194025039673
+            ],
+            [
+              1.0,
+              -7.589671326968528e-07,
+              -0.0,
+              309.46002197265625
+            ],
+            [
+              0.0,
+              -0.0,
+              1.0,
+              0.0015024375170469284
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        },
+        "velocity": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "angular_velocity": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "acceleration": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "control": {
+          "throttle": 0.0,
+          "steer": 0.0,
+          "brake": 1.0,
+          "hand_brake": true,
+          "reverse": false
+        },
+        "control_source": "client-cache-at-world-frame"
+      },
+      "camera": {
+        "actor_id": 177,
+        "transform": {
+          "location": {
+            "x": -1.2800205945968628,
+            "y": 310.96002197265625,
+            "z": 2.4015023708343506
+          },
+          "rotation": {
+            "pitch": -12.0,
+            "yaw": 90.00004577636719,
+            "roll": -4.3642367586471664e-07
+          },
+          "matrix": [
+            [
+              -7.42381871532416e-07,
+              -1.0,
+              -1.5018110843811883e-07,
+              -1.2800205945968628
+            ],
+            [
+              0.9781476259231567,
+              -7.573834750473907e-07,
+              0.20791170001029968,
+              310.96002197265625
+            ],
+            [
+              -0.20791170001029968,
+              7.4505797087454084e-09,
+              0.9781476259231567,
+              2.4015023708343506
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        }
+      },
+      "mount_matrix_max_abs_error": 9.71493560486536e-07,
+      "rgb": {
+        "width": 640,
+        "height": 360,
+        "rgb_bytes": 691200,
+        "channel_min": [
+          1,
+          1,
+          0
+        ],
+        "channel_max": [
+          255,
+          255,
+          255
+        ],
+        "spatially_nonconstant": true
+      },
+      "color_provenance": {
+        "source_format": "BGRA8",
+        "output_format": "RGB8",
+        "source_sha256": "773e6d79b9610eb7b359b845b135fe0e534d2104b90898537cf8efb19be8df01",
+        "rgb_sha256": "abd0590936e3dcac5c2970e31bba75ec0e4254e8342c3f299e8369a21b07e86c",
+        "sample_pixels": [
+          {
+            "index": 0,
+            "bgra": [
+              255,
+              255,
+              255,
+              255
+            ]
+          },
+          {
+            "index": 99204,
+            "bgra": [
+              5,
+              109,
+              255,
+              255
+            ]
+          },
+          {
+            "index": 115200,
+            "bgra": [
+              50,
+              50,
+              50,
+              255
+            ]
+          },
+          {
+            "index": 230399,
+            "bgra": [
+              46,
+              46,
+              46,
+              255
+            ]
+          }
+        ]
+      },
+      "label_state": "NOT_GENERATED",
+      "label": null
+    }
+  ],
+  "label_rows": [
+    {
+      "index": 0,
+      "frame": 1323,
+      "timestamp": 16.96384805755224,
+      "sample_id": "geometry_left_curve_01:0000001323",
+      "label_state": "GENERATED",
+      "image": {
+        "path": "images/00001323.png",
+        "sha256": "1fbc7fe4704605cdcef28244a932c0c8618e38880ce7dbe311b1f4cfc4ee0549"
+      },
+      "label": {
+        "schema_version": 1,
+        "ego_frame": 1323,
+        "route_id": "town01_geometry_p108",
+        "target_lane": {
+          "road_id": 15,
+          "section_id": 0,
+          "lane_id": -1
+        },
+        "coordinate_origin": "vehicle_actor_transform",
+        "axes": "x-forward_y-right",
+        "units": "m",
+        "distance_reference": "target-lane-centerline-arc-length",
+        "horizon_arc_m": [
+          3,
+          6,
+          9,
+          12,
+          15
+        ],
+        "reference_arc_m": 0.0012196333651060905,
+        "waypoints_world_m": [
+          [
+            -1.9893289013731814,
+            312.45992932457676,
+            0.0
+          ],
+          [
+            -1.9897206230952615,
+            315.4599292990019,
+            0.0
+          ],
+          [
+            -1.982472030575559,
+            318.4598439908941,
+            0.0
+          ],
+          [
+            -1.5544849189315546,
+            321.4230021517724,
+            0.0
+          ],
+          [
+            -0.48807726892557207,
+            324.22054418867197,
+            0.0
+          ]
+        ],
+        "waypoints_ego_m": [
+          [
+            2.9999078902631093,
+            0.7093072220381329
+          ],
+          [
+            5.999907864985536,
+            0.7096966668588344
+          ],
+          [
+            8.999822551376322,
+            0.7024457975024797
+          ],
+          [
+            11.962980387426436,
+            0.27445643691882227
+          ],
+          [
+            14.760521614957666,
+            -0.7919533363296185
+          ]
+        ]
+      },
+      "diagnostics": {
+        "centerline_distance_xy_m": 0.7089177831977951,
+        "max_world_route_error_m": 0.0,
+        "max_ego_error_m": 0.0,
+        "max_world_roundtrip_error_m": 8.538698906254177e-12,
+        "max_reference_error_m": 0.0
+      }
+    },
+    {
+      "index": 1,
+      "frame": 1324,
+      "timestamp": 17.0138480582973,
+      "sample_id": "geometry_left_curve_01:0000001324",
+      "label_state": "GENERATED",
+      "image": {
+        "path": "images/00001324.png",
+        "sha256": "55eb1692f35f0cbbb363597b5a60093dc41b866d84095c56c2d21d94ea08ab6a"
+      },
+      "label": {
+        "schema_version": 1,
+        "ego_frame": 1324,
+        "route_id": "town01_geometry_p108",
+        "target_lane": {
+          "road_id": 15,
+          "section_id": 0,
+          "lane_id": -1
+        },
+        "coordinate_origin": "vehicle_actor_transform",
+        "axes": "x-forward_y-right",
+        "units": "m",
+        "distance_reference": "target-lane-centerline-arc-length",
+        "horizon_arc_m": [
+          3,
+          6,
+          9,
+          12,
+          15
+        ],
+        "reference_arc_m": 0.0012196333651060905,
+        "waypoints_world_m": [
+          [
+            -1.9893289013731814,
+            312.45992932457676,
+            0.0
+          ],
+          [
+            -1.9897206230952615,
+            315.4599292990019,
+            0.0
+          ],
+          [
+            -1.982472030575559,
+            318.4598439908941,
+            0.0
+          ],
+          [
+            -1.5544849189315546,
+            321.4230021517724,
+            0.0
+          ],
+          [
+            -0.48807726892557207,
+            324.22054418867197,
+            0.0
+          ]
+        ],
+        "waypoints_ego_m": [
+          [
+            2.9999078902631093,
+            0.7093072220381329
+          ],
+          [
+            5.999907864985536,
+            0.7096966668588344
+          ],
+          [
+            8.999822551376322,
+            0.7024457975024797
+          ],
+          [
+            11.962980387426436,
+            0.27445643691882227
+          ],
+          [
+            14.760521614957666,
+            -0.7919533363296185
+          ]
+        ]
+      },
+      "diagnostics": {
+        "centerline_distance_xy_m": 0.7089177831977951,
+        "max_world_route_error_m": 0.0,
+        "max_ego_error_m": 0.0,
+        "max_world_roundtrip_error_m": 8.538698906254177e-12,
+        "max_reference_error_m": 0.0
+      }
+    },
+    {
+      "index": 58,
+      "frame": 1381,
+      "timestamp": 19.86384810076561,
+      "sample_id": "geometry_left_curve_01:0000001381",
+      "label_state": "GENERATED",
+      "image": {
+        "path": "images/00001381.png",
+        "sha256": "b2bae230a49603e2c91f9645f130c79316ca5b5847395c16e1c3b7d0be7b02be"
+      },
+      "label": {
+        "schema_version": 1,
+        "ego_frame": 1381,
+        "route_id": "town01_geometry_p108",
+        "target_lane": {
+          "road_id": 15,
+          "section_id": 0,
+          "lane_id": -1
+        },
+        "coordinate_origin": "vehicle_actor_transform",
+        "axes": "x-forward_y-right",
+        "units": "m",
+        "distance_reference": "target-lane-centerline-arc-length",
+        "horizon_arc_m": [
+          3,
+          6,
+          9,
+          12,
+          15
+        ],
+        "reference_arc_m": 0.0012196333651060905,
+        "waypoints_world_m": [
+          [
+            -1.9893289013731814,
+            312.45992932457676,
+            0.0
+          ],
+          [
+            -1.9897206230952615,
+            315.4599292990019,
+            0.0
+          ],
+          [
+            -1.982472030575559,
+            318.4598439908941,
+            0.0
+          ],
+          [
+            -1.5544849189315546,
+            321.4230021517724,
+            0.0
+          ],
+          [
+            -0.48807726892557207,
+            324.22054418867197,
+            0.0
+          ]
+        ],
+        "waypoints_ego_m": [
+          [
+            2.9999078902631093,
+            0.7093072220381329
+          ],
+          [
+            5.999907864985536,
+            0.7096966668588344
+          ],
+          [
+            8.999822551376322,
+            0.7024457975024797
+          ],
+          [
+            11.962980387426436,
+            0.27445643691882227
+          ],
+          [
+            14.760521614957666,
+            -0.7919533363296185
+          ]
+        ]
+      },
+      "diagnostics": {
+        "centerline_distance_xy_m": 0.7089177831977951,
+        "max_world_route_error_m": 0.0,
+        "max_ego_error_m": 0.0,
+        "max_world_roundtrip_error_m": 8.538698906254177e-12,
+        "max_reference_error_m": 0.0
+      }
+    },
+    {
+      "index": 59,
+      "frame": 1382,
+      "timestamp": 19.913848101510666,
+      "sample_id": "geometry_left_curve_01:0000001382",
+      "label_state": "GENERATED",
+      "image": {
+        "path": "images/00001382.png",
+        "sha256": "6156eabb15cd6ff2cd32d6fbbd1ad3151ec8f5d0f2880ce580d0bb2b43d8e540"
+      },
+      "label": {
+        "schema_version": 1,
+        "ego_frame": 1382,
+        "route_id": "town01_geometry_p108",
+        "target_lane": {
+          "road_id": 15,
+          "section_id": 0,
+          "lane_id": -1
+        },
+        "coordinate_origin": "vehicle_actor_transform",
+        "axes": "x-forward_y-right",
+        "units": "m",
+        "distance_reference": "target-lane-centerline-arc-length",
+        "horizon_arc_m": [
+          3,
+          6,
+          9,
+          12,
+          15
+        ],
+        "reference_arc_m": 0.0012196333651060905,
+        "waypoints_world_m": [
+          [
+            -1.9893289013731814,
+            312.45992932457676,
+            0.0
+          ],
+          [
+            -1.9897206230952615,
+            315.4599292990019,
+            0.0
+          ],
+          [
+            -1.982472030575559,
+            318.4598439908941,
+            0.0
+          ],
+          [
+            -1.5544849189315546,
+            321.4230021517724,
+            0.0
+          ],
+          [
+            -0.48807726892557207,
+            324.22054418867197,
+            0.0
+          ]
+        ],
+        "waypoints_ego_m": [
+          [
+            2.9999078902631093,
+            0.7093072220381329
+          ],
+          [
+            5.999907864985536,
+            0.7096966668588344
+          ],
+          [
+            8.999822551376322,
+            0.7024457975024797
+          ],
+          [
+            11.962980387426436,
+            0.27445643691882227
+          ],
+          [
+            14.760521614957666,
+            -0.7919533363296185
+          ]
+        ]
+      },
+      "diagnostics": {
+        "centerline_distance_xy_m": 0.7089177831977951,
+        "max_world_route_error_m": 0.0,
+        "max_ego_error_m": 0.0,
+        "max_world_roundtrip_error_m": 8.538698906254177e-12,
+        "max_reference_error_m": 0.0
+      }
+    }
+  ]
+}

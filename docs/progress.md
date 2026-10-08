@@ -2,6 +2,8 @@
 
 작업 일차와 실제 날짜를 함께 기록한다. 완료 여부는 산출물과 검증에 근거하며, 시간 경과나 설치 파일 존재만으로 다음 단계의 성공을 표시하지 않는다. 전체 계획은 [ROADMAP.md](ROADMAP.md)에 있다.
 
+**현재 D1~D7 완료.** 다음 단계는 D8 Pure Pursuit controller다. D6/D7은 실제 Kaggle native 실행과 전체 다운로드의 CPU 재검증을 통과했으며, 주행·학습 성능은 후속 단계에서 검증한다.
+
 ## D1 프로젝트 범위와 개발 환경 조사
 
 - 실제 날짜: **2026-10-05 (Asia/Seoul)**
@@ -158,6 +160,62 @@ D4에서는 같은 frame의 이미지·차량 snapshot·자세를 보존하는 e
 이번 D4/D5는 로컬에서 진행했다. Kaggle 제출이나 새 노트북 생성은 없으며 기존 ID 재사용 원칙을 유지한다. GitHub 계정의 Actions 제한은 계속 남아 있고 원격 CI 성공으로 표시하지 않는다.
 
 최종 전체 로컬 검증 **204 PASS·0 skip**, `pip check`, strict 환경 사전 검사와 PowerShell syntax PASS. PNG 내부 CRC·bounded zlib stream·scanline 검사를 보강한 뒤 실제 원본 3개와 기존 manifest를 다시 읽어 PASS를 확인했다. JSON Schema 외부 검사는 Python 3.12.7·jsonschema 4.26.0으로 원본 frame 180개와 CSV 행 180개에서 오류 0개였다. 이 도구는 검토 환경에서만 사용했고 프로젝트 runtime dependency로 추가하지 않았다.
+
+## D6 고정 목표 waypoint 라벨과 native 곡선 overlay
+
+- 실제 날짜: **2026-10-08 (Asia/Seoul)**
+- 상태: **D6 gate PASS**, native 생성·overlay와 다운로드 후 독립 CPU 라벨 검증 완료
+- 실행: 기존 `dongmyungpark/vlf-carla-rgb-smoke-20261005`, 제목 `VLF CARLA RGB smoke 20261005`의 **version 4**, Kaggle T4·CARLA 0.9.16·Town01
+- 실제 원격 데이터: 정지 직선·좌곡선·우곡선 각각 60 frame, 총 3 episode·180 RGB frame·900 waypoint 점
+- 산출물: [D6 라벨·overlay 문서](WAYPOINT_LABELS_D6.md), [실제 요약](evidence/carla_week1_d6_d7_2026-10-08_summary.json), [직선](evidence/carla_week1_d6_d7_2026-10-08_straight_overlay.png)·[좌곡선](evidence/carla_week1_d6_d7_2026-10-08_left_curve_overlay.png)·[우곡선](evidence/carla_week1_d6_d7_2026-10-08_right_curve_overlay.png) overlay
+
+### 구현과 실제 원격 증거
+
+`next(d)`의 OpenDRIVE reference 간격이 곡선 outer lane의 실제 centerline 거리와 다를 수 있음을 native survey에서 확인했다. 실제 lane-centerline XYZ 간 길이를 dense polyline에서 누적하고 0.25m anchor로 보간하여 35m route를 고정했다. 이 physical arc는 수치 근사이며 analytic curve 적분값이 아니다. Original route/hash와 같은 frame actor pose에서 3/6/9/12/15m world 점 및 actor-origin `[x-forward,y-right]` m 타깃을 생성한다.
+
+| Case | Route spawn | 실제 frame 범위 | 수집 frame | 15m net waypoint heading |
+| --- | --- | --- | --- | --- |
+| Straight | 0 | 1142~1201 | 60 | 0° |
+| Left curve | 108 | 1323~1382 | 60 | 약 -27.19° |
+| Right curve | 174 | 1478~1537 | 60 | 약 +30.99° |
+
+원본 `episode.json`, `frames.jsonl`과 RGB PNG를 변경하지 않는다. 원본 metadata는 `labels_state=not-generated-D6`, frame은 `NOT_GENERATED`/`null`을 유지하고 라벨만 외부 `GENERATED` sidecar에 저장한다. Source metadata/JSONL/config/route/image 해시·frame identity를 연결하고 fresh raw integrity와 독립 geometry validator를 요구한다. Missing/duplicate/reordered frame, 잘못된 frame/axis/unit/target lane, nonfinite geometry, 부족한 horizon, 자기 교차·모호한 projection, source 변조와 기존 output 덮어쓰기를 거부한다.
+
+원격 라벨의 frame당 shape는 `5 × 2`다. 고정 source route 대비 world/ego/reference 오차는 0m, actor world roundtrip 최대는 `8.66e-12m` 미만이었다. 이 수치를 실제 연속 도로의 절대 측량 오차로 해석하지 않는다. 동일 frame의 RGB/camera pose로 overlay를 만들었으며 3m 점이 영상 밖일 때 원래 UV와 `OUTSIDE_IMAGE`를 유지하고 clamp하지 않았다.
+
+전체 raw와 sidecar는 `results/local/kaggle-week1-output-v4/week1/`에 다운로드했고, CPU에서 같은 source와 label SHA-256를 확인했다. [실제 geometry route catalog](../configs/routes_d6_geometry.json)와 작은 요약·overlay만 검토용으로 보존하며 이 정지 geometry QA로 새 training split을 만들지 않는다. 기존 D4/D5 로컬 180 frame·train 120/dev 60 snapshot도 별도로 유지한다.
+
+## D7 Week 1 동일 frame RGB·pose·label·color 게이트
+
+- 실제 날짜: **2026-10-08 (Asia/Seoul)**
+- 상태: **D7 gate PASS**, native 원격·전체 다운로드 CPU 게이트 모두 통과
+- 원격 결과: 모든 180 frame에서 다섯 타깃 camera 전방·네 타깃 visible, BGRA→stored RGB 색상 검사 통과
+- 정리: Case별 capture cleanup, 수집 후 asynchronous RPC 및 bootstrap의 `server_stopped=true` 확인
+- 산출물: [D7 게이트·재현 문서](WEEK1_GATE_D7.md), [실제 D6/D7 요약](evidence/carla_week1_d6_d7_2026-10-08_summary.json)
+
+### 검증 결과와 해결한 실패
+
+Gate는 하나의 dataset version·map/OpenDRIVE source·nominal calibration·spawn 제외 config에서 실제 직선·좌곡선·우곡선 3 case를 확인한다. 각 frame은 같은 sensor/world/snapshot frame과 timestamp, finite actor-origin 라벨과 camera projection을 만족해야 한다. 최소 세 점 visible·모든 다섯 점 전방이라는 판정에서 실제로는 모든 case가 네 점 visible이었다. 3m 점은 전체 180 frame에서 `OUTSIDE_IMAGE`였고 나머지 6/9/12/15m는 visible이었다.
+
+새 native capture의 BGRA buffer hash, RGB hash와 source pixel witness를 보존했다. 저장 PNG를 decode하여 180 frame의 channel order와 720 pixel witness를 확인했다. BGRA 전체 buffer를 저장하지 않으므로 offline source buffer 전체 hash를 다시 계산한 증거로 주장하지 않는다. 기존 D4/D5 raw에 color witness를 사후 넣지 않았다. Camera/world inverse pinhole roundtrip 최대 오차는 약 `7.281e-7m`로 0.001m gate tolerance 안이었다.
+
+Version 3은 첫 두 case 수집 후 세 번째 case의 `weather-readback-mismatch`로 전체 FAIL이었다. [실패 기록](evidence/carla_week1_d6_d7_2026-10-08_weather_failure.json)을 보존했다. Weather 적용·복구의 엄격한 readback 비교를 유지하고 비동기 전달을 기다리도록 최대 2초의 bounded 재시도를 추가했다. 일치하지 않으면 여전히 FAIL이며, version 4 전체 native 실행과 해당 회귀 검증이 통과했다.
+
+Native pipeline과 다운로드 후 최신 CPU helper의 **9개 negative QA**는 잘못된 ego frame·unit·target, duplicate/missing label frame, source hash, PNG 손상, dropped raw frame과 RGB hash를 다시 계산한 R/B swap을 모두 거부했다. 원본은 보존했다. 최신 전체 로컬 unit 검증 **309 PASS·0 skip**는 라벨·overlay·색상·gate·weather strict 재시도 회귀를 포함한다. 외부 `jsonschema 4.26.0`으로 raw frame 180개·derived label 180개를 검사해 오류 0개였으며 runtime dependency로 추가하지 않았다. `pip check`, strict 환경 사전 검사와 PowerShell syntax도 PASS다. 원격 GitHub Actions는 계정 제한으로 실행되지 않았다.
+
+실제 bootstrap 소요 시간은 **452.02초**, D6/D7 pipeline은 약 **66.60초**였다. Job 대기 시간은 별도 측정하지 않았다. Capture 직후 GPU 0의 전체 장치 메모리 표본은 **1,844MiB / 15,360MiB**, 두 번째 T4는 idle **1MiB**였다. 이는 해당 시점의 장치 표본이며 peak 메모리·FPS·모델 추론 latency가 아니다.
+
+### CPU 재검증과 최종 gate 판정
+
+전체 PNG·metadata·JSONL·sidecar·manifest를 다운로드한 뒤 현재 로컬 코드로 다음 fresh disk 검증을 실행해 **3 episode·180 frame·errors=[]**의 PASS를 확인했다. 모든 case의 source와 label SHA-256는 원격 version 4 결과와 일치했다. CARLA server와 로컬 GPU는 사용하지 않았다.
+
+```powershell
+.\.venv\Scripts\python.exe scripts/verify_week1.py --manifest results/local/kaggle-week1-output-v4/week1/week1_manifest.json --output results/local/week1-v4-cpu-gate.json
+```
+
+**D6/D7 최종 gate: 통과.** 실제 source-pinned native capture·라벨·overlay·color gate, 전체 artifact의 독립 CPU 재검증, 변조 QA와 cleanup 증거를 확보했다. Kaggle에는 기존 ID/title로 version 4를 추가했으며 새 notebook은 만들지 않았다. 이번 단계의 GPU 실행은 Kaggle T4에서 수행했고 로컬 GPU 실행은 없었다.
+
+다음 단계는 **D8 Pure Pursuit controller 구현과 privileged GT waypoint 검증**이다. D13 moving training pilot·recovery 수집, D14 주행 metric 구현·평가는 아직 진행하지 않았다. D6/D7 정지 게이트는 주행 완주율·모델 정확도·inference latency를 검증하지 않는다. Town02 final test는 사용하지 않았고 `UNCOLLECTED`/`UNVERIFIED`를 유지한다.
 
 ### 이후 기록 양식
 

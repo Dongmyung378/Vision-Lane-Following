@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any, Mapping
 
 from .config import ConfigError, collection_config_from_dict
+from .color import color_provenance
 from .episode import EpisodeError, EpisodeWriter, validate_episode
 from .session import CollectionSession, SessionError, fields_match
 from scripts.carla_rgb_probe import ProbeFailure, matching_image, png_from_rgb, rgb_from_bgra
@@ -160,7 +161,8 @@ def _record(session: Any, cfg: Any, image: Any, snapshot: Any, row: dict, index:
     control = {name: getattr(cached_control, name) for name in cfg.vehicle.control.to_dict()}
     if not fields_match(cfg.vehicle.control.to_dict(), control, exact_keys=True):
         raise CaptureError("vehicle-control-readback-mismatch")
-    rgb, stats = rgb_from_bgra(bytes(image.raw_data), image.width, image.height)
+    raw_bgra = bytes(image.raw_data)
+    rgb, stats = rgb_from_bgra(raw_bgra, image.width, image.height)
     row.update({
         "index": index, "image": {"width": image.width, "height": image.height},
         "vehicle": {"actor_id": session.vehicle.id, "transform": _transform(vehicle_transform),
@@ -169,6 +171,7 @@ def _record(session: Any, cfg: Any, image: Any, snapshot: Any, row: dict, index:
                     "control_source": "client-cache-at-world-frame"},
         "camera": {"actor_id": session.camera.id, "transform": camera_transform},
         "mount_matrix_max_abs_error": mount_error, "rgb": stats,
+        "color_provenance": color_provenance(raw_bgra, rgb, image.width, image.height),
         "label_state": "NOT_GENERATED", "label": None,
     })
     return row, png_from_rgb(rgb, image.width, image.height)

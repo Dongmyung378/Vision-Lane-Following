@@ -343,7 +343,7 @@ def validate_frame_contract(frame: Any, metadata: dict, contract: dict | None = 
         raise ContractError("unsupported-dataset-contract")
     _object(frame, {"schema_version", "index", "frame", "world_frame", "snapshot_frame", "sensor_frame", "timestamp",
                     "snapshot_timestamp", "sensor_timestamp", "delta_seconds", "image", "vehicle", "camera", "label_state", "label"},
-            {"tick_to_rgb_ms", "mount_matrix_max_abs_error", "rgb"}, code="invalid-episode-frame")
+            {"tick_to_rgb_ms", "mount_matrix_max_abs_error", "rgb", "color_provenance"}, code="invalid-episode-frame")
     if type(frame["schema_version"]) is not int or frame["schema_version"] != 1:
         raise ContractError("unsupported-frame-version")
     _integer(frame["index"], minimum=0)
@@ -365,6 +365,12 @@ def validate_frame_contract(frame: Any, metadata: dict, contract: dict | None = 
         raise ContractError("invalid-image-hash")
     for key in ("width", "height"):
         _integer(image[key], minimum=1)
+    if "color_provenance" in frame:
+        from .color import ColorError, validate_color_provenance
+        try:
+            validate_color_provenance(frame["color_provenance"], image["width"], image["height"])
+        except ColorError as error:
+            raise ContractError(error.code) from None
     if "tick_to_rgb_ms" in frame and _finite(frame["tick_to_rgb_ms"]) < 0:
         raise ContractError("invalid-capture-latency")
     if "mount_matrix_max_abs_error" in frame and not 0 <= _finite(frame["mount_matrix_max_abs_error"]) <= .001:

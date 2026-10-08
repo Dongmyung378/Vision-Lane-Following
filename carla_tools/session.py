@@ -188,7 +188,7 @@ class CollectionSession:
             self._weather_expected = public_fields(preset)
             self._weather_touched = True
             self.world.set_weather(preset)
-            if not fields_match(self._weather_expected, public_fields(self.world.get_weather()), exact_keys=True):
+            if not self._wait_weather_readback(self._weather_expected):
                 raise SessionError("weather-readback-mismatch", stage)
             stage = "vehicle-spawn"
             self.vehicle = self.world.try_spawn_actor(vehicle_bp, spawn)
@@ -232,6 +232,21 @@ class CollectionSession:
             if not isinstance(error, Exception):
                 raise
             raise failure from None
+
+    def _wait_weather_readback(self, expected):
+        # CARLA 0.9.16 SetWeatherParameters uses AsyncCall. Returning from
+        # set_weather is not an application acknowledgement; preserve exact
+        # equality and allow bounded delivery before failing the readback.
+        if fields_match(expected, public_fields(self.world.get_weather()), exact_keys=True):
+            return True
+        deadline = time.monotonic() + min(2.0, self.cfg.connection.timeout_seconds)
+        while True:
+            if fields_match(expected, public_fields(self.world.get_weather()), exact_keys=True):
+                return True
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                return False
+            time.sleep(min(0.02, remaining))
 
     def _verify_actor_metadata(self):
         if self.vehicle.type_id != self.cfg.vehicle.blueprint or self.camera.type_id != self.cfg.camera.blueprint:
@@ -317,7 +332,7 @@ class CollectionSession:
         if self._weather_touched:
             restored = attempt("weather-restore", lambda: self.world.set_weather(self._original_weather))
             if restored:
-                restored = attempt("weather-readback", lambda: fields_match(self._weather_before, public_fields(self.world.get_weather()), exact_keys=True))
+                restored = attempt("weather-readback", lambda: self._wait_weather_readback(self._weather_before))
             report["weather_restored"] = restored
         if self._settings_touched:
             restored = attempt("world-settings-restore", lambda: self.world.apply_settings(self._original_settings))
