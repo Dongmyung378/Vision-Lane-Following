@@ -20,21 +20,21 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.12'
-      - name: Test D1-D10 collection, labels, controller and driving contracts
+      - name: Test collection, labels, controller and driving contracts
         run: python -m unittest discover -s tests -v
-      - name: Validate D3 config without simulator dependencies
+      - name: Validate collection config without simulator dependencies
         run: python scripts/verify_collection.py --validate-only
-      - name: Validate D4 config and pinned D5 routes without simulator dependencies
+      - name: Validate episode config and pinned routes without simulator dependencies
         run: |
           python scripts/survey_routes.py --validate-only
           python scripts/collect_episode.py --route-id town01_train_p000 --episode-id ci_smoke --validate-only
-      - name: Validate pinned D6 geometry without simulator dependencies
+      - name: Validate pinned geometry without simulator dependencies
         run: |
           python scripts/survey_geometry_routes.py --output configs/routes_d6_geometry.json --validate-only
           python scripts/run_geometry_collection.py --catalog configs/routes_d6_geometry.json --validate-only
       - name: Run audit without simulator or GPU requirements
         run: python scripts/doctor.py
-      - name: Validate D8-D10 controller and development driving config
+      - name: Validate controller and development driving config
         run: python -c "from carla_tools.controller import load_controller_config; from carla_tools.driving import load_validation_config; print(load_controller_config().sha256, load_validation_config()['scope'])"
       - name: Check the Windows entry point
         if: runner.os == 'Windows'

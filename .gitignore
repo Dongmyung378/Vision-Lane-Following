@@ -36,3 +36,13 @@ access_token
 *.log
 .DS_Store
 Thumbs.db
+
+# Private project instructions, planning and execution records
+/AGENTS.md
+/docs/local/
+/docs/evidence/
+/docs/progress.md
+/docs/ROADMAP.md
+/docs/KAGGLE_CARLA_VERIFICATION.md
+/docs/*_D[0-9]*.md
+/docs/controller_d[0-9]*.md

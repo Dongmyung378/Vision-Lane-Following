@@ -20,7 +20,6 @@ from scripts import render_waypoint_overlay as overlay_cli
 from scripts.carla_rgb_probe import rgb_from_bgra
 
 
-ROOT = Path(__file__).resolve().parents[1]
 IDENTITY = [[1., 0., 0., 0.], [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]]
 
 
@@ -175,12 +174,26 @@ class PngProjectionTests(unittest.TestCase):
             with self.subTest(code=code), self.assertRaisesRegex(projection.ProjectionError, code):
                 projection.decode_rgb8_png(value, hashlib.sha256(value).hexdigest())
 
-    def test_committed_real_capture_decodes_to_recorded_dimensions_and_channel_extrema(self):
-        evidence = ROOT / "docs" / "evidence"
-        row = json.loads((evidence / "carla_dataset_d4_d5_2026-10-07_train_smoke_01_frames.json").read_text(encoding="utf-8"))["rows"][0]
-        data = (evidence / "carla_dataset_d4_d5_2026-10-07_train_smoke_01.png").read_bytes()
-        width, height, rgb = projection.decode_rgb8_png(data, row["image"]["sha256"], (640, 360))
+    def test_synthetic_capture_decodes_to_recorded_dimensions_and_channel_extrema(self):
+        expected_width, expected_height = 640, 360
+        source_rgb = bytes(channel for y in range(expected_height) for x in range(expected_width)
+                           for channel in (x % 256, y % 256, (x + y) % 256))
+        stride = expected_width * 3
+        filtered = b"".join(b"\x00" + source_rgb[y * stride:(y + 1) * stride] for y in range(expected_height))
+        png = png_from_filtered(filtered, expected_width, expected_height)
+        recorded = {"frame": 7, "world_frame": 7, "snapshot_frame": 7, "sensor_frame": 7,
+                    "image": {"sha256": hashlib.sha256(png).hexdigest(), "width": expected_width, "height": expected_height},
+                    "rgb": {"rgb_bytes": expected_width * expected_height * 3,
+                            "channel_min": [0, 0, 0], "channel_max": [255, 255, 255]}}
+        with tempfile.TemporaryDirectory() as folder:
+            directory = Path(folder)
+            (directory / "frame.json").write_text(json.dumps(recorded), encoding="utf-8")
+            (directory / "image.png").write_bytes(png)
+            row = json.loads((directory / "frame.json").read_text(encoding="utf-8"))
+            data = (directory / "image.png").read_bytes()
+        width, height, rgb = projection.decode_rgb8_png(data, row["image"]["sha256"], (expected_width, expected_height))
         self.assertEqual((width, height), (row["image"]["width"], row["image"]["height"]))
+        self.assertEqual(rgb, source_rgb)
         self.assertEqual(len(rgb), row["rgb"]["rgb_bytes"])
         self.assertEqual([min(rgb[channel::3]) for channel in range(3)], row["rgb"]["channel_min"])
         self.assertEqual([max(rgb[channel::3]) for channel in range(3)], row["rgb"]["channel_max"])
