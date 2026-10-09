@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "metric_version": "vlf-closed-loop-v1",
+  "route_completion_tolerance_m": 0.5,
+  "lane_departure_hold_seconds": 0.5,
+  "stalled_speed_mps": 0.1,
+  "stalled_progress_m": 0.1,
+  "stalled_hold_seconds": 5.0,
+  "timeout_seconds": 120.0,
+  "minimum_future_horizon_m": 15.0,
+  "recovery_lateral_tolerance_m": 0.2,
+  "recovery_heading_tolerance_deg": 3.0,
+  "recovery_hold_seconds": 1.0,
+  "recovery_deadline_seconds": 5.0,
+  "fixed_delta_seconds": 0.05,
+  "timestamp_tolerance_seconds": 0.001
+}

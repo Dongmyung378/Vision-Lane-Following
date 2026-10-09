@@ -2,7 +2,7 @@
 
 CARLA에서 전방 RGB 영상으로 차선 중심 경로를 예측하고, 공통 controller로 주행 성능을 비교하기 위한 프로젝트입니다. 수집·라벨 생성·데이터 분할·제어·주행 검사 도구를 제공합니다.
 
-현재 주행 도구는 지도에서 얻은 정답 waypoint를 사용하는 **privileged controller 개발 QA**입니다. RGB 입력만으로 경로를 예측하는 OpenCV baseline과 학습 모델은 별도의 구현 대상입니다. 정답 경로를 사용하는 검사 결과를 camera-only 모델의 주행 성능으로 해석하지 않습니다.
+OpenCV baseline은 RGB와 고정 nominal camera calibration으로 waypoint를 예측합니다. 지도에서 얻은 정답 waypoint를 사용하는 **privileged reference**와 같은 controller·초기 조건·종료 규칙으로 비교합니다. RGB waypoint 학습 모델은 별도의 구현 대상입니다.
 
 ## 시스템과 입력
 
@@ -26,6 +26,8 @@ Waypoint는 목표 차선 중심선을 따라 3·6·9·12·15m 앞의 점입니�
 - 실제 wheel geometry를 사용하는 Pure Pursuit, Ackermann 변환, PI 속도 제어와 곡률 preview 속도 계획.
 - 고정 route 주행·초기 편차 복귀, 충돌·차선 침범·차체 차선 여유, 제동·actor 정리 검사.
 - 주행 artifact CPU 재검증, 손상 검사와 native Map 기반 차체 모서리 검사.
+- RGB 차선 표시 검출·고정 ground-plane 역투영·중심선 arc 기반 OpenCV waypoint와 overlay.
+- 종료 원인·event 중복 제거·실패 포함 오차/완주율·복귀·제어 변화율·처리 시간의 episode CSV와 집계.
 
 초기 범위는 Town01의 분기 없는 직선·좌곡선·우곡선, 고정 차량과 카메라, 맑은 날씨 및 다른 차량과 보행자가 없는 조건입니다. 교차로 의사결정, 차선 변경과 객체 회피는 포함하지 않습니다.
 
@@ -35,6 +37,7 @@ Windows PowerShell에서 저장소 루트를 기준으로 실행합니다. Pytho
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup_d2.ps1
+.\.venv\Scripts\python.exe -m pip install -r requirements-baseline.txt
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/carla_server.ps1 -Action Start
 .\.venv\Scripts\python.exe scripts/check_carla_connection.py --timeout 30 --ticks 3
 .\.venv\Scripts\python.exe scripts/carla_rgb_probe.py --reuse-current-world --output-dir results/local/rgb-probe --timeout 60
@@ -77,6 +80,21 @@ Privileged 주행 pipeline은 고정 route와 초기 편차 조건을 실행합�
 
 주행 판정·artifact 구조와 native Map 검사 조건은 [주행과 복귀](docs/driving.md)에 설명합니다.
 
+## RGB baseline 비교
+
+OpenCV는 CPU에서 실행하며 simulator 렌더링에 GPU를 사용합니다. 기존 Kaggle notebook에서 GPU 주행을 실행하는 준비 절차는 [환경 준비](docs/setup.md)에 있습니다.
+
+```powershell
+# 기존 RGB8 PNG에서 nominal calibration으로 예측과 overlay를 생성합니다.
+.\.venv\Scripts\python.exe scripts/predict_baseline.py --image results/local/example-rgb.png --output results/local/baseline-overlay/prediction.json --overlay results/local/baseline-overlay/overlay.png
+
+# 실행 중인 전용 Town01 서버에서 RGB baseline과 privileged reference를 비교합니다.
+.\.venv\Scripts\python.exe scripts/run_baseline_pipeline.py --output-dir results/local/baseline-example
+.\.venv\Scripts\python.exe scripts/verify_baseline.py --manifest results/local/baseline-example/baseline_manifest.json --output results/local/baseline-example-gate.json
+```
+
+한쪽 yellow marking만 관측되면 고정 4m 차선 폭을 가정해 반대 경계를 추정하고, 그 가정을 diagnostics에 표시합니다. Calibration과 평면·차선 폭 가정은 frame별 map/pose로 보정하지 않습니다. 검출에 실패하면 제동하고 실패 episode를 metric CSV에 포함합니다. Artifact integrity 통과와 차선 주행 성공을 구분합니다. 자세한 범위와 제한은 [OpenCV baseline](docs/baseline.md)을 참고하세요.
+
 ## 테스트
 
 ```powershell
@@ -92,6 +110,7 @@ Privileged 주행 pipeline은 고정 route와 초기 편차 조건을 실행합�
 - [수집과 episode 기록](docs/collection.md): 동기 수집, frame 정합과 파일 검사.
 - [데이터 계약](docs/data-contract.md): 좌표·라벨 schema, route와 split 규칙.
 - [Waypoint 라벨](docs/waypoint-labels.md): 고정 경로, 좌표 변환과 overlay.
+- [OpenCV baseline](docs/baseline.md): RGB 검출, nominal calibration, 차선 폭 가정과 예측 실패 처리.
 - [Controller](docs/controller.md): 차량 기하, Pure Pursuit와 속도 제어.
 - [주행과 복귀](docs/driving.md): 초기 편차, 제어 readback, 센서·차체·정리 검사.
 - [평가 명세](docs/evaluation.md): 공통 조건, 주행 지표와 final test 원칙.

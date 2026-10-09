@@ -21,10 +21,20 @@ SOURCES = (
     "scripts/run_geometry_collection.py", "scripts/run_week1_pipeline.py",
     "configs/collection_d4.json", "configs/dataset_contract_d5.json",
 )
+DRIVING_SOURCES = (
+    "carla_tools/controller.py", "carla_tools/driving_route.py", "carla_tools/driving.py",
+    "carla_tools/driving_validation.py", "scripts/run_driving_pipeline.py", "scripts/verify_driving.py",
+    "configs/controller_d8.json", "configs/driving_validation_d10.json", "configs/routes_d6_geometry.json",
+)
+BASELINE_SOURCES = (
+    "carla_tools/baseline.py", "carla_tools/baseline_driving.py", "carla_tools/baseline_validation.py",
+    "carla_tools/evaluation.py", "scripts/run_baseline_pipeline.py", "scripts/verify_baseline.py",
+    "configs/baseline.json", "configs/evaluation.json", "requirements-baseline.txt",
+)
 
 
 def prepare(existing_metadata: Path, output_dir: Path, *, workload="week1") -> dict:
-    if workload not in ("week1", "driving"):
+    if workload not in ("week1", "driving", "baseline"):
         raise ValueError("unsupported-existing-notebook-workload")
     metadata = json.loads(existing_metadata.read_text(encoding="utf-8"))
     if not isinstance(metadata, dict):
@@ -36,16 +46,22 @@ def prepare(existing_metadata: Path, output_dir: Path, *, workload="week1") -> d
     sources = {}
     manifest = {}
     selected = SOURCES
-    if workload == "driving":
-        selected += ("carla_tools/controller.py", "carla_tools/driving_route.py", "carla_tools/driving.py",
-                     "carla_tools/driving_validation.py", "scripts/run_driving_pipeline.py", "scripts/verify_driving.py",
-                     "configs/controller_d8.json", "configs/driving_validation_d10.json", "configs/routes_d6_geometry.json")
+    if workload in ("driving", "baseline"):
+        selected += DRIVING_SOURCES
+    if workload == "baseline":
+        selected += BASELINE_SOURCES
     for relative in selected:
         source = (ROOT / relative).read_text(encoding="utf-8")
         if relative.endswith(".py"):
             compile(source, relative, "exec")
-        else:
+        elif relative.endswith(".json"):
             json.loads(source)
+        elif relative == "requirements-baseline.txt":
+            requirements = {line.strip() for line in source.splitlines() if line.strip() and not line.lstrip().startswith("#")}
+            if requirements != {"opencv-python-headless==4.12.0.88", "numpy==2.2.6"}:
+                raise ValueError("baseline-runtime-dependency-pins-mismatch")
+        else:
+            raise ValueError("unsupported-public-source-extension")
         sources[relative] = source
         manifest[relative] = hashlib.sha256(source.encode("utf-8")).hexdigest()
     bootstrap = (ROOT / "scripts/kaggle_carla_bootstrap.py").read_text(encoding="utf-8")
@@ -71,7 +87,8 @@ def prepare(existing_metadata: Path, output_dir: Path, *, workload="week1") -> d
     output_dir.mkdir(parents=True, exist_ok=False)
     (output_dir / "week1.py").write_text(code, encoding="utf-8", newline="\n")
     (output_dir / "kernel-metadata.json").write_text(json.dumps(submission, indent=2) + "\n", encoding="utf-8", newline="\n")
-    bundle = {"notebook_id": submission["id"], "title": submission["title"], "workload": "D6-D7-week1" if workload == "week1" else "D8-D10-privileged-driving",
+    workload_label = {"week1": "D6-D7-week1", "driving": "D8-D10-privileged-driving", "baseline": "camera-only-opencv-baseline"}[workload]
+    bundle = {"notebook_id": submission["id"], "title": submission["title"], "workload": workload_label,
               "code_sha256": hashlib.sha256(code.encode("utf-8")).hexdigest(), "source_sha256": manifest,
               "submitted": False, "creates_new_notebook": False}
     (output_dir / "bundle_manifest.json").write_text(json.dumps(bundle, indent=2) + "\n", encoding="utf-8", newline="\n")

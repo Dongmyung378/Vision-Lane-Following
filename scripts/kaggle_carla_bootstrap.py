@@ -10,6 +10,7 @@ from __future__ import annotations
 import ctypes
 import ctypes.util
 import glob
+import hashlib
 import json
 import os
 import platform
@@ -24,6 +25,7 @@ import tempfile
 import time
 import urllib.error
 import urllib.request
+import zipfile
 from pathlib import Path
 
 PROBE_SOURCE = ""
@@ -34,10 +36,56 @@ CARLA_URL = "https://downloads.carlasim.com/Linux/CARLA_0.9.16.tar.gz"
 CARLA_MIRROR = "https://carla-releases.s3.us-east-005.backblazeb2.com/Linux/CARLA_0.9.16.tar.gz"
 CARLA_PACKAGE_BYTES = 8346095504
 MAX_SECONDS = 1200
+# Published PyPI wheel hashes for the CPython 3.12 Linux x86-64 runtime.
+# https://pypi.org/project/opencv-python-headless/4.12.0.88/#files
+# https://pypi.org/project/numpy/2.2.6/#files
+BASELINE_DEPENDENCIES = (
+    ("opencv-python-headless", "4.12.0.88", "236c8df54a90f4d02076e6f9c1cc763d794542e886c576a6fee46ec8ff75a7a9"),
+    ("numpy", "2.2.6", "fd83c01228a688733f1ded5201c678f0c53ecc1006ffbc404db9f7a899ac6249"),
+)
 
 
 class BootstrapFailure(RuntimeError):
     pass
+
+
+def export_baseline_runtime_sources(project: Path, output: Path, sources: dict) -> dict:
+    """Keep the actual materialized runtime source bytes available for CPU audit."""
+    manifest = {}
+    with zipfile.ZipFile(output / "baseline_runtime_sources.zip", "x",
+                         compression=zipfile.ZIP_DEFLATED, compresslevel=1) as archive:
+        for relative in sorted(sources):
+            path = project / relative
+            if path.is_symlink() or not path.is_file() or not path.resolve().is_relative_to(project.resolve()):
+                raise BootstrapFailure("baseline-runtime-source-path-invalid")
+            data = path.read_bytes()
+            expected = hashlib.sha256(sources[relative].encode("utf-8")).hexdigest()
+            actual = hashlib.sha256(data).hexdigest()
+            if actual != expected:
+                raise BootstrapFailure("baseline-runtime-source-hash-mismatch")
+            manifest[relative] = actual
+            archive.writestr(relative, data)
+    report = {"schema_version": 1, "source_sha256": manifest}
+    (output / "baseline_runtime_source_manifest.json").write_text(
+        json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    return report
+
+
+def preserve_baseline_failure_artifacts(output: Path) -> None:
+    """Archive partial native output even when the pipeline times out or crashes."""
+    directory, destination = output / "baseline", output / "baseline_artifacts.zip"
+    if destination.exists():
+        if destination.is_symlink() or not destination.is_file():
+            raise BootstrapFailure("baseline-artifact-destination-invalid")
+        return
+    if not directory.exists():
+        return
+    if directory.is_symlink() or not directory.is_dir() or not directory.resolve().is_relative_to(output.resolve()):
+        raise BootstrapFailure("baseline-artifact-source-invalid")
+    with zipfile.ZipFile(destination, "x", compression=zipfile.ZIP_DEFLATED, compresslevel=1) as archive:
+        for path in sorted(directory.rglob("*")):
+            if path.is_file() and not path.is_symlink() and path.resolve().is_relative_to(directory.resolve()):
+                archive.write(path, Path("baseline") / path.relative_to(directory))
 
 
 def main() -> int:
@@ -93,7 +141,7 @@ def main() -> int:
                 "carla_apt_install", 180, env)
 
     try:
-        if sys.platform != "linux" or not PROBE_SOURCE or not VULKAN_CHILD_SOURCE or WORKLOAD not in ("rgb", "week1", "driving"):
+        if sys.platform != "linux" or not PROBE_SOURCE or not VULKAN_CHILD_SOURCE or WORKLOAD not in ("rgb", "week1", "driving", "baseline"):
             raise BootstrapFailure("linux-and-embedded-probes-required")
         report["workload"] = WORKLOAD
         stage("vulkan-preflight")
@@ -158,6 +206,22 @@ def main() -> int:
         python = str(venv / "bin" / "python")
         command([uv, "pip", "install", "--python", python, "--only-binary", ":all:",
                  "carla==0.9.16"], "carla_client_install", 180, env)
+        if WORKLOAD == "baseline":
+            stage("camera-baseline-runtime-install")
+            requirements = scratch / "baseline-runtime-requirements.txt"
+            requirements.write_text("\n".join(
+                f"{name}=={version} --hash=sha256:{checksum}"
+                for name, version, checksum in BASELINE_DEPENDENCIES) + "\n", encoding="utf-8")
+            command([uv, "pip", "install", "--python", python, "--only-binary", ":all:",
+                     "--require-hashes", "-r", str(requirements)], "carla_baseline_dependencies", 180, env)
+            smoke = ("import importlib.metadata as m,json,cv2,numpy as np; "
+                     "assert m.version('opencv-python-headless')=='4.12.0.88'; "
+                     "assert m.version('numpy')=='2.2.6'; cv2.setNumThreads(1); "
+                     "assert cv2.cvtColor(np.zeros((2,2,3),dtype=np.uint8),cv2.COLOR_RGB2HSV).shape==(2,2,3); "
+                     "print(json.dumps({'opencv_package':m.version('opencv-python-headless'), "
+                     "'opencv':cv2.__version__, 'numpy':np.__version__, 'opencv_cuda_used':False}))")
+            runtime = command([python, "-c", smoke], "carla_baseline_runtime", 30, env, True)
+            report["baseline_runtime"] = json.loads(runtime.stdout.strip().splitlines()[-1])
 
         stage("server-download")
         if shutil.disk_usage(scratch).free < 35 * 2**30:
@@ -227,7 +291,7 @@ def main() -> int:
         binary = server / "CarlaUE4/Binaries/Linux/CarlaUE4-Linux-Shipping"
         if not launcher.is_file() or not binary.is_file():
             raise BootstrapFailure("official-package-layout-mismatch")
-        if WORKLOAD in ("week1", "driving"):
+        if WORKLOAD in ("week1", "driving", "baseline"):
             # Pin the unpacked package only; reuse the current Town01 in the
             # session instead of reloading a different map during capture.
             ini = server / "CarlaUE4/Config/DefaultEngine.ini"
@@ -292,9 +356,11 @@ def main() -> int:
                 raise BootstrapFailure("server-rpc-ready-timeout")
             time.sleep(1)
 
-        if WORKLOAD in ("week1", "driving"):
+        if WORKLOAD in ("week1", "driving", "baseline"):
             driving = WORKLOAD == "driving"
-            stage("D8-D10-privileged-driving-and-recovery-gate" if driving else "D6-D7-geometry-labels-and-week1-gate")
+            baseline = WORKLOAD == "baseline"
+            stage("camera-only-baseline-and-evaluation" if baseline else
+                  "D8-D10-privileged-driving-and-recovery-gate" if driving else "D6-D7-geometry-labels-and-week1-gate")
             project = scratch / "project"
             project.mkdir()
             if not PROJECT_SOURCES:
@@ -304,11 +370,14 @@ def main() -> int:
                 if path.resolve().is_relative_to(project.resolve()) is not True:
                     raise BootstrapFailure("embedded-project-path-invalid")
                 path.parent.mkdir(parents=True, exist_ok=True)
-                path.write_text(source, encoding="utf-8")
-            artifact = "driving" if driving else "week1"
-            script = "run_driving_pipeline.py" if driving else "run_week1_pipeline.py"
+                path.write_text(source, encoding="utf-8", newline="\n")
+            if baseline:
+                report["baseline_runtime_sources"] = export_baseline_runtime_sources(project, output, PROJECT_SOURCES)
+            artifact = "baseline" if baseline else "driving" if driving else "week1"
+            script = "run_baseline_pipeline.py" if baseline else "run_driving_pipeline.py" if driving else "run_week1_pipeline.py"
             command([python, str(project / "scripts" / script), "--output-dir", str(output / artifact)],
-                    "carla_driving" if driving else "carla_week1", 600 if driving else 480, env)
+                    "carla_baseline" if baseline else "carla_driving" if driving else "carla_week1",
+                    600 if (driving or baseline) else 480, env)
             gate = json.loads((output / artifact / (artifact + "_report.json")).read_text(encoding="utf-8"))
             if gate.get("status") != "PASS" or gate.get("gate", {}).get("status") != "PASS":
                 raise BootstrapFailure(artifact + "-evidence-not-pass")
@@ -353,6 +422,12 @@ def main() -> int:
                 report["cleanup_error"] = type(error).__name__
                 report["status"] = "FAIL"
         signal.signal(signal.SIGALRM, previous_handler)
+        if WORKLOAD == "baseline":
+            try:
+                preserve_baseline_failure_artifacts(output)
+            except Exception as error:
+                report["artifact_cleanup_error"] = type(error).__name__
+                report["status"] = "FAIL"
         report["elapsed_seconds"] = round(time.monotonic() - started, 2)
         report["server_stopped"] = process is None or process.poll() is not None
         (output / "kaggle_carla_bootstrap.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")

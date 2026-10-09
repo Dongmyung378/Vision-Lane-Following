@@ -188,7 +188,7 @@ def _write_rgb(directory, row, image):
                     "color_provenance": color_provenance(raw, rgb, image.width, image.height)}
 
 def run_drive_trial(route, case, condition, output_dir, collection_config, *, carla_module,
-                    validation_config=None, controller_config=None):
+                    validation_config=None, controller_config=None, trial_policy=None):
     """Stationary setup -> native measured geometry -> same-frame drive -> cleanup."""
     limits = validation_config or load_validation_config()
     control_cfg = controller_config or load_controller_config()
@@ -196,13 +196,16 @@ def run_drive_trial(route, case, condition, output_dir, collection_config, *, ca
     cfg_dict["vehicle"]["spawn_point_index"] = route["spawn_point_index"]
     cfg = collection_config_from_dict(cfg_dict)
     directory = Path(output_dir)
-    report = {"schema_version": 1, "status": "FAIL", "scope": SCOPE, "case": case,
+    scope = SCOPE if trial_policy is None else trial_policy.scope
+    report = {"schema_version": 1, "status": "FAIL", "scope": scope, "case": case,
               "condition": condition["name"], "episode_directory": directory.name}
-    metadata = {"schema_version": 1, "status": "RUNNING", "scope": SCOPE, "episode_id": directory.name,
+    metadata = {"schema_version": 1, "status": "RUNNING", "scope": scope, "episode_id": directory.name,
                 "geometry_case": case, "condition": condition, "route_contract": route,
                 "collection_config": cfg.to_dict(), "controller_config": control_cfg.to_dict(),
                 "controller_config_sha256": control_cfg.sha256, "validation_config": limits,
                 "started_utc": dt.datetime.now(dt.timezone.utc).isoformat()}
+    if trial_policy is not None:
+        trial_policy.configure_metadata(metadata)
     owned = False
     session, events = None, EventLog()
     rows, stage = [], "output-preflight"
@@ -288,7 +291,7 @@ def run_drive_trial(route, case, condition, output_dir, collection_config, *, ca
             controller = PurePursuitController(control_cfg, geometry)
             expected_control = cfg.vehicle.control.to_dict()
             start_time = None
-            stage = "privileged-driving"
+            stage = "privileged-driving" if trial_policy is None else "rgb-baseline-driving"
             with (directory / "steps.jsonl").open("x", encoding="utf-8", newline="\n") as log:
                 while True:
                     image, snapshot, row = _tick(session, cfg, images, previous)
@@ -309,24 +312,38 @@ def run_drive_trial(route, case, condition, output_dir, collection_config, *, ca
                                native_wheel_angles_deg={"front_left": float(session.vehicle.get_wheel_steer_angle(carla_module.VehicleWheelLocation.FL_Wheel)),
                                                        "front_right": float(session.vehicle.get_wheel_steer_angle(carla_module.VehicleWheelLocation.FR_Wheel))}, image=None)
                     start_time = row["timestamp"] if start_time is None else start_time
-                    row["command"] = controller.step(tracking["label"]["waypoints_ego_m"], speed)
-                    terminal = tracking["reference_arc_m"] >= limits["goal_reference_m"]
+                    if trial_policy is None:
+                        row["command"] = controller.step(tracking["label"]["waypoints_ego_m"], speed)
+                        terminal = tracking["reference_arc_m"] >= limits["goal_reference_m"]
+                    else:
+                        if hasattr(trial_policy, "privileged_command"):
+                            row["command"], row["perception"], row["latency_ms"] = trial_policy.privileged_command(
+                                tracking["label"], speed, controller)
+                        else:
+                            row["command"], row["perception"], row["latency_ms"] = trial_policy.command(image, speed, controller)
+                        logged_events, callback_errors = events.snapshot()
+                        row["evaluation_events"] = logged_events
+                        row["evaluation_callback_errors"] = callback_errors
+                        row["evaluation"] = trial_policy.observe(row, logged_events, callback_errors)
+                        terminal = row["evaluation"]["terminated"]
+                        row["termination_reason"] = row["evaluation"]["reason"]
                     row.update(terminal=terminal, command_source_frame=row["frame"], command_target_frame=None if terminal else row["frame"] + 1)
-                    if len(rows) % limits["image_stride"] == 0 or terminal:
+                    if trial_policy is not None or len(rows) % limits["image_stride"] == 0 or terminal:
                         _write_rgb(directory, row, image)
                     log.write(json.dumps(row, allow_nan=False, separators=(",", ":")) + "\n")
                     log.flush()
                     rows.append(row)
                     previous = row
                     logged_events, callback_errors = events.snapshot()
-                    if callback_errors or any(event["frame"] >= rows[0]["frame"] for event in logged_events):
-                        raise DrivingError("driving-collision-or-lane-event")
-                    if speed > limits["maximum_speed_mps"] or abs(tracking["lateral_error_m"]) > limits["maximum_lateral_error_m"]:
-                        raise DrivingError("driving-speed-or-lateral-limit")
-                    if row["body_lane_margin_m"] < limits["minimum_body_lane_margin_m"]:
-                        raise DrivingError("driving-body-outside-safe-lane-margin")
-                    if row["timestamp"] - start_time > limits["maximum_simulation_seconds"]:
-                        raise DrivingError("driving-simulation-timeout")
+                    if trial_policy is None:
+                        if callback_errors or any(event["frame"] >= rows[0]["frame"] for event in logged_events):
+                            raise DrivingError("driving-collision-or-lane-event")
+                        if speed > limits["maximum_speed_mps"] or abs(tracking["lateral_error_m"]) > limits["maximum_lateral_error_m"]:
+                            raise DrivingError("driving-speed-or-lateral-limit")
+                        if row["body_lane_margin_m"] < limits["minimum_body_lane_margin_m"]:
+                            raise DrivingError("driving-body-outside-safe-lane-margin")
+                        if row["timestamp"] - start_time > limits["maximum_simulation_seconds"]:
+                            raise DrivingError("driving-simulation-timeout")
                     if terminal:
                         break
                     expected_control = {key: row["command"][key] for key in expected_control}
@@ -354,7 +371,7 @@ def run_drive_trial(route, case, condition, output_dir, collection_config, *, ca
                                                 "front_right": float(session.vehicle.get_wheel_steer_angle(carla_module.VehicleWheelLocation.FR_Wheel))},
                     "body_lane_margin_m": body_lane_margin(pose, None, metadata["bounding_box"], route)}
                 metadata["stop_observations"].append(observation)
-                if observation["body_lane_margin_m"] < limits["minimum_body_lane_margin_m"]:
+                if trial_policy is None and observation["body_lane_margin_m"] < limits["minimum_body_lane_margin_m"]:
                     raise DrivingError("driving-stop-body-outside-safe-lane-margin")
                 return observation
             _apply_control(carla_module, session, stop_control)
@@ -386,13 +403,20 @@ def run_drive_trial(route, case, condition, output_dir, collection_config, *, ca
     events.seal(2.0)
     with events.publication():
         metadata["events"], metadata["event_callback_errors"] = events.snapshot()
-        if report["status"] == "PASS" and (metadata["event_callback_errors"] or
+        if report["status"] == "PASS" and trial_policy is None and (metadata["event_callback_errors"] or
                 any(event["frame"] >= rows[0]["frame"] for event in metadata["events"])):
             report.update(status="FAIL", error={"code": "driving-late-collision-or-lane-event", "stage": "cleanup", "exception_type": "DrivingError"})
             metadata.update(status="FAILED", error=report["error"])
         metadata["finished_utc"] = dt.datetime.now(dt.timezone.utc).isoformat()
         if session is not None:
             metadata["cleanup"] = session.cleanup_report
+        if trial_policy is not None:
+            try:
+                trial_policy.finalize(metadata, rows)
+            except Exception as error:
+                report.update(status="FAIL", error={"code": getattr(error, "code", "trial-evaluation-finalization-failed"),
+                                                    "stage": "evaluation-finalization", "exception_type": type(error).__name__})
+                metadata.update(status="FAILED", error=report["error"])
         if owned:
             write_report(directory / "episode.json", metadata)
     report["step_count"] = len(rows)

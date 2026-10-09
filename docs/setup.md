@@ -8,6 +8,7 @@ CARLA 서버와 Python API는 `0.9.16`으로 맞춘다. Windows 도구는 CPytho
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup_d2.ps1
+.\.venv\Scripts\python.exe -m pip install -r requirements-baseline.txt
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/carla_server.ps1 -Action Start
 .\.venv\Scripts\python.exe scripts/check_carla_connection.py --timeout 60 --ticks 3 --output results/local/carla_connection.json
 ```
@@ -40,4 +41,12 @@ py -3.12 scripts/doctor.py --output results/local/environment.json
 
 Kaggle에서는 GPU 작업 안에서 Linux CARLA 서버와 같은 버전의 client를 함께 실행한다. [bootstrap](../scripts/kaggle_carla_bootstrap.py)은 NVIDIA Vulkan 장치, 호환 Python 환경, RPC와 RGB 수집을 준비한다. CUDA 동작과 Vulkan 렌더링은 별도 조건이다.
 
+OpenCV baseline은 CPU 전용 NumPy·headless OpenCV를 사용한다. Kaggle baseline workload는 고정한 Linux wheel hash와 설치 version을 확인한다. RGB 주행과 reference 비교는 같은 native controller와 평가 설정을 사용하며, 실행 종료 후 owned 서버를 정리한다.
+
 인증은 별도 `.venv-kaggle` 환경의 Kaggle CLI에서 설정하며 인증정보를 코드·문서·제출 bundle에 넣지 않는다. 기존 notebook의 ID와 제목을 유지하고, 제출 전 읽기 전용 status/pull로 존재·접근·실행 상태를 확인한다. 접근 실패를 새 notebook 생성으로 대체하지 않는다. 준비 도구는 등록된 notebook의 metadata와 일치해야 하므로 임의 ID를 받지 않는다. 주행 bundle 준비와 다운로드 후 확인은 [주행 문서](driving.md)를 따른다.
+
+```powershell
+.\.venv\Scripts\python.exe scripts/prepare_kaggle_baseline.py --existing-metadata results/local/kaggle-existing/kernel-metadata.json --output-dir results/local/kaggle-baseline-bundle
+```
+
+이 명령은 제출 bundle만 준비한다. 기존 notebook을 갱신하여 실행한 뒤 `baseline_artifacts.zip`, bootstrap 보고서와 runtime source bundle을 로컬에 다운로드한다. [baseline](baseline.md)과 [평가](evaluation.md) 문서의 CPU 재검증으로 RGB 예측·제어·평가를 다시 확인한다.
