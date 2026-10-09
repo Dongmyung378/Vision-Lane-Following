@@ -31,6 +31,7 @@ Waypoint는 목표 차선 중심선을 따라 3·6·9·12·15m 앞의 점입니�
 - 실제 이동 RGB pilot 수집, route·scene 기반 분할과 공간 누수 검사.
 - 사전학습 ResNet18 waypoint 회귀, photometric augmentation, AMP와 상태 검증을 포함한 학습 재개.
 - 개발 데이터의 근거리·원거리 및 곡선·초기 편차별 예측 오차, coverage와 동일 RGB의 baseline 비교.
+- 선택 checkpoint의 계약·SHA-256 검사, 원본 RGB8 PNG의 로컬 예측 API와 JSON 출력.
 
 초기 범위는 Town01의 분기 없는 직선·좌곡선·우곡선, 고정 차량과 카메라, 맑은 날씨 및 다른 차량과 보행자가 없는 조건입니다. 교차로 의사결정, 차선 변경과 객체 회피는 포함하지 않습니다.
 
@@ -110,6 +111,12 @@ Pilot은 정답 경로 제어기로 실제 이동 중 수집하며, 학습용과
 모델은 원본 640 × 360 RGB를 입력받습니다. 전체 폭을 유지한 고정 영역 `[0, 144, 640, 360]`을 잘라 640 × 216 영상을 `INTER_AREA`로 320 × 180으로 변환하고 근거리·원거리 waypoint를 함께 회귀합니다. 라벨은 차량 actor 좌표계의 `5 × 2` 배열과 m 단위를 유지합니다. GPU 학습은 기존 Kaggle notebook의 pilot 출력을 연결해 실행합니다. 설치와 실행, checkpoint 재개 및 오차 해석은 [학습 문서](docs/learning.md)를 참고하세요. 학습 모델의 offline 예측 정확도와 실제 closed-loop 주행 성능은 별도로 검증합니다.
 
 `BaselineAssistedWaypointPredictor`는 유효한 OpenCV waypoint를 사용하고 검출에 실패하면 같은 RGB를 학습 모델에 전달하는 선택 옵션입니다. 순수 학습 모델과 이 옵션의 성능은 각각 평가하며, 경로 선택에는 정답 라벨이나 차량 위치를 사용하지 않습니다.
+
+선택한 `checkpoint.pt`로 simulator 없이 단일 원본 RGB8 PNG를 예측할 수 있습니다. `learned`가 기본 모드이며, 출력은 차량 actor 좌표계의 m 단위 waypoint입니다. 출력 파일은 새 경로를 사용합니다.
+
+```powershell
+.\.venv\Scripts\python.exe scripts/predict_waypoints.py --checkpoint results/local/waypoint-training/checkpoint.pt --image results/local/example-rgb.png --output results/local/local-inference/prediction.json --device cpu --mode learned
+```
 
 ## 테스트
 

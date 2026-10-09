@@ -119,6 +119,69 @@ an explicit failure with no retained previous path. Public documentation
 describes contracts and procedures; dataset artifacts, checkpoints and actual
 execution reports belong under `results/local/`.
 
+## Local checkpoint inference
+
+`carla_tools.inference.OfflineWaypointPredictor` restores a selected model once
+and predicts each original RGB frame independently. The loader checks the
+checkpoint's configuration, model contract, pretrained provenance and training
+source hashes. It rejects a `training-state` checkpoint: use `checkpoint.pt`
+for prediction and `last_checkpoint.pt` for training continuation. Optional
+SHA256 pins verify the selected checkpoint bytes and training dataset identity.
+
+```python
+from pathlib import Path
+from carla_tools.inference import OfflineWaypointPredictor
+
+predictor = OfflineWaypointPredictor(
+    Path("results/local/waypoint-training/checkpoint.pt"), device="cpu"
+)
+prediction = predictor.predict_rgb(rgb_uint8_640x360)
+```
+
+The PNG command checks the original image format, dimensions and RGB8 channels
+before preprocessing. Symlinks, grayscale, alpha channels and 16-bit images
+are rejected. Supply a new output path; an existing report is never replaced.
+
+```powershell
+.venv\Scripts\python.exe scripts/predict_waypoints.py --checkpoint results/local/waypoint-training/checkpoint.pt --image results/local/example-rgb.png --output results/local/local-inference/prediction.json --device cpu --mode learned
+```
+
+The JSON records the model identity, runtime and input image hash alongside the
+prediction. The default `learned` mode uses the CNN. Explicit `--mode assisted`
+uses the OpenCV-first policy described below and records which predictor ran.
+Both modes return five actor-origin points in metres. The model forward pass
+already applies its residual scale; multiply neither output axis by 15 again.
+No route, pose, speed or target label is supplied to this interface. A failed
+frame returns no path, including after an earlier successful prediction.
+
+## Selecting a development checkpoint
+
+Within a training run, the lowest held-out development SmoothL1 selects the
+checkpoint. Compare different runs using the same frozen development sample
+IDs, original image hashes, metre labels and failure accounting. Check complete
+coverage first, then compare near and far metre errors together with geometry,
+initial-condition groups, p95 errors and prediction overlays. Record the
+selection rule and every rejected candidate locally; changing a rule after
+examining development results is a development decision that must be recorded.
+Never use the reserved final town to choose a model.
+
+Report pure CNN and OpenCV-assisted results separately. An assisted mean does
+not replace the CNN's error or establish its performance on a difficult curve.
+Selecting the best available development checkpoint does not imply that all
+accuracy targets pass or that closed-loop driving has been validated. Preserve
+such failures and inspect them before connecting the model to vehicle control.
+
+Before handoff, verify the image/label contract, a real small-batch loss decrease,
+checkpoint continuation, fixed development errors and visual review. Record
+completed epochs, selected epoch, measured training time, device, AMP and the
+reason training stopped. Keep execution duration separate from remote waiting
+time and compare costs only alongside the actual configuration and data size.
+Retain the selected model and the last continuation state as separate artifacts.
+An inference summary distinguishes the checkpoint execution epoch from the
+epoch that selected the best model. When continuation finds no better model,
+the new selected file retains earlier best weights even though its training
+history extends to a later execution epoch.
+
 ## Optional OpenCV-assisted inference
 
 `carla_tools.rgb_predictor.BaselineAssistedWaypointPredictor` first runs the
