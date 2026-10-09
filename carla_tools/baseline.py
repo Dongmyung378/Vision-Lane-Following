@@ -16,7 +16,7 @@ from typing import Any
 
 from .contracts import read_strict_json
 
-BASELINE_VERSION = "vlf-opencv-lane-v1"
+BASELINE_VERSION = "vlf-opencv-lane-v2"
 DEFAULT_BASELINE_PATH = Path(__file__).resolve().parents[1] / "configs" / "baseline.json"
 HORIZONS_M = (3.0, 6.0, 9.0, 12.0, 15.0)
 
@@ -243,7 +243,29 @@ def _curve(coefficients, x):
     return y, first, second
 
 
-def _yellow_component_curve(mask, grid, config):
+def _observed_circle_tangent(near, far, far_tangent):
+    """Near tangent of the circle through two RGB-observed paint centers.
+
+    A circle's two endpoint tangents are mirror images about its chord. The
+    reflection also covers the straight-line limit without an unstable solve.
+    The far tangent is oriented toward increasing path distance beforehand.
+    """
+    _, np = _dependencies()
+    chord = np.asarray(far, dtype=float) - np.asarray(near, dtype=float)
+    distance = float(np.linalg.norm(chord))
+    tangent = np.asarray(far_tangent, dtype=float)
+    magnitude = float(np.linalg.norm(tangent))
+    if distance <= 1e-6 or magnitude <= 1e-6 or not np.isfinite(chord).all() or not np.isfinite(tangent).all():
+        raise BaselineError("baseline-observed-circle-degenerate")
+    direction, tangent = chord / distance, tangent / magnitude
+    if float(direction @ tangent) < 0:
+        tangent = -tangent
+    near_tangent = 2 * float(direction @ tangent) * direction - tangent
+    curvature = 2 * float(direction[0] * tangent[1] - direction[1] * tangent[0]) / distance
+    return near_tangent, tangent, curvature
+
+
+def _yellow_component_curve(mask, grid, config, image=None):
     """Trace elongated paint components, preserving curved-path ordering.
 
     A forward graph and local paint tangents permit a bend whose X coordinate
@@ -251,6 +273,7 @@ def _yellow_component_curve(mask, grid, config):
     """
     cv2, np = _dependencies()
     count, labels, statistics, _ = cv2.connectedComponentsWithStats(mask.astype(np.uint8), 8)
+    hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV) if image is not None else None
     components = []
     for index in range(1, count):
         area = int(statistics[index, cv2.CC_STAT_AREA])
@@ -269,34 +292,55 @@ def _yellow_component_curve(mask, grid, config):
             continue
         if tangent[0] < 0:
             tangent = -tangent
-        components.append({"center": center, "tangent": tangent, "pixels": area, "uncertain_tangent": uncertain_tangent})
+        hue = float(np.median(hsv[select, 0])) if hsv is not None else None
+        components.append({"center": center, "tangent": tangent, "pixels": area,
+                           "uncertain_tangent": uncertain_tangent, "hue": hue})
     starts = [item for item in components if 2.5 <= item["center"][0] <= 14 and -4.5 < item["center"][1] < -0.3]
     if not starts:
         raise BaselineError("baseline-near-yellow-boundary-not-observed")
     starts.sort(key=lambda item: float(np.linalg.norm(item["center"])))
     first = starts[0]
+    if any(item is not first and abs(item["center"][0] - first["center"][0]) < 1.0
+           and abs(item["center"][1] - first["center"][1]) > .5
+           and abs(float(np.linalg.norm(item["center"])) - float(np.linalg.norm(first["center"]))) < 1.5
+           for item in starts):
+        raise BaselineError("baseline-competing-near-yellow-boundaries")
+    # Colour is compared with the *observed* near paint, not a Town/map colour.
+    # HSV hue is stable under multiplicative shadows unlike a value threshold.
+    rejected_color = 0
+    if first["hue"] is not None:
+        selected = [item for item in components if abs(item["hue"] - first["hue"]) <= 7]
+        rejected_color = len(components) - len(selected)
+        components = selected
+    near_heading_model = "observed-near-paint-PCA"
+    inferred_near_curvature = None
     if first["uncertain_tangent"]:
         # A dash clipped by the image bottom supplies position but not heading.
-        # Infer its tangent from a local circle through three *observed* paint
-        # centroids; this does not read or invent a simulator reference path.
-        later = sorted((item for item in components if item is not first and item["center"][0] > first["center"][0]),
-                       key=lambda item: float(np.linalg.norm(item["center"]-first["center"])))
-        if len(later) < 2:
+        # Associate the far paint geometrically *before* estimating a tangent.
+        # Two observed centers plus the far paint's measured tangent suffice;
+        # arbitrary nearest background colour cannot become a third anchor.
+        later = []
+        for item in components:
+            if item is first or item["uncertain_tangent"]:
+                continue
+            delta = item["center"] - first["center"]
+            gap = float(np.linalg.norm(delta))
+            if not 1 <= gap <= 16 or delta[0] <= .5:
+                continue
+            near_tangent, far_tangent, curvature = _observed_circle_tangent(
+                first["center"], item["center"], item["tangent"])
+            if (near_tangent[0] <= 0 or abs(math.degrees(math.atan2(near_tangent[1], near_tangent[0]))) > 35 or
+                    abs(curvature) > config.maximum_curvature_per_m):
+                continue
+            score = gap + 4 * (1 - near_tangent[0]) + 4 * (1 - float(far_tangent @ (delta/gap)))
+            later.append((score, item, near_tangent, curvature))
+        if not later:
             raise BaselineError("baseline-clipped-near-marking-heading-unresolved")
-        a, b, c = first["center"], later[0]["center"], later[1]["center"]
-        matrix = 2*np.stack((b-a, c-a))
-        if abs(float(np.linalg.det(matrix))) < 0.5:
-            tangent = later[0]["tangent"]
-        else:
-            circle = np.linalg.solve(matrix, np.array([b@b-a@a, c@c-a@a]))
-            radial = a-circle
-            if not 5 <= float(np.linalg.norm(radial)) <= 100:
-                raise BaselineError("baseline-clipped-near-marking-circle-invalid")
-            tangent = np.array([-radial[1], radial[0]])
-            tangent /= np.linalg.norm(tangent)
-            if tangent[0] < 0:
-                tangent = -tangent
-        first["tangent"] = tangent
+        later.sort(key=lambda candidate: candidate[0])
+        if len(later) > 1 and later[1][0] - later[0][0] < .8:
+            raise BaselineError("baseline-clipped-near-marking-association-ambiguous")
+        _, _, first["tangent"], inferred_near_curvature = later[0]
+        near_heading_model = "two-observed-centers-and-far-observed-tangent-circle"
     if abs(math.degrees(math.atan2(first["tangent"][1], first["tangent"][0]))) > 35:
         raise BaselineError("baseline-near-marking-heading-ambiguous")
     chain = [first]
@@ -367,6 +411,11 @@ def _yellow_component_curve(mask, grid, config):
                    "dash_centers_ego_m": [item["center"].tolist() for item in chain],
                    "dash_tangents_ego": [item["tangent"].tolist() for item in chain],
                    "curve_model": "ordered-paint-tangent-cubic-Hermite",
+                   "paint_hue_consistency_tolerance": 7,
+                   "observed_near_paint_hue": first["hue"],
+                   "rejected_color_components": rejected_color,
+                   "near_heading_model": near_heading_model,
+                   "inferred_near_boundary_curvature_per_m": inferred_near_curvature,
                    "near_blind_zone_model": "backward-extension-of-observed-nearest-paint-tangent",
                    "allowed_far_extrapolation_m": config.maximum_far_extrapolation_m}
     return centerline, diagnostics
@@ -441,7 +490,7 @@ class OpenCVLanePredictor:
         yellow, white = _marking_mask(image, config, self._grid)
         diagnostics.update(yellow_pixel_count=int(yellow.sum()), white_pixel_count=int(white.sum()))
         if yellow.sum() >= config.minimum_marking_pixels:
-            centerline, fit = _yellow_component_curve(yellow, self._grid, config)
+            centerline, fit = _yellow_component_curve(yellow, self._grid, config, image)
             diagnostics.update(boundary_mode="yellow-left-plus-nominal-width", observed_boundary="left-yellow",
                                inferred_boundary="right", lane_width_source="fixed-nominal-prior",
                                lane_width_m=config.nominal_lane_width_m, confidence="single-boundary-prior", **fit)

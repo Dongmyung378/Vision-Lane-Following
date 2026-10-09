@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import argparse
 import ast
+import base64
 import hashlib
 import json
+import zlib
 from pathlib import Path
 
 
@@ -31,10 +33,14 @@ BASELINE_SOURCES = (
     "carla_tools/evaluation.py", "scripts/run_baseline_pipeline.py", "scripts/verify_baseline.py",
     "configs/baseline.json", "configs/evaluation.json", "requirements-baseline.txt",
 )
+PILOT_SOURCES = (
+    "carla_tools/pilot.py", "carla_tools/splits.py", "configs/pilot.json",
+    "scripts/run_pilot_pipeline.py", "scripts/verify_pilot.py",
+)
 
 
 def prepare(existing_metadata: Path, output_dir: Path, *, workload="week1") -> dict:
-    if workload not in ("week1", "driving", "baseline"):
+    if workload not in ("week1", "driving", "baseline", "pilot"):
         raise ValueError("unsupported-existing-notebook-workload")
     metadata = json.loads(existing_metadata.read_text(encoding="utf-8"))
     if not isinstance(metadata, dict):
@@ -46,10 +52,12 @@ def prepare(existing_metadata: Path, output_dir: Path, *, workload="week1") -> d
     sources = {}
     manifest = {}
     selected = SOURCES
-    if workload in ("driving", "baseline"):
+    if workload in ("driving", "baseline", "pilot"):
         selected += DRIVING_SOURCES
-    if workload == "baseline":
+    if workload in ("baseline", "pilot"):
         selected += BASELINE_SOURCES
+    if workload == "pilot":
+        selected += PILOT_SOURCES
     for relative in selected:
         source = (ROOT / relative).read_text(encoding="utf-8")
         if relative.endswith(".py"):
@@ -68,10 +76,25 @@ def prepare(existing_metadata: Path, output_dir: Path, *, workload="week1") -> d
     vulkan = (ROOT / "scripts/kaggle_vulkan_probe.py").read_text(encoding="utf-8")
     function = next(node for node in ast.parse(vulkan).body if isinstance(node, ast.FunctionDef) and node.name == "vulkan_devices")
     child = "import ctypes,ctypes.util,struct,json\n" + ast.get_source_segment(vulkan, function) + "\nprint(json.dumps(vulkan_devices()))\n"
+    if sources:
+        # Kaggle limits script source size. JSON compression transports the
+        # same audited UTF-8 source bytes; no executable serialization is used.
+        payload = json.dumps(sources, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        project_sources = ("\nimport base64,zlib\nPROJECT_SOURCES_PACKED = " +
+                          repr(base64.b64encode(zlib.compress(payload, level=9)).decode("ascii")) +
+                          "\nPROJECT_PAYLOAD_SHA256 = " + repr(hashlib.sha256(payload).hexdigest()) +
+                          "\n_project_payload = zlib.decompress(base64.b64decode(PROJECT_SOURCES_PACKED, validate=True))" +
+                          "\nif hashlib.sha256(_project_payload).hexdigest() != PROJECT_PAYLOAD_SHA256:" +
+                          "\n    raise SystemExit('embedded-project-transport-hash-mismatch')" +
+                          "\nPROJECT_SOURCES = json.loads(_project_payload.decode('utf-8'))\n")
+    else:
+        project_sources = "\nPROJECT_SOURCES = " + repr(sources)
     code = (bootstrap + "\nPROBE_SOURCE = " + repr(sources["scripts/carla_rgb_probe.py"]) +
-            "\nVULKAN_CHILD_SOURCE = " + repr(child) + "\nPROJECT_SOURCES = " + repr(sources) +
+            "\nVULKAN_CHILD_SOURCE = " + repr(child) + project_sources +
             "\nWORKLOAD = " + repr(workload) + "\nraise SystemExit(main())\n")
     compile(code, "week1.py", "exec")
+    if len(code.encode("utf-8")) >= 1_000_000:
+        raise ValueError("kaggle-script-source-size-exceeded")
     # Copy only submission fields. Credentials and machine-local configuration
     # cannot enter the package through an arbitrary metadata key.
     submission = {"id": metadata["id"], "title": metadata["title"], "code_file": "week1.py",
@@ -87,7 +110,8 @@ def prepare(existing_metadata: Path, output_dir: Path, *, workload="week1") -> d
     output_dir.mkdir(parents=True, exist_ok=False)
     (output_dir / "week1.py").write_text(code, encoding="utf-8", newline="\n")
     (output_dir / "kernel-metadata.json").write_text(json.dumps(submission, indent=2) + "\n", encoding="utf-8", newline="\n")
-    workload_label = {"week1": "D6-D7-week1", "driving": "D8-D10-privileged-driving", "baseline": "camera-only-opencv-baseline"}[workload]
+    workload_label = {"week1": "D6-D7-week1", "driving": "D8-D10-privileged-driving",
+                      "baseline": "camera-only-opencv-baseline", "pilot": "moving-rgb-waypoint-pilot"}[workload]
     bundle = {"notebook_id": submission["id"], "title": submission["title"], "workload": workload_label,
               "code_sha256": hashlib.sha256(code.encode("utf-8")).hexdigest(), "source_sha256": manifest,
               "submitted": False, "creates_new_notebook": False}

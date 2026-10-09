@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "dataset_version": "moving-pilot-v1",
+  "minimum_samples": 2000,
+  "maximum_samples": 5000,
+  "minimum_train_samples": 1400,
+  "minimum_dev_samples": 500,
+  "minimum_speed_mps": 0.2,
+  "minimum_step_distance_m": 0.005,
+  "scene_buffer_m": 75.0,
+  "train_routes_per_case": {"straight": 2, "left_curve": 1, "right_curve": 1},
+  "dev_routes_per_case": {"straight": 1, "left_curve": 1, "right_curve": 1},
+  "conditions": [
+    {"name": "center", "lateral_m": 0.0, "yaw_deg": 0.0},
+    {"name": "left_offset", "lateral_m": -0.3, "yaw_deg": 0.0},
+    {"name": "right_offset", "lateral_m": 0.3, "yaw_deg": 0.0},
+    {"name": "left_yaw", "lateral_m": 0.0, "yaw_deg": -5.0},
+    {"name": "right_yaw", "lateral_m": 0.0, "yaw_deg": 5.0}
+  ]
+}

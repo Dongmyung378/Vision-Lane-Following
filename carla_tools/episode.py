@@ -14,6 +14,7 @@ import os
 import re
 import struct
 import tempfile
+import time
 import zlib
 from pathlib import Path
 from typing import Any
@@ -126,6 +127,23 @@ def _is_link(path: Path) -> bool:
     return path.is_symlink() or getattr(path, "is_junction", lambda: False)()
 
 
+def _replace_file(source: Path, destination: Path) -> None:
+    """Bound retries for observed Windows access denial during replacement.
+
+    Keep the same complete temporary file and atomic replacement operation.
+    Permanent denial and other failures still propagate to the episode's
+    failure handling; exclusive image publication never uses this helper.
+    """
+    for attempt in range(3):
+        try:
+            os.replace(source, destination)
+            return
+        except PermissionError as error:
+            if getattr(error, "winerror", None) != 5 or attempt == 2:
+                raise
+            time.sleep(0.01 * (attempt + 1))
+
+
 def _atomic_bytes(path: Path, content: bytes, *, exclusive: bool) -> None:
     temporary = None
     try:
@@ -139,7 +157,7 @@ def _atomic_bytes(path: Path, content: bytes, *, exclusive: bool) -> None:
             # refuses an existing destination on Windows and POSIX.
             os.link(temporary, path)
         else:
-            os.replace(temporary, path)
+            _replace_file(temporary, path)
     finally:
         if temporary is not None:
             temporary.unlink(missing_ok=True)

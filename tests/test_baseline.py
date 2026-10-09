@@ -14,6 +14,7 @@ from unittest.mock import patch
 from carla_tools.baseline import (
     BaselineConfig, BaselineError, OpenCVLanePredictor, baseline_config_from_dict,
     load_baseline_config, nominal_ground_to_pixels, overlay_baseline,
+    _observed_circle_tangent,
 )
 
 try:
@@ -138,6 +139,55 @@ class BaselinePredictionTests(unittest.TestCase):
             with self.subTest(shadow=shadow, outliers=outliers):
                 image, expected = scene(shadow=shadow, outliers=outliers)
                 self.assert_prediction(image, expected)
+
+    def test_two_observed_centers_and_far_tangent_resolve_circle_both_signs(self):
+        for curvature in (-.1, -.04, 0., .04, .1):
+            with self.subTest(curvature=curvature):
+                arc = 6.0
+                near = np.array([4., -2.])
+                if curvature:
+                    angle = curvature*arc
+                    far = near + np.array([math.sin(angle)/curvature, (1-math.cos(angle))/curvature])
+                    observed_far_tangent = np.array([math.cos(angle), math.sin(angle)])
+                else:
+                    far, observed_far_tangent = near+np.array([arc, 0.]), np.array([1., 0.])
+                tangent, oriented_far, measured_curvature = _observed_circle_tangent(near, far, -observed_far_tangent)
+                np.testing.assert_allclose(tangent, [1., 0.], atol=1e-12)
+                np.testing.assert_allclose(oriented_far, observed_far_tangent, atol=1e-12)
+                self.assertAlmostEqual(measured_curvature, curvature, places=12)
+        with self.assertRaises(BaselineError):
+            _observed_circle_tangent([1., 2.], [1., 2.], [1., 0.])
+
+    def test_other_observed_paint_hues_and_shadow_have_no_native_colour_lookup(self):
+        for hue in (10, 24, 35):
+            with self.subTest(hue=hue):
+                image, expected = scene(shadow=True)
+                hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
+                paint = (hsv[:, :, 1] > 120) & (hsv[:, :, 2] > 70)
+                hsv[paint, 0] = hue
+                image = cv2.cvtColor(hsv, cv2.COLOR_HSV2RGB)
+                result = self.assert_prediction(image, expected)
+                self.assertAlmostEqual(result["diagnostics"]["observed_near_paint_hue"], hue, delta=1)
+
+    def test_elongated_yellow_background_with_different_hue_not_linked_as_paint(self):
+        image, expected = scene()
+        # Several large elongated distractors, rather than single noise pixels.
+        # They lie on the right in the ground ROI and use a different yellow.
+        for start in (330, 370, 410):
+            cv2.line(image, (start, 205), (start+55, 235), (150, 180, 0), 5)
+        result = self.assert_prediction(image, expected)
+        self.assertGreater(result["diagnostics"]["rejected_color_components"], 0)
+
+    def test_competing_near_yellow_boundaries_are_refused(self):
+        image, _ = scene()
+        # A second independent near-boundary paint strip must not silently
+        # redefine which lane contains the vehicle.
+        points = [[4.3, -3.1], [6.0, -3.1]]
+        uv, _ = nominal_ground_to_pixels(points, self.predictor.config)
+        cv2.line(image, tuple(np.rint(uv[0]).astype(int)), tuple(np.rint(uv[1]).astype(int)), (255, 185, 0), 8)
+        result = self.predictor.predict(image)
+        self.assertEqual(result["status"], "FAIL", result)
+        self.assertIsNone(result["waypoints_ego_m"])
 
     def test_paired_white_and_lane_width_rejection(self):
         image, expected = scene(kind="white")

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import ast
+import base64
 import contextlib
 import hashlib
 import io
@@ -12,6 +13,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import zlib
 from pathlib import Path, PurePosixPath
 from unittest.mock import patch
 
@@ -31,6 +33,11 @@ def literal_assignments(source: str) -> dict:
             for target in node.targets:
                 if isinstance(target, ast.Name):
                     values[target.id] = value
+    if "PROJECT_SOURCES_PACKED" in values:
+        payload = zlib.decompress(base64.b64decode(values["PROJECT_SOURCES_PACKED"], validate=True))
+        if hashlib.sha256(payload).hexdigest() != values["PROJECT_PAYLOAD_SHA256"]:
+            raise ValueError("embedded-project-transport-hash-mismatch")
+        values["PROJECT_SOURCES"] = json.loads(payload.decode("utf-8"))
     return values
 
 

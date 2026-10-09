@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "baseline_version": "vlf-opencv-lane-v1",
+  "baseline_version": "vlf-opencv-lane-v2",
   "image_width": 640,
   "image_height": 360,
   "fov_deg": 90.0,

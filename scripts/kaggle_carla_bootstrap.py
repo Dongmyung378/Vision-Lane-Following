@@ -49,10 +49,12 @@ class BootstrapFailure(RuntimeError):
     pass
 
 
-def export_baseline_runtime_sources(project: Path, output: Path, sources: dict) -> dict:
+def export_baseline_runtime_sources(project: Path, output: Path, sources: dict, *, artifact="baseline") -> dict:
     """Keep the actual materialized runtime source bytes available for CPU audit."""
     manifest = {}
-    with zipfile.ZipFile(output / "baseline_runtime_sources.zip", "x",
+    if artifact not in ("baseline", "pilot"):
+        raise BootstrapFailure("runtime-source-artifact-invalid")
+    with zipfile.ZipFile(output / f"{artifact}_runtime_sources.zip", "x",
                          compression=zipfile.ZIP_DEFLATED, compresslevel=1) as archive:
         for relative in sorted(sources):
             path = project / relative
@@ -66,14 +68,16 @@ def export_baseline_runtime_sources(project: Path, output: Path, sources: dict) 
             manifest[relative] = actual
             archive.writestr(relative, data)
     report = {"schema_version": 1, "source_sha256": manifest}
-    (output / "baseline_runtime_source_manifest.json").write_text(
+    (output / f"{artifact}_runtime_source_manifest.json").write_text(
         json.dumps(report, indent=2) + "\n", encoding="utf-8")
     return report
 
 
-def preserve_baseline_failure_artifacts(output: Path) -> None:
+def preserve_baseline_failure_artifacts(output: Path, *, artifact="baseline") -> None:
     """Archive partial native output even when the pipeline times out or crashes."""
-    directory, destination = output / "baseline", output / "baseline_artifacts.zip"
+    if artifact not in ("baseline", "pilot"):
+        raise BootstrapFailure("failure-artifact-invalid")
+    directory, destination = output / artifact, output / f"{artifact}_artifacts.zip"
     if destination.exists():
         if destination.is_symlink() or not destination.is_file():
             raise BootstrapFailure("baseline-artifact-destination-invalid")
@@ -85,19 +89,20 @@ def preserve_baseline_failure_artifacts(output: Path) -> None:
     with zipfile.ZipFile(destination, "x", compression=zipfile.ZIP_DEFLATED, compresslevel=1) as archive:
         for path in sorted(directory.rglob("*")):
             if path.is_file() and not path.is_symlink() and path.resolve().is_relative_to(directory.resolve()):
-                archive.write(path, Path("baseline") / path.relative_to(directory))
+                archive.write(path, Path(artifact) / path.relative_to(directory))
 
 
 def main() -> int:
     output = Path("/kaggle/working")
     output.mkdir(parents=True, exist_ok=True)
     started = time.monotonic()
-    deadline = started + MAX_SECONDS
+    maximum_seconds = 2400 if WORKLOAD == "pilot" else MAX_SECONDS
+    deadline = started + maximum_seconds
     scratch = Path(tempfile.mkdtemp(prefix="vlf_carla_", dir="/tmp"))
     scratch.chmod(0o755)
     report = {"schema_version": 1, "status": "FAIL", "stage": "initializing",
               "carla_rgb_verified": False, "python": platform.python_version(),
-              "stages": [], "max_seconds": MAX_SECONDS}
+              "stages": [], "max_seconds": maximum_seconds}
     process = None
     previous_handler = signal.getsignal(signal.SIGALRM)
 
@@ -105,7 +110,7 @@ def main() -> int:
         raise BootstrapFailure("total-time-limit")
 
     signal.signal(signal.SIGALRM, expired)
-    signal.alarm(MAX_SECONDS)
+    signal.alarm(maximum_seconds)
 
     def remaining(limit: float) -> float:
         value = min(limit, deadline - time.monotonic())
@@ -141,7 +146,7 @@ def main() -> int:
                 "carla_apt_install", 180, env)
 
     try:
-        if sys.platform != "linux" or not PROBE_SOURCE or not VULKAN_CHILD_SOURCE or WORKLOAD not in ("rgb", "week1", "driving", "baseline"):
+        if sys.platform != "linux" or not PROBE_SOURCE or not VULKAN_CHILD_SOURCE or WORKLOAD not in ("rgb", "week1", "driving", "baseline", "pilot"):
             raise BootstrapFailure("linux-and-embedded-probes-required")
         report["workload"] = WORKLOAD
         stage("vulkan-preflight")
@@ -206,7 +211,7 @@ def main() -> int:
         python = str(venv / "bin" / "python")
         command([uv, "pip", "install", "--python", python, "--only-binary", ":all:",
                  "carla==0.9.16"], "carla_client_install", 180, env)
-        if WORKLOAD == "baseline":
+        if WORKLOAD in ("baseline", "pilot"):
             stage("camera-baseline-runtime-install")
             requirements = scratch / "baseline-runtime-requirements.txt"
             requirements.write_text("\n".join(
@@ -291,7 +296,7 @@ def main() -> int:
         binary = server / "CarlaUE4/Binaries/Linux/CarlaUE4-Linux-Shipping"
         if not launcher.is_file() or not binary.is_file():
             raise BootstrapFailure("official-package-layout-mismatch")
-        if WORKLOAD in ("week1", "driving", "baseline"):
+        if WORKLOAD in ("week1", "driving", "baseline", "pilot"):
             # Pin the unpacked package only; reuse the current Town01 in the
             # session instead of reloading a different map during capture.
             ini = server / "CarlaUE4/Config/DefaultEngine.ini"
@@ -356,10 +361,11 @@ def main() -> int:
                 raise BootstrapFailure("server-rpc-ready-timeout")
             time.sleep(1)
 
-        if WORKLOAD in ("week1", "driving", "baseline"):
+        if WORKLOAD in ("week1", "driving", "baseline", "pilot"):
             driving = WORKLOAD == "driving"
             baseline = WORKLOAD == "baseline"
-            stage("camera-only-baseline-and-evaluation" if baseline else
+            pilot = WORKLOAD == "pilot"
+            stage("moving-rgb-waypoint-pilot-and-split-validation" if pilot else "camera-only-baseline-and-evaluation" if baseline else
                   "D8-D10-privileged-driving-and-recovery-gate" if driving else "D6-D7-geometry-labels-and-week1-gate")
             project = scratch / "project"
             project.mkdir()
@@ -373,16 +379,23 @@ def main() -> int:
                 path.write_text(source, encoding="utf-8", newline="\n")
             if baseline:
                 report["baseline_runtime_sources"] = export_baseline_runtime_sources(project, output, PROJECT_SOURCES)
-            artifact = "baseline" if baseline else "driving" if driving else "week1"
-            script = "run_baseline_pipeline.py" if baseline else "run_driving_pipeline.py" if driving else "run_week1_pipeline.py"
+            if pilot:
+                report["pilot_runtime_sources"] = export_baseline_runtime_sources(project, output, PROJECT_SOURCES, artifact="pilot")
+            artifact = "pilot" if pilot else "baseline" if baseline else "driving" if driving else "week1"
+            script = "run_pilot_pipeline.py" if pilot else "run_baseline_pipeline.py" if baseline else "run_driving_pipeline.py" if driving else "run_week1_pipeline.py"
             command([python, str(project / "scripts" / script), "--output-dir", str(output / artifact)],
-                    "carla_baseline" if baseline else "carla_driving" if driving else "carla_week1",
-                    600 if (driving or baseline) else 480, env)
+                    "carla_pilot" if pilot else "carla_baseline" if baseline else "carla_driving" if driving else "carla_week1",
+                    1800 if pilot else 600 if (driving or baseline) else 480, env)
             gate = json.loads((output / artifact / (artifact + "_report.json")).read_text(encoding="utf-8"))
             if gate.get("status") != "PASS" or gate.get("gate", {}).get("status") != "PASS":
                 raise BootstrapFailure(artifact + "-evidence-not-pass")
             report[artifact + "_verified"] = True
-            report[artifact] = {key: gate[key] for key in ("status", "episode_count", "frame_count", "gate")}
+            fields = (("status", "native_frame_count", "sample_count", "split_counts", "route_count", "gate")
+                      if pilot else ("status", "episode_count", "frame_count", "gate"))
+            report[artifact] = {key: gate[key] for key in fields}
+            if pilot:
+                report[artifact].update(episode_count=gate["gate"]["episode_count"],
+                                        frame_count=gate["native_frame_count"])
         else:
             stage("rgb-probe")
             probe_file = scratch / "carla_rgb_probe.py"
@@ -425,6 +438,12 @@ def main() -> int:
         if WORKLOAD == "baseline":
             try:
                 preserve_baseline_failure_artifacts(output)
+            except Exception as error:
+                report["artifact_cleanup_error"] = type(error).__name__
+                report["status"] = "FAIL"
+        if WORKLOAD == "pilot":
+            try:
+                preserve_baseline_failure_artifacts(output, artifact="pilot")
             except Exception as error:
                 report["artifact_cleanup_error"] = type(error).__name__
                 report["status"] = "FAIL"

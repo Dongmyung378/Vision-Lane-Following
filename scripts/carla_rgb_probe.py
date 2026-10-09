@@ -53,10 +53,19 @@ def rgb_from_bgra(raw: bytes, width: int, height: int) -> tuple[bytes, dict[str,
         raise ProbeFailure("invalid-image-dimensions")
     if len(raw) != width * height * 4:
         raise ProbeFailure("invalid-bgra-length")
-    rgb = bytearray(width * height * 3)
-    rgb[0::3], rgb[1::3], rgb[2::3] = raw[2::4], raw[1::4], raw[0::4]
-    channels = (rgb[0::3], rgb[1::3], rgb[2::3])
-    ranges = [(min(channel), max(channel)) for channel in channels]
+    try:
+        import numpy as np
+    except ImportError:
+        np = None
+    if np is None:
+        rgb = bytearray(width * height * 3)
+        rgb[0::3], rgb[1::3], rgb[2::3] = raw[2::4], raw[1::4], raw[0::4]
+        channels = (rgb[0::3], rgb[1::3], rgb[2::3])
+        ranges = [(min(channel), max(channel)) for channel in channels]
+    else:
+        pixels = np.frombuffer(raw, dtype=np.uint8).reshape(-1, 4)[:, [2, 1, 0]]
+        ranges = list(zip(pixels.min(axis=0).tolist(), pixels.max(axis=0).tolist()))
+        rgb = pixels.tobytes()
     if not any(low != high for low, high in ranges):
         raise ProbeFailure("spatially-constant-rgb")
     return bytes(rgb), {

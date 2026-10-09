@@ -96,7 +96,7 @@ def _stopping(metadata, last, route):
             "minimum_stopping_body_lane_margin_m": min(margins)}
 
 
-def validate_baseline_episode(episode_path: str | Path) -> dict:
+def validate_baseline_episode(episode_path: str | Path, *, allowed_conditions=None) -> dict:
     """Read unchanged source bytes and reconstruct RGB predictions independently."""
     root = Path(episode_path)
     report = {"status": "FAIL", "scope": SCOPE, "gate_version": GATE_VERSION, "errors": []}
@@ -127,8 +127,17 @@ def validate_baseline_episode(episode_path: str | Path) -> dict:
         from .driving import load_validation_config
         policy = load_validation_config()
         _require(_same(metadata["validation_config"], policy), "baseline-native-validation-policy-mismatch")
-        expected_condition = next(condition for condition in policy["initial_conditions"] if condition["name"] == "center")
-        _require(_same(metadata["condition"], expected_condition), "baseline-condition-invalid")
+        approved_conditions = policy["initial_conditions"]
+        if allowed_conditions is None:
+            permitted_conditions = [next(condition for condition in approved_conditions if condition["name"] == "center")]
+        else:
+            _require(isinstance(allowed_conditions, (list, tuple)) and 1 <= len(allowed_conditions) <= len(approved_conditions)
+                     and all(any(_same(condition, approved) for approved in approved_conditions)
+                             for condition in allowed_conditions)
+                     and len({canonical_sha256(condition) for condition in allowed_conditions}) == len(allowed_conditions),
+                     "baseline-allowed-conditions-invalid")
+            permitted_conditions = allowed_conditions
+        _require(any(_same(metadata["condition"], condition) for condition in permitted_conditions), "baseline-condition-invalid")
         baseline_config = baseline_config_from_dict(metadata["baseline_config"])
         evaluation_config = evaluation_config_from_dict(metadata["evaluation_config"])
         controller_config = controller_config_from_dict(metadata["controller_config"])
@@ -204,9 +213,11 @@ def validate_baseline_episode(episode_path: str | Path) -> dict:
             validate_waypoint_label(row["tracking"]["label"], {"frame": frame, "vehicle": {"transform": pose}},
                                     {"route_id": route["route_id"], "route_contract": route})
             if index == 0:
+                condition = metadata["condition"]
+                yaw_error = (tracking["heading_error_deg"] - condition["yaw_deg"] + 180.) % 360. - 180.
                 _require(abs(tracking["reference_arc_m"] - start) <= 1e-6 and start <= .5
-                         and abs(tracking["lateral_error_m"]) <= policy["initial_lateral_tolerance_m"]
-                         and abs(tracking["heading_error_deg"]) <= policy["initial_yaw_tolerance_deg"],
+                         and abs(tracking["lateral_error_m"] - condition["lateral_m"]) <= policy["initial_lateral_tolerance_m"]
+                         and abs(yaw_error) <= policy["initial_yaw_tolerance_deg"],
                          "baseline-initial-reference-or-condition-mismatch")
             camera = row["camera"]
             _require(isinstance(camera, dict) and set(camera) == {"transform"}, "baseline-camera-record-invalid")

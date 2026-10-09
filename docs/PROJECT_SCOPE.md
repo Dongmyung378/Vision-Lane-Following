@@ -14,7 +14,7 @@
 
 지도, 세계 좌표의 차량 자세, 정답 경로, 충돌 센서와 차선 침범 센서는 라벨 생성과 평가에 사용합니다. Camera-only 경로 예측기에는 이 정보를 전달하지 않습니다. 정답 waypoint를 사용하는 주행은 **privileged reference**로 표시하고, 라벨·controller의 개발 QA와 인지 오차 분석에 사용합니다.
 
-현재 주행 pipeline은 privileged reference와 RGB 기반 OpenCV 경로 예측 baseline을 실행합니다. 두 방법은 같은 controller와 평가 정책을 사용합니다. RGB waypoint 학습 모델은 별도의 구현 대상입니다.
+현재 주행 pipeline은 privileged reference와 RGB 기반 OpenCV 경로 예측 baseline을 실행합니다. 두 방법은 같은 controller와 평가 정책을 사용합니다. RGB waypoint 학습 모델은 ResNet18의 학습·checkpoint 재개와 offline 개발 평가를 제공합니다. 학습 모델의 closed-loop 연결과 주행 성능은 추가 검증 단계입니다.
 
 ## 실행 범위
 

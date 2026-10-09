@@ -1,0 +1,7 @@
+# Install the matching CPU or CUDA wheel pair from the official PyTorch index.
+# Local validation uses CPU wheels; actual training uses the Kaggle GPU.
+torch==2.7.1
+torchvision==0.22.1
+Pillow==11.3.0
+numpy==2.2.6
+opencv-python-headless==4.12.0.88

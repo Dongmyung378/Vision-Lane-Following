@@ -2,7 +2,7 @@
 
 CARLA에서 전방 RGB 영상으로 차선 중심 경로를 예측하고, 공통 controller로 주행 성능을 비교하기 위한 프로젝트입니다. 수집·라벨 생성·데이터 분할·제어·주행 검사 도구를 제공합니다.
 
-OpenCV baseline은 RGB와 고정 nominal camera calibration으로 waypoint를 예측합니다. 지도에서 얻은 정답 waypoint를 사용하는 **privileged reference**와 같은 controller·초기 조건·종료 규칙으로 비교합니다. RGB waypoint 학습 모델은 별도의 구현 대상입니다.
+OpenCV baseline은 RGB와 고정 nominal camera calibration으로 waypoint를 예측합니다. 지도에서 얻은 정답 waypoint를 사용하는 **privileged reference**와 같은 controller·초기 조건·종료 규칙으로 비교합니다. ResNet18 RGB waypoint 모델의 학습·checkpoint 재개·독립 개발 데이터 평가도 제공합니다.
 
 ## 시스템과 입력
 
@@ -28,6 +28,9 @@ Waypoint는 목표 차선 중심선을 따라 3·6·9·12·15m 앞의 점입니�
 - 주행 artifact CPU 재검증, 손상 검사와 native Map 기반 차체 모서리 검사.
 - RGB 차선 표시 검출·고정 ground-plane 역투영·중심선 arc 기반 OpenCV waypoint와 overlay.
 - 종료 원인·event 중복 제거·실패 포함 오차/완주율·복귀·제어 변화율·처리 시간의 episode CSV와 집계.
+- 실제 이동 RGB pilot 수집, route·scene 기반 분할과 공간 누수 검사.
+- 사전학습 ResNet18 waypoint 회귀, photometric augmentation, AMP와 상태 검증을 포함한 학습 재개.
+- 개발 데이터의 근거리·원거리 및 곡선·초기 편차별 예측 오차, coverage와 동일 RGB의 baseline 비교.
 
 초기 범위는 Town01의 분기 없는 직선·좌곡선·우곡선, 고정 차량과 카메라, 맑은 날씨 및 다른 차량과 보행자가 없는 조건입니다. 교차로 의사결정, 차선 변경과 객체 회피는 포함하지 않습니다.
 
@@ -95,9 +98,24 @@ OpenCV는 CPU에서 실행하며 simulator 렌더링에 GPU를 사용합니다. 
 
 한쪽 yellow marking만 관측되면 고정 4m 차선 폭을 가정해 반대 경계를 추정하고, 그 가정을 diagnostics에 표시합니다. Calibration과 평면·차선 폭 가정은 frame별 map/pose로 보정하지 않습니다. 검출에 실패하면 제동하고 실패 episode를 metric CSV에 포함합니다. Artifact integrity 통과와 차선 주행 성공을 구분합니다. 자세한 범위와 제한은 [OpenCV baseline](docs/baseline.md)을 참고하세요.
 
+## RGB waypoint 학습
+
+Pilot은 정답 경로 제어기로 실제 이동 중 수집하며, 학습용과 개발용의 route 및 주변 scene을 분리합니다. 정지 프레임과 중복 RGB를 제외하고 영상·라벨·제어·종료 기록을 독립적으로 재검증합니다.
+
+```powershell
+.\.venv\Scripts\python.exe scripts/run_pilot_pipeline.py --output-dir results/local/pilot-example
+.\.venv\Scripts\python.exe scripts/verify_pilot.py --manifest results/local/pilot-example/pilot_manifest.json --output results/local/pilot-example-gate.json
+```
+
+모델은 원본 640 × 360 RGB를 입력받습니다. 전체 폭을 유지한 고정 영역 `[0, 144, 640, 360]`을 잘라 640 × 216 영상을 `INTER_AREA`로 320 × 180으로 변환하고 근거리·원거리 waypoint를 함께 회귀합니다. 라벨은 차량 actor 좌표계의 `5 × 2` 배열과 m 단위를 유지합니다. GPU 학습은 기존 Kaggle notebook의 pilot 출력을 연결해 실행합니다. 설치와 실행, checkpoint 재개 및 오차 해석은 [학습 문서](docs/learning.md)를 참고하세요. 학습 모델의 offline 예측 정확도와 실제 closed-loop 주행 성능은 별도로 검증합니다.
+
+`BaselineAssistedWaypointPredictor`는 유효한 OpenCV waypoint를 사용하고 검출에 실패하면 같은 RGB를 학습 모델에 전달하는 선택 옵션입니다. 순수 학습 모델과 이 옵션의 성능은 각각 평가하며, 경로 선택에는 정답 라벨이나 차량 위치를 사용하지 않습니다.
+
 ## 테스트
 
 ```powershell
+.\.venv\Scripts\python.exe -m pip install torch==2.7.1 torchvision==0.22.1 --index-url https://download.pytorch.org/whl/cpu
+.\.venv\Scripts\python.exe -m pip install -r requirements-learning.txt
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 ```
 
@@ -111,6 +129,8 @@ OpenCV는 CPU에서 실행하며 simulator 렌더링에 GPU를 사용합니다. 
 - [데이터 계약](docs/data-contract.md): 좌표·라벨 schema, route와 split 규칙.
 - [Waypoint 라벨](docs/waypoint-labels.md): 고정 경로, 좌표 변환과 overlay.
 - [OpenCV baseline](docs/baseline.md): RGB 검출, nominal calibration, 차선 폭 가정과 예측 실패 처리.
+- [Pilot 수집](docs/pilot.md): 이동 sample, scene 분할, 공간 누수와 원본 재검증.
+- [Waypoint 학습](docs/learning.md): RGB preprocessing, ResNet18, 학습·재개 및 개발 평가.
 - [Controller](docs/controller.md): 차량 기하, Pure Pursuit와 속도 제어.
 - [주행과 복귀](docs/driving.md): 초기 편차, 제어 readback, 센서·차체·정리 검사.
 - [평가 명세](docs/evaluation.md): 공통 조건, 주행 지표와 final test 원칙.
