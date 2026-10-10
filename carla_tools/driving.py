@@ -43,6 +43,23 @@ def load_validation_config(path=ROOT / "configs/driving_validation_d10.json"):
             raise DrivingError("driving-validation-config-invalid")
     return value
 
+
+def route_initial_location(route, reference_m=0.0):
+    """Interpolate an initial XY and tangent on the unchanged original route."""
+    if (type(reference_m) not in (int, float) or not math.isfinite(reference_m)
+            or reference_m < 0 or reference_m >= route["route_length_m"]):
+        raise DrivingError("driving-initial-reference-invalid")
+    anchors = route["centerline_anchor_sequence"]
+    for first, second in zip(anchors, anchors[1:]):
+        start_arc, end_arc = first["arc_distance_m"], second["arc_distance_m"]
+        if start_arc <= reference_m < end_arc:
+            a, b = first["world_location"], second["world_location"]
+            fraction = (reference_m - start_arc) / (end_arc - start_arc)
+            location = {axis: a[axis] + fraction * (b[axis] - a[axis]) for axis in ("x", "y", "z")}
+            yaw = math.degrees(math.atan2(b["y"] - a["y"], b["x"] - a["x"]))
+            return location, yaw
+    raise DrivingError("driving-initial-reference-not-covered")
+
 def body_lane_margin(pose, tracking, bbox, route=None):
     if route is not None:
         margins = []
@@ -228,9 +245,10 @@ def run_drive_trial(route, case, condition, output_dir, collection_config, *, ca
             session.verify_applied()
             stage = "fixed-route-perturbation"
             initial_pose = _transform(session.vehicle.get_transform())
-            anchors = route["centerline_anchor_sequence"]
-            start, next_point = anchors[0]["world_location"], anchors[1]["world_location"]
-            tangent_yaw = math.degrees(math.atan2(next_point["y"] - start["y"], next_point["x"] - start["x"]))
+            initial_reference_m = getattr(trial_policy, "initial_reference_m", 0.0)
+            if initial_reference_m >= limits["goal_reference_m"]:
+                raise DrivingError("driving-initial-reference-after-goal")
+            start, tangent_yaw = route_initial_location(route, initial_reference_m)
             # CARLA spawn transforms can be offset from the lane centre.
             # Anchor every condition to the ORIGINAL route before perturbing.
             centered_native = carla_module.Transform(
@@ -240,6 +258,9 @@ def run_drive_trial(route, case, condition, output_dir, collection_config, *, ca
             moved = perturbation_transform(centered, condition["lateral_m"], condition["yaw_deg"])
             metadata["initialization"] = {"policy": "pinned-route-start-xy-and-tangent-preserve-settled-height",
                 "spawn_settled_transform": initial_pose, "center_requested_transform": centered, "perturbed_requested_transform": moved}
+            if initial_reference_m != 0.0:
+                metadata["initialization"].update(policy="pinned-original-route-reference-xy-and-tangent-preserve-settled-height",
+                                                  initial_reference_m=initial_reference_m)
             session.vehicle.set_simulate_physics(False)
             session.vehicle.set_transform(carla_module.Transform(carla_module.Location(**moved["location"]),
                                                                 carla_module.Rotation(**moved["rotation"])))

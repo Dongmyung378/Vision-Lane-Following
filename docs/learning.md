@@ -285,3 +285,205 @@ manifest. Those verified bytes become the immutable training input in the
 same session. The native and training source manifests remain separate, and
 collection and training have independent bounded execution budgets. The
 packager performs no remote submission, upload or resource creation.
+
+## Frozen ViT comparison
+
+An optional DINOv3 ViT-B/16 candidate preserves the same RGB source, fixed road
+ROI, actor-coordinate waypoint labels and route-separated development split.
+Install `requirements-vit.txt` with the appropriate CPU or CUDA PyTorch wheels.
+The verified pretrained artifact comes from the timm DINOv3 conversion, pinned
+to an immutable revision and full SHA256. Loading never falls back to random
+weights. The upstream DINOv3 license continues to apply.
+
+The encoder remains frozen and in evaluation mode. After the original fixed
+320 x 180 preprocessing, the candidate replicates the bottom row into twelve
+additional rows so the encoder receives a 192 x 320 image without silently
+cropping incomplete patches. Eight disjoint spatial patch groups feed a
+regression head that predicts the same five metre-valued waypoints. CUDA uses
+FP16 for feature extraction and FP32 for the regression head. PyTorch math
+attention retains FP32 intermediate calculations to avoid FP16 attention-score
+overflow; the runtime explicitly selects this backend.
+
+Training caches RGB features without augmentation, verifies a small training
+batch can be overfit, restores the fresh head, and selects the checkpoint by
+development SmoothL1 loss. This protocol differs from the ResNet encoder
+fine-tuning and photometric augmentation, so the comparison evaluates two
+complete candidate pipelines rather than isolating architecture alone.
+
+```powershell
+.venv\Scripts\python.exe scripts/train_vit_waypoints.py --manifest <pilot-manifest.json> --weights <verified-pretrained.pth> --output-dir <new-private-output-directory> --device cuda
+```
+
+For remote execution, `scripts/prepare_kaggle_vit.py` packages the candidate for
+the existing training notebook. It retrieves an explicitly numbered existing
+collection output, checks the archive and manifest hashes, and downloads the
+public hash-pinned pretrained weights. It requires a T4 CUDA runtime and has
+bounded execution and owned-process cleanup. No new notebook or dataset is
+created. Read-only access to the target notebook must be checked before
+submission.
+
+Evaluation reopens every development RGB image and executes the complete
+encoder and head. It retains failed predictions in coverage, reports geometry
+and condition groups, and measures synchronized forward latency separately
+from decoding, preprocessing and vehicle control. Offline waypoint accuracy
+does not establish closed-loop driving success. Keep experiment outputs,
+checkpoints and actual comparison records in ignored local directories.
+
+## Controlled CNN and attention comparison
+
+The spatial comparison keeps the original pooled ResNet reference and adds two
+RGB-only candidates. Both candidates retain the ResNet encoder's 6 x 10 feature
+grid and project its 60 locations from 512 to 128 features. The spatial control
+flattens these tokens into an MLP. The hybrid adds fixed two-dimensional position
+encodings, two self-attention blocks, and five waypoint queries with query
+self-attention and cross-attention. Each query predicts a two-axis residual
+relative to the same straight-path prior. The experimental heads use float32;
+CUDA training can use mixed precision in the CNN. Attention explicitly uses the
+PyTorch math backend.
+
+All three arms fine-tune the complete ImageNet-pretrained encoder with the same
+route-separated samples, road crop, photometric augmentation, seed, AdamW rates,
+warmup, epoch budget and early-stopping rule. Each arm discards its small-batch
+diagnostic model and starts again from fresh initialization. The selected model
+minimizes development SmoothL1. Candidate checkpoint contracts distinguish the
+architecture and bind the configuration, source files and dataset manifest.
+These inference checkpoints do not contain a resumable optimizer state.
+
+The fixed-batch diagnostic caps its head learning rate at the regular head
+learning rate. This diagnostic changes no retained model weights: the model
+and seeds are reset before ordinary fine-tuning. A completed reference arm can
+be supplied with `--reused-baseline` to avoid retraining it. Reuse requires the
+same configuration, manifest, checkpoint binding and core prediction sources;
+the report retains its original source hashes and execution provenance. Keep
+the reference's original checkpoint and prediction archive alongside the new
+candidate outputs. The reuse does not claim a new reference execution.
+
+```powershell
+.venv\Scripts\python.exe scripts/train_spatial_waypoints.py --manifest <pilot-manifest.json> --output-dir <new-private-output-directory> --device cpu
+```
+
+`scripts/prepare_kaggle_spatial.py` prepares the same comparison for the existing
+private training notebook, preserving its ID and title. It creates only a local
+bundle, embeds exact runtime source bytes and requires immutable collection
+archive and manifest hashes. Verify access to the existing notebook before
+submission. The remote runner requires a T4, enforces a total execution limit,
+stops its owned process on timeout and exports all three checkpoints and full
+development predictions without creating notebooks or datasets.
+
+Evaluation retains every attempted development frame in coverage and reports
+near/far errors by curve direction and initial condition. Batch-one forward
+latency excludes decoding, preprocessing and vehicle control, and excludes
+warmup frames. Current selection uses the mean error over all five waypoints,
+complete coverage, absolute near/far mean budgets for every geometry case,
+and a fixed forward latency budget. A case may be worse than the reference
+while remaining within its budget. This produces an offline development model;
+closed-loop validation and the reserved final test are separate requirements.
+Keep actual scores, execution logs and selection records in ignored local
+directories.
+
+Use `SpatialCheckpointPredictor` for explicit RGB inference from one selected
+spatial checkpoint. It defaults to CPU, verifies the checkpoint contract and
+runtime sources, optionally requires an expected full checkpoint SHA256, and
+reports the actual candidate variant and model version. Invalid RGB inputs
+return a failed prediction. The existing default predictor is unchanged.
+
+For a retained checkpoint whose training runner has changed, the optional
+`--training-source-manifest` supplies explicitly trusted archived source
+hashes. The current model implementation and shared core sources must still
+match; historical training sources are never accepted automatically.
+
+```powershell
+.venv\Scripts\python.exe scripts/predict_spatial_waypoints.py --image <native-rgb.png> --checkpoint <selected-checkpoint.pt> --expected-checkpoint-sha256 <sha256> --output <new-private-prediction.json> --device cpu
+```
+
+## Mirrored and geometric attention refinements
+
+The refinement experiment uses the same compact attention encoder with two
+decoder choices. Both use train-only horizontal reflection about the fixed
+camera principal point and negate the target's actor-coordinate lateral axis.
+Development images remain unchanged. Deterministic sample/epoch seeds control
+the reflection, and neither route identifiers nor geometry classes reach the
+model. The normalized SmoothL1 horizon weights are `[1, 1, 2, 2, 3]`.
+
+The mirrored control predicts ordinary Cartesian residuals. The geometric
+decoder predicts five segment directions and lengths, then cumulatively sums
+them into the same five actor-origin waypoints. Directions use `pi*tanh(raw)`.
+Lengths use a 3m prior with learned bounded adjustments; the first segment has
+a wider bound to account for actor displacement from the route. This is a
+path-distance prior and may limit performance outside the training geometry.
+It does not query a map or measured vehicle pose. Comparisons to the original
+models change augmentation and loss as well as the decoder; the two refinement
+arms share augmentation, loss and training budget.
+
+```powershell
+.venv\Scripts\python.exe scripts/train_refined_waypoints.py --manifest <pilot-manifest.json> --reused-baseline <trusted-frozen-reference.json> --output-dir <new-private-output-directory> --device cpu
+```
+
+Checkpoint selection minimizes the complete development weighted loss. The
+separate current model selection requires improved overall mean error, complete
+coverage, every geometry case within its absolute near/far mean budgets, and
+acceptable forward latency. Tail errors remain reported; case-wise relative
+improvement against the reference is not required. Model contracts and
+source hashes bind the decoder, training transformation and retained weights.
+Actual experiments and model selection records belong in ignored directories.
+
+`carla_tools.model_selection` applies the current policy separately from saved
+training/checkpoint source contracts. The policy in `configs/model_selection.json`
+requires near mean at most 0.3m and far mean at most 1.0m for the overall, left,
+right and straight groups, complete coverage, lower overall mean than the
+reference, and forward p95 at most 50ms. These are group-mean budgets; individual
+frame maxima and far-error p95 are separate reported statistics. Saved training
+comparisons retain their historical embedded decisions for reproducibility.
+The authoritative current decision is the separate selection artifact produced
+by `select_waypoint_model.py`; future Kaggle refinement bundles run this step
+after training. The selection change does not require retraining or rewriting
+checkpoint files.
+
+```powershell
+.venv\Scripts\python.exe scripts/select_waypoint_model.py --reference <frozen-reference.json> --comparison <comparison.json> --output <new-private-selection.json>
+.venv\Scripts\python.exe scripts/predict_selected_waypoints.py --selection <selection.json> --image <native-rgb.png> --output <new-private-prediction.json> --device cpu
+```
+
+The selected-model inference command verifies the checkpoint bytes, training
+report and dataset identity. Its default selection path is the ignored local
+`results/local/selected-waypoint-model.json`. Selecting a project development
+model and verifying actual native driving remain separate steps.
+
+For single-image inference, `predict_refined_waypoints.py` accepts a native RGB
+PNG and requires the expected checkpoint SHA256. It verifies the model contract
+and source files and writes a new prediction JSON without overwriting existing
+artifacts. The default device is CPU.
+
+`run_refinement_pipeline.py` connects explicit checkpoint predictors to the
+shared native controller. It compares the reference and candidate on frozen
+development routes alongside the fixed OpenCV baseline. The paired protocol
+uses straight, left and right curves, original-route starts at 0/2/4m, and
+center or lateral offsets of -0.3/+0.3m: 81 episodes across three methods.
+The common original-route goal is 19m; each start has its own remaining
+evaluation distance. Learned predictors receive only RGB; speed reaches the
+controller separately. B0 uses RGB and its fixed nominal camera configuration.
+Every original frame is independently inferred before replaying the recorded
+controls, event handling, stopping, cleanup and evaluation metrics. Execution
+integrity and driving success are reported separately. Failed driving episodes
+remain in the success-rate denominator, and unexecuted trials are reported
+separately; a partial run never becomes a complete protocol success rate.
+Every verified episode exports CPU-encoded video and a synchronized CSV with
+predicted waypoints, steering and termination reason. The video uses nominal
+ground-plane projection for viewing; original PNGs and traces are retained for
+audit. Partial artifacts are preserved after an execution timeout.
+The frozen `driving_success` field records reaching the route goal under the
+declared termination policy, including its sustained-departure hold time.
+`carla_tools.driving_quality` additionally reports clean completion: a completed
+route with zero collision or lane-invasion events and a nonnegative minimum
+vehicle-body lane margin. This diagnostic keeps the original results intact
+and exposes route completions with a terminal lane crossing.
+GPU execution belongs
+in the existing Kaggle notebooks; local commands default to CPU.
+
+`prepare_kaggle_refinement.py` and `prepare_kaggle_refinement_driving.py` prepare
+local bundles for the existing training and CARLA notebooks. The driving bundle
+uses an existing training output and a hash-pinned archived reference. The
+candidate can also be retrieved from an explicit saved version, with an archive
+hash, checkpoint hash and size check, to avoid circular latest-output sources.
+Both preserve notebook IDs and titles and require a fresh read-only access
+check before submission. They create no notebooks or datasets.

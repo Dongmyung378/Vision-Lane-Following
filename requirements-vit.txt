@@ -1,0 +1,3 @@
+# Optional frozen ViT candidate; install the appropriate CPU/CUDA PyTorch pair.
+-r requirements-learning.txt
+timm==1.0.20

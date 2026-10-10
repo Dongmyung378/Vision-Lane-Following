@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "policy_version": "mean-and-absolute-case-bounds-v1",
+  "primary_metric": "mean_euclidean_m",
+  "near_mean_max_m": 0.3,
+  "far_mean_max_m": 1.0,
+  "forward_p95_max_ms": 50.0
+}

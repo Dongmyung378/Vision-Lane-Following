@@ -96,10 +96,13 @@ def _stopping(metadata, last, route):
             "minimum_stopping_body_lane_margin_m": min(margins)}
 
 
-def validate_baseline_episode(episode_path: str | Path, *, allowed_conditions=None) -> dict:
+def _validate_camera_episode(episode_path: str | Path, *, allowed_conditions=None,
+                             scope=SCOPE, methods=METHODS,
+                             prediction_inputs="rgb-and-fixed-nominal-calibration",
+                             predictor=None, expected_initial_reference_m=0.0) -> dict:
     """Read unchanged source bytes and reconstruct RGB predictions independently."""
     root = Path(episode_path)
-    report = {"status": "FAIL", "scope": SCOPE, "gate_version": GATE_VERSION, "errors": []}
+    report = {"status": "FAIL", "scope": scope, "gate_version": GATE_VERSION, "errors": []}
     try:
         metadata_path, trace_path = _safe_file(root, "episode.json"), _safe_file(root, "steps.jsonl")
         metadata_bytes, trace_bytes = metadata_path.read_bytes(), trace_path.read_bytes()
@@ -114,15 +117,15 @@ def validate_baseline_episode(episode_path: str | Path, *, allowed_conditions=No
                     "perception_uses_route", "perception_uses_vehicle_pose", "non_driving_events"}
         _require(isinstance(metadata, dict) and required <= metadata.keys(), "baseline-metadata-fields-missing")
         _require(type(metadata["schema_version"]) is int and metadata["schema_version"] == 1
-                 and metadata["status"] == "COMPLETE" and metadata["scope"] == SCOPE,
+                 and metadata["status"] == "COMPLETE" and metadata["scope"] == scope,
                  "baseline-episode-not-complete")
         validate_identifier(metadata["episode_id"])
         method = metadata["method"]
-        _require(method in METHODS and metadata["geometry_case"] in CASES, "baseline-method-or-case-invalid")
+        _require(method in methods and metadata["geometry_case"] in CASES, "baseline-method-or-case-invalid")
         is_reference = method == "privileged_reference"
         _require(metadata["perception_uses_route"] is is_reference and metadata["perception_uses_vehicle_pose"] is is_reference,
                  "baseline-prediction-input-contract-mismatch")
-        expected_inputs = "privileged-original-route-and-same-frame-pose" if is_reference else "rgb-and-fixed-nominal-calibration"
+        expected_inputs = "privileged-original-route-and-same-frame-pose" if is_reference else prediction_inputs
         _require(metadata["prediction_inputs"] == expected_inputs, "baseline-prediction-input-contract-mismatch")
         from .driving import load_validation_config
         policy = load_validation_config()
@@ -161,7 +164,7 @@ def validate_baseline_episode(episode_path: str | Path, *, allowed_conditions=No
                  "baseline-original-route-source-mismatch")
         geometry = _geometry(metadata)
         controller = PurePursuitController(controller_config, geometry)
-        predictor = None if is_reference else OpenCVLanePredictor(baseline_config)
+        predictor = None if is_reference else (predictor if predictor is not None else OpenCVLanePredictor(baseline_config))
         _require(_same(metadata["camera_calibration"], _calibration(cfg, _mount_matrix(cfg))), "baseline-calibration-mismatch")
         _require(metadata["applied_manifest"].get("applied_verified") is True, "baseline-initial-application-not-verified")
         _cleanup(metadata["cleanup"])
@@ -215,7 +218,8 @@ def validate_baseline_episode(episode_path: str | Path, *, allowed_conditions=No
             if index == 0:
                 condition = metadata["condition"]
                 yaw_error = (tracking["heading_error_deg"] - condition["yaw_deg"] + 180.) % 360. - 180.
-                _require(abs(tracking["reference_arc_m"] - start) <= 1e-6 and start <= .5
+                _require(abs(tracking["reference_arc_m"] - start) <= 1e-6
+                         and abs(start - expected_initial_reference_m) <= .5
                          and abs(tracking["lateral_error_m"] - condition["lateral_m"]) <= policy["initial_lateral_tolerance_m"]
                          and abs(yaw_error) <= policy["initial_yaw_tolerance_deg"],
                          "baseline-initial-reference-or-condition-mismatch")
@@ -309,6 +313,11 @@ def validate_baseline_episode(episode_path: str | Path, *, allowed_conditions=No
         report["errors"].append({"code": getattr(error, "code", str(error) if isinstance(error, ValueError) else "baseline-source-validation-failed"),
                                  "exception_type": type(error).__name__})
     return report
+
+
+def validate_baseline_episode(episode_path: str | Path, *, allowed_conditions=None) -> dict:
+    """Preserve the strict original B0/reference episode validation contract."""
+    return _validate_camera_episode(episode_path, allowed_conditions=allowed_conditions)
 
 
 def validate_baseline_manifest(manifest_path: str | Path) -> dict:
