@@ -487,3 +487,44 @@ candidate can also be retrieved from an explicit saved version, with an archive
 hash, checkpoint hash and size check, to avoid circular latest-output sources.
 Both preserve notebook IDs and titles and require a fresh read-only access
 check before submission. They create no notebooks or datasets.
+
+## Development failure analysis and near-path correction
+
+`carla_tools.failure_analysis` reconstructs same-frame route labels and replays
+the shared controller on independently verified episodes. It distinguishes an
+invalid perception path, near-path errors before a lane event, and failures
+requiring a paired privileged reference. Steering computed from labels at a
+recorded vehicle state is a counterfactual diagnostic, not a new driving run.
+Execution integrity, lane retention, and reaching the route goal remain
+separate checks.
+
+An explicit `NearCorrectedPredictor` development option keeps the selected
+checkpoint and distant waypoints. It fits a short observed yellow boundary
+through the fixed nominal camera, offsets it by a declared lane-width prior,
+and blends only the first two lateral coordinates. No route, measured pose,
+labels, or image history enter this correction. Qualified paint components,
+fit residuals, bounded extrapolation and smooth support fading control where
+it applies; missing or rejected evidence leaves the original prediction.
+This option assumes a yellow left boundary and a nominal flat camera geometry.
+White-only lanes and changed calibration require separate development work.
+
+Use `predict_selected_waypoints.py --near-correction` to explicitly enable this
+option for the selected geometric hybrid in single-image CPU inference. The
+original selection and checkpoint contracts stay intact; the output identity
+records the correction version and configuration separately.
+
+`run_failure_pipeline.py` compares the original and corrected checkpoint
+pipelines with an explicitly privileged reference on the same original
+development routes, starts, lateral states, controller, speed policy and
+termination rules. The primary diagnostic is clean completion, requiring zero
+collision or lane-invasion events and a nonnegative vehicle-body lane margin.
+All failed driving episodes remain counted. Every original RGB and control is
+independently replayed; videos and synchronized controls retain failed cases.
+The privileged arm isolates controller behaviour and is not a camera-only
+candidate. The reserved final town remains outside this development protocol.
+
+`prepare_kaggle_failure_driving.py` packages this protocol for the existing
+CARLA notebook. It preserves its identity and adds a new execution version
+only after a read-only access check. Local inference defaults to CPU; model
+and simulator GPU execution use the existing Kaggle runtime. Keep analysis,
+actual comparison results and runtime selection records in ignored storage.
