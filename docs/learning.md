@@ -528,3 +528,52 @@ CARLA notebook. It preserves its identity and adds a new execution version
 only after a read-only access check. Local inference defaults to CPU; model
 and simulator GPU execution use the existing Kaggle runtime. Keep analysis,
 actual comparison results and runtime selection records in ignored storage.
+
+## Processing latency and paired runtime development
+
+`run_runtime_pipeline.py` compares the existing near correction with an explicit
+RGB paint-alignment candidate and a privileged controller reference on the
+same development routes and initial states. The learned checkpoint, controller,
+speed policy, simulation clock and termination rules are shared. Clean completion
+continues to require goal completion, zero collisions, zero lane invasions and
+a nonnegative body lane margin. Failed driving episodes remain in every count.
+
+`pipeline_latency` measures BGRA conversion, learned preprocessing and device
+transfer, synchronized forward and output decoding, RGB correction, and control.
+It reports validation/orchestration overhead separately and includes it in total
+processing time. Sensor/simulator waiting, route-label generation, disk writes
+and video encoding are outside this processing measurement. All frames remain
+available; the first ten frames of each episode are additionally identified as
+startup for separate steady-state median, p95, maximum and budget summaries.
+CUDA stages are explicitly synchronized. The paired runtime places both learned
+methods on the same device and keeps privileged-reference timing separate.
+Passing a processing budget in synchronous simulation does not
+prove real-time wall-clock driving or sensor-to-actuation latency.
+
+A second benchmark alternates the two methods on the same recorded RGB states,
+after explicit warmup, on the same runtime. Its outputs and timing records stay
+bound to image hashes. This is a processing comparison, not another driving
+experiment. Independent replay reconstructs every original RGB prediction,
+route label, control, event and metric; CPU/CUDA numerical tolerances are fixed
+before execution, while source hashes and discrete contracts remain exact.
+
+`PathCorrectedPredictor` retains the local boundary correction when it changes
+the near path. Otherwise an elongated observed yellow-left paint component can
+align the learned path's boundary position and direction. It uses fixed nominal
+calibration and lane width, rejects ambiguous or excessive adjustments, resamples
+the first two points along path arc length, and preserves the three far points.
+It does not infer reliable curvature from a short dash and accepts no pose,
+route, ground-truth label or temporal history. Enable it explicitly with
+`predict_selected_waypoints.py --path-correction`; this option and
+`--near-correction` are mutually exclusive. Missing accepted paint retains the
+learned prediction, so white-only lanes and changed calibration need further
+development.
+
+`prepare_kaggle_runtime_driving.py` packages source-bound execution for the
+existing CARLA notebook without creating another notebook or dataset.
+`build_driving_demo` produces a local HTML index and full episode videos with
+the fixed center/start-zero selection across straight and both curve cases.
+It verifies copied media, controls and traces and includes failure endings.
+Its evidence integrity status and learned sustained clean-driving gate are
+separate. Video playback uses the simulation clock; its frame rate is not a
+processing-speed result. Keep actual reports and demo files in ignored storage.

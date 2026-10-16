@@ -14,7 +14,9 @@ def main(argv=None):
     for name in ('image','output'):
         parser.add_argument('--'+name,type=Path,required=True)
     parser.add_argument('--device',choices=('cpu','cuda'),default='cpu')
-    parser.add_argument('--near-correction', action='store_true', help='Explicit development RGB near-path correction for the selected geometric hybrid')
+    correction = parser.add_mutually_exclusive_group()
+    correction.add_argument('--near-correction', action='store_true', help='Explicit development RGB near-path correction for the selected geometric hybrid')
+    correction.add_argument('--path-correction', action='store_true', help='Explicit development RGB paint alignment for the selected geometric hybrid')
     args = parser.parse_args(argv)
     from carla_tools.contracts import read_strict_json
     from carla_tools.inference import _input_file, _sha256_file, read_rgb_png, write_prediction_json
@@ -32,11 +34,15 @@ def main(argv=None):
         expected_sha256=binding['checkpoint_sha256'],device=args.device,training_report=training)
     if predictor.identity['variant'] != decision['selected_candidate'] or predictor.identity['manifest_sha256'] != decision['manifest_sha256']:
         raise ValueError('selected-inference-model-or-dataset-mismatch')
-    if args.near_correction:
+    if args.near_correction or args.path_correction:
         if predictor.identity['variant'] != 'hybrid_geometry':
             raise ValueError('selected-near-correction-requires-geometric-hybrid')
-        from carla_tools.near_correction import NearCorrectedPredictor
-        predictor = NearCorrectedPredictor(predictor)
+        if args.path_correction:
+            from carla_tools.path_correction import PathCorrectedPredictor
+            predictor = PathCorrectedPredictor(predictor)
+        else:
+            from carla_tools.near_correction import NearCorrectedPredictor
+            predictor = NearCorrectedPredictor(predictor)
     rgb,image = read_rgb_png(args.image)
     result = predictor.predict(rgb)
     write_prediction_json(args.output,dict(result,image=image,model=predictor.identity,selection=decision))
