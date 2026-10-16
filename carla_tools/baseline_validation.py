@@ -99,8 +99,15 @@ def _stopping(metadata, last, route):
 def _validate_camera_episode(episode_path: str | Path, *, allowed_conditions=None,
                              scope=SCOPE, methods=METHODS,
                              prediction_inputs="rgb-and-fixed-nominal-calibration",
-                             predictor=None, expected_initial_reference_m=0.0) -> dict:
-    """Read unchanged source bytes and reconstruct RGB predictions independently."""
+                             predictor=None, expected_initial_reference_m=0.0,
+                             allowed_weather_presets=("ClearNoon",),
+                             initial_heading_reference="tracked-route-tangent") -> dict:
+    """Replay native sources, preserving the legacy tracked-heading default.
+
+    Dataset references can explicitly prove the requested initial heading
+    against the frozen declared route start. A tiny native position rounding
+    near a polyline vertex can otherwise select the preceding segment tangent.
+    """
     root = Path(episode_path)
     report = {"status": "FAIL", "scope": scope, "gate_version": GATE_VERSION, "errors": []}
     try:
@@ -123,11 +130,15 @@ def _validate_camera_episode(episode_path: str | Path, *, allowed_conditions=Non
         method = metadata["method"]
         _require(method in methods and metadata["geometry_case"] in CASES, "baseline-method-or-case-invalid")
         is_reference = method == "privileged_reference"
+        _require(type(initial_heading_reference) is str and initial_heading_reference in
+                 ("tracked-route-tangent", "declared-route-start"), "baseline-initial-heading-reference-invalid")
+        _require(initial_heading_reference == "tracked-route-tangent" or is_reference,
+                 "baseline-initial-heading-reference-requires-privileged-method")
         _require(metadata["perception_uses_route"] is is_reference and metadata["perception_uses_vehicle_pose"] is is_reference,
                  "baseline-prediction-input-contract-mismatch")
         expected_inputs = "privileged-original-route-and-same-frame-pose" if is_reference else prediction_inputs
         _require(metadata["prediction_inputs"] == expected_inputs, "baseline-prediction-input-contract-mismatch")
-        from .driving import load_validation_config
+        from .driving import load_validation_config, route_initial_location
         policy = load_validation_config()
         _require(_same(metadata["validation_config"], policy), "baseline-native-validation-policy-mismatch")
         approved_conditions = policy["initial_conditions"]
@@ -147,7 +158,8 @@ def _validate_camera_episode(episode_path: str | Path, *, allowed_conditions=Non
         _require(metadata["baseline_config_sha256"] == baseline_config.sha256
                  and metadata["evaluation_config_sha256"] == evaluation_config.sha256
                  and metadata["controller_config_sha256"] == controller_config.sha256, "baseline-configuration-hash-mismatch")
-        cfg = collection_config_from_dict(metadata["collection_config"])
+        cfg = collection_config_from_dict(metadata["collection_config"],
+                                          allowed_weather_presets=allowed_weather_presets)
         camera = cfg.camera
         _require((camera.width, camera.height) == (baseline_config.image_width, baseline_config.image_height)
                  and camera.fov == baseline_config.fov_deg
@@ -217,7 +229,11 @@ def _validate_camera_episode(episode_path: str | Path, *, allowed_conditions=Non
                                     {"route_id": route["route_id"], "route_contract": route})
             if index == 0:
                 condition = metadata["condition"]
-                yaw_error = (tracking["heading_error_deg"] - condition["yaw_deg"] + 180.) % 360. - 180.
+                if initial_heading_reference == "declared-route-start":
+                    nominal_yaw = route_initial_location(route, expected_initial_reference_m)[1]
+                    yaw_error = (pose["rotation"]["yaw"] - nominal_yaw - condition["yaw_deg"] + 180.) % 360. - 180.
+                else:
+                    yaw_error = (tracking["heading_error_deg"] - condition["yaw_deg"] + 180.) % 360. - 180.
                 _require(abs(tracking["reference_arc_m"] - start) <= 1e-6
                          and abs(start - expected_initial_reference_m) <= .5
                          and abs(tracking["lateral_error_m"] - condition["lateral_m"]) <= policy["initial_lateral_tolerance_m"]
@@ -309,6 +325,8 @@ def _validate_camera_episode(episode_path: str | Path, *, allowed_conditions=Non
                       checks={"every_frame_rgb_color": True, "prediction_replay": True, "shared_controller_replay": True,
                               "original_route_evaluation_replay": True, "command_application": True, "stop_readbacks": True,
                               "owned_actors_cleaned": True, "sources_unchanged": True})
+        if initial_heading_reference == "declared-route-start":
+            report["checks"]["declared_start_heading_binding"] = True
     except BaseException as error:
         report["errors"].append({"code": getattr(error, "code", str(error) if isinstance(error, ValueError) else "baseline-source-validation-failed"),
                                  "exception_type": type(error).__name__})

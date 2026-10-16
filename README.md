@@ -103,6 +103,8 @@ OpenCV는 CPU에서 실행하며 simulator 렌더링에 GPU를 사용합니다. 
 
 Pilot은 정답 경로 제어기로 실제 이동 중 수집하며, 학습용과 개발용의 route 및 주변 scene을 분리합니다. 정지 프레임과 중복 RGB를 제외하고 영상·라벨·제어·종료 기록을 독립적으로 재검증합니다.
 
+확대 수집은 개발용 정오 날씨와 시작 위치를 바꾸어 중앙·복귀 장면을 연결합니다. 같은 장면을 진행 거리로 짝지어 동일한 데이터 예산의 학습 선택을 고정하고, 원본 영상·라벨·분할을 재검증합니다. 사용법은 [확대 데이터셋](docs/dataset.md)에 있습니다.
+
 ```powershell
 .\.venv\Scripts\python.exe scripts/run_pilot_pipeline.py --output-dir results/local/pilot-example
 .\.venv\Scripts\python.exe scripts/verify_pilot.py --manifest results/local/pilot-example/pilot_manifest.json --output results/local/pilot-example-gate.json
@@ -137,6 +139,7 @@ Pilot은 정답 경로 제어기로 실제 이동 중 수집하며, 학습용과
 - [Waypoint 라벨](docs/waypoint-labels.md): 고정 경로, 좌표 변환과 overlay.
 - [OpenCV baseline](docs/baseline.md): RGB 검출, nominal calibration, 차선 폭 가정과 예측 실패 처리.
 - [Pilot 수집](docs/pilot.md): 이동 sample, scene 분할, 공간 누수와 원본 재검증.
+- [확대 데이터셋](docs/dataset.md): 중앙·복귀 장면의 짝, 동일 예산 학습 선택과 데이터 버전 고정.
 - [Waypoint 학습](docs/learning.md): RGB preprocessing, ResNet18, 학습·재개 및 개발 평가.
 - [Controller](docs/controller.md): 차량 기하, Pure Pursuit와 속도 제어.
 - [주행과 복귀](docs/driving.md): 초기 편차, 제어 readback, 센서·차체·정리 검사.

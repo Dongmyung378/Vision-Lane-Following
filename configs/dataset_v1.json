@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "dataset_version": "central-recovery-v1",
+  "minimum_samples": 40000,
+  "maximum_samples": 60000,
+  "minimum_train_samples": 20000,
+  "minimum_dev_samples": 15000,
+  "minimum_central_samples": 8000,
+  "minimum_recovery_samples": 30000,
+  "minimum_speed_mps": 0.2,
+  "minimum_step_distance_m": 0.005,
+  "scene_buffer_m": 75.0,
+  "pair_arc_tolerance_m": 0.15,
+  "minimum_pair_count": 5000,
+  "minimum_recovery_lateral_difference_m": 0.05,
+  "minimum_recovery_heading_difference_deg": 1.0,
+  "train_selection_samples": 5000,
+  "mixed_recovery_fraction": 0.5,
+  "selection_seed": 42,
+  "train_routes_per_case": {"straight": 2, "left_curve": 1, "right_curve": 1},
+  "dev_routes_per_case": {"straight": 1, "left_curve": 1, "right_curve": 1},
+  "conditions": [
+    {"name": "center", "lateral_m": 0.0, "yaw_deg": 0.0},
+    {"name": "left_offset", "lateral_m": -0.3, "yaw_deg": 0.0},
+    {"name": "right_offset", "lateral_m": 0.3, "yaw_deg": 0.0},
+    {"name": "left_yaw", "lateral_m": 0.0, "yaw_deg": -5.0},
+    {"name": "right_yaw", "lateral_m": 0.0, "yaw_deg": 5.0}
+  ],
+  "weather_presets": ["ClearNoon", "CloudyNoon", "WetNoon", "SoftRainNoon"],
+  "collection_runs": [
+    {"name": "start00", "initial_reference_m": 0.0, "seed": 42},
+    {"name": "start01", "initial_reference_m": 1.0, "seed": 42},
+    {"name": "start02", "initial_reference_m": 2.0, "seed": 42},
+    {"name": "start03", "initial_reference_m": 3.0, "seed": 42},
+    {"name": "start04", "initial_reference_m": 4.0, "seed": 42}
+  ]
+}

@@ -81,9 +81,10 @@ def transform_record(transform: Any) -> dict[str, Any]:
 
 
 class CollectionSession:
-    def __init__(self, cfg: Any, carla_module: Any = None):
+    def __init__(self, cfg: Any, carla_module: Any = None, *, allowed_weather_presets=("ClearNoon",)):
         self.cfg = cfg
         self._carla = carla_module
+        self._allowed_weather_presets = allowed_weather_presets
         self.client = self.world = self.vehicle = self.camera = None
         self.manifest: dict[str, Any] = {}
         self.cleanup_report: dict[str, Any] = {"status": "NOT_RUN", "errors": []}
@@ -109,10 +110,10 @@ class CollectionSession:
         self._entered = True
         stage = "configuration"
         try:
-            cfg = collection_config_from_dict(self.cfg.to_dict())
+            cfg = collection_config_from_dict(self.cfg.to_dict(), allowed_weather_presets=self._allowed_weather_presets)
             self.cfg = cfg
             if (cfg.carla_version != CARLA_VERSION or not cfg.world.synchronous_mode
-                    or cfg.world.no_rendering_mode or cfg.weather.preset != "ClearNoon"):
+                    or cfg.world.no_rendering_mode or cfg.weather.preset not in self._allowed_weather_presets):
                 raise SessionError("unsupported-collection-configuration", stage)
             self._control_expected = cfg.vehicle.control.to_dict()
             if (self._control_expected["throttle"] != 0 or self._control_expected["steer"] != 0
@@ -186,7 +187,7 @@ class CollectionSession:
             if not fields_match(self._world_expected, public_fields(self.world.get_settings())):
                 raise SessionError("world-settings-readback-mismatch", stage)
             stage = "weather"
-            preset = carla.WeatherParameters.ClearNoon
+            preset = getattr(carla.WeatherParameters, cfg.weather.preset)
             self._weather_expected = public_fields(preset)
             self._weather_touched = True
             self.world.set_weather(preset)
@@ -211,7 +212,7 @@ class CollectionSession:
             self._verify_actor_metadata()
             self.manifest.update(
                 world_settings=public_fields(self.world.get_settings()),
-                weather={"preset": "ClearNoon", "values": public_fields(self.world.get_weather())},
+                weather={"preset": cfg.weather.preset, "values": public_fields(self.world.get_weather())},
                 vehicle={"actor_id": self.vehicle.id, "blueprint": self.vehicle.type_id,
                          "attributes": {key: self.vehicle.attributes[key] for key in self._vehicle_attributes},
                          "spawn_point_index": index, "spawn_point_count": len(spawn_points),

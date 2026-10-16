@@ -215,7 +215,8 @@ def _boolean(value: Any, path: str, expected: bool | None = None) -> bool:
     return value
 
 
-def collection_config_from_dict(value: Mapping[str, Any]) -> CollectionConfig:
+def collection_config_from_dict(value: Mapping[str, Any], *,
+                                allowed_weather_presets=("ClearNoon",)) -> CollectionConfig:
     """Validate every supplied field; omitted fields never silently use defaults."""
     root = _object(value, "config", {item.name for item in fields(CollectionConfig)})
     schema = _integer(root["schema_version"], "schema_version", 1, 1)
@@ -243,7 +244,15 @@ def collection_config_from_dict(value: Mapping[str, Any]) -> CollectionConfig:
         raise ConfigError("world.fixed_delta_seconds exceeds max_substep_delta_time * max_substeps.")
 
     raw = _object(root["weather"], "weather", {"preset"})
-    weather = WeatherConfig(_exact(raw["preset"], "weather.preset", "ClearNoon"))
+    supported = {"ClearNoon", "CloudyNoon", "WetNoon", "SoftRainNoon"}
+    if (not isinstance(allowed_weather_presets, (tuple, list)) or not allowed_weather_presets
+            or any(type(name) is not str or name not in supported for name in allowed_weather_presets)
+            or len(set(allowed_weather_presets)) != len(allowed_weather_presets)):
+        raise ConfigError("allowed_weather_presets must select supported development presets.")
+    preset = _string(raw["preset"], "weather.preset")
+    if preset not in allowed_weather_presets:
+        raise ConfigError("weather.preset is not allowed by this collection contract.")
+    weather = WeatherConfig(preset)
 
     raw = _object(root["vehicle"], "vehicle", {item.name for item in fields(VehicleConfig)})
     control_raw = _object(raw["control"], "vehicle.control", {item.name for item in fields(VehicleControlConfig)})

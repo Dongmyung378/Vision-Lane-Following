@@ -205,13 +205,14 @@ def _write_rgb(directory, row, image):
                     "color_provenance": color_provenance(raw, rgb, image.width, image.height)}
 
 def run_drive_trial(route, case, condition, output_dir, collection_config, *, carla_module,
-                    validation_config=None, controller_config=None, trial_policy=None):
+                    validation_config=None, controller_config=None, trial_policy=None,
+                    allowed_weather_presets=("ClearNoon",), session_factory=None):
     """Stationary setup -> native measured geometry -> same-frame drive -> cleanup."""
     limits = validation_config or load_validation_config()
     control_cfg = controller_config or load_controller_config()
     cfg_dict = collection_config.to_dict()
     cfg_dict["vehicle"]["spawn_point_index"] = route["spawn_point_index"]
-    cfg = collection_config_from_dict(cfg_dict)
+    cfg = collection_config_from_dict(cfg_dict, allowed_weather_presets=allowed_weather_presets)
     directory = Path(output_dir)
     scope = SCOPE if trial_policy is None else trial_policy.scope
     report = {"schema_version": 1, "status": "FAIL", "scope": scope, "case": case,
@@ -233,7 +234,12 @@ def run_drive_trial(route, case, condition, output_dir, collection_config, *, ca
         (directory / "images").mkdir()
         owned = True
         write_report(directory / "episode.json", metadata)
-        session = CollectionSession(cfg, carla_module=carla_module)
+        factory = session_factory or CollectionSession
+        if allowed_weather_presets == ("ClearNoon",):
+            session = factory(cfg, carla_module=carla_module)
+        else:
+            session = factory(cfg, carla_module=carla_module,
+                                      allowed_weather_presets=allowed_weather_presets)
         stage = "native-session"
         with session:
             verify_geometry_route_in_world(route, session.world.get_map(), carla_module)
