@@ -105,6 +105,8 @@ Pilot은 정답 경로 제어기로 실제 이동 중 수집하며, 학습용과
 
 확대 수집은 개발용 정오 날씨와 시작 위치를 바꾸어 중앙·복귀 장면을 연결합니다. 같은 장면을 진행 거리로 짝지어 동일한 데이터 예산의 학습 선택을 고정하고, 원본 영상·라벨·분할을 재검증합니다. 사용법은 [확대 데이터셋](docs/dataset.md)에 있습니다.
 
+중앙·복귀 데이터 비교는 같은 초기 하이브리드 모델과 학습 예산으로 여러 시드를 학습합니다. 공통 개발 영상의 예측 오차와 같은 조건의 실제 주행을 함께 평가하며, 계약과 사용법은 [복귀 데이터 학습 비교](docs/recovery-learning.md)에 있습니다.
+
 ```powershell
 .\.venv\Scripts\python.exe scripts/run_pilot_pipeline.py --output-dir results/local/pilot-example
 .\.venv\Scripts\python.exe scripts/verify_pilot.py --manifest results/local/pilot-example/pilot_manifest.json --output results/local/pilot-example-gate.json
@@ -141,6 +143,7 @@ Pilot은 정답 경로 제어기로 실제 이동 중 수집하며, 학습용과
 - [Pilot 수집](docs/pilot.md): 이동 sample, scene 분할, 공간 누수와 원본 재검증.
 - [확대 데이터셋](docs/dataset.md): 중앙·복귀 장면의 짝, 동일 예산 학습 선택과 데이터 버전 고정.
 - [Waypoint 학습](docs/learning.md): RGB preprocessing, ResNet18, 학습·재개 및 개발 평가.
+- [복귀 데이터 학습 비교](docs/recovery-learning.md): 동일 예산 A/B 학습, 시드별 평가와 공통 조건 주행 선택.
 - [Controller](docs/controller.md): 차량 기하, Pure Pursuit와 속도 제어.
 - [주행과 복귀](docs/driving.md): 초기 편차, 제어 readback, 센서·차체·정리 검사.
 - [평가 명세](docs/evaluation.md): 공통 조건, 주행 지표와 final test 원칙.
