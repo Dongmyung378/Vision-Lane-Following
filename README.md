@@ -144,7 +144,10 @@ Pilot은 정답 경로 제어기로 실제 이동 중 수집하며, 학습용과
 - [확대 데이터셋](docs/dataset.md): 중앙·복귀 장면의 짝, 동일 예산 학습 선택과 데이터 버전 고정.
 - [Waypoint 학습](docs/learning.md): RGB preprocessing, ResNet18, 학습·재개 및 개발 평가.
 - [복귀 데이터 학습 비교](docs/recovery-learning.md): 동일 예산 A/B 학습, 시드별 평가와 공통 조건 주행 선택.
-- [Controller](docs/controller.md): 차량 기하, Pure Pursuit와 속도 제어.
+- [개발 주행 비교](docs/development-study.md): 제어기 조정, RGB 보정 검사, 실제 카메라·환경 변화와 개발 후보 회귀 평가.
+- [외관 변화 추가 학습](docs/development-training.md): 동일 초기화·학습 예산의 추가 학습과 환경 변화 대응 비교.
+- [선택 파이프라인 실행](docs/selected-pipeline.md): 모델·RGB 경로 보정·제어기 설정을 함께 고정한 추론과 연속 프레임 제어.
+- [Controller](docs/controller.md): 차량 기하, Pure Pursuit·Stanley와 속도 제어.
 - [주행과 복귀](docs/driving.md): 초기 편차, 제어 readback, 센서·차체·정리 검사.
 - [평가 명세](docs/evaluation.md): 공통 조건, 주행 지표와 final test 원칙.
 

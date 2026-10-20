@@ -53,3 +53,33 @@ command = controller.step(waypoints_ego_m, speed_mps, dt_seconds=0.05)
 `command`는 throttle/brake/steer·handbrake/reverse와 diagnostics를 담는다. Simulator에는 control 필드만 전달한다. Diagnostics는 actor/rear 타깃·곡률·Ackermann 변환·lookahead·clipping/slew·속도 목표·PI/antiwindup와 config hash를 구분한다.
 
 Native 시간 정책은 `frame F snapshot/label → command → frame F+1 applied readback`이다. F+1 pose를 F label에 사용하지 않는다. Frame 정합·원래 route identity·실제 적용 확인은 [주행 runner와 validator](driving.md)가 담당한다.
+
+## 제어기 비교와 Stanley
+
+[controller_study.py](../carla_tools/controller_study.py)는 기존 Pure Pursuit 설정과 구현을 유지하면서 비교용 설정과 Stanley 제어기를 제공한다. [controller_study.json](../configs/controller_study.json)은 기존 전체 설정을 `base`에 담고 `method`, Stanley gain·저속 완화, 조향 smoothing을 명시한다. 비교 대상마다 canonical configuration hash가 다르며 누락·중복·unknown field와 nonfinite 값을 거부한다.
+
+```python
+from dataclasses import replace
+from carla_tools.controller_study import build_controller, load_study_controller_config
+
+config = load_study_controller_config()
+config = replace(config, method="stanley", stanley_cross_track_gain=1.0)
+controller = build_controller(config, geometry)
+command = controller.step(waypoints_ego_m, speed_mps, dt_seconds=0.05)
+```
+
+`build_controller`에 기존 `ControllerConfig`를 전달하면 기존 Pure Pursuit 객체를 만든다. 비교용 Pure Pursuit에 `steer_smoothing_alpha=1.0`을 사용하면 같은 base 설정·입력 이력에서 기존 throttle/brake/steer 명령과 일치한다. Episode마다 `reset()`하고 검증에서도 같은 설정으로 command를 독립 재계산한다.
+
+Stanley는 측정한 front axle 위치에서 가장 가까운 경로점과 경로 접선 방향을 사용한다. Waypoint는 actor 원점의 미래 위치이므로 이를 그대로 front axle 경로로 취급하면 곡선에서 기준점 차이에 의한 오차가 생긴다. 처음 세 점이 정의하는 actor 국소 원 또는 직선을 대응하는 front axle 원·직선으로 변환한 뒤 투영한다. Actor 원의 반경이 `Ra`, actor-local rear offset이 `(rx,ry)`, 회전 부호가 `s`이면 rear 반경과 front 반경은 다음과 같다.
+
+```text
+Rrear = -ry + s * sqrt(Ra² - rx²)
+Rfront = hypot(front_x - rx, front_y - ry - Rrear)
+steering = heading_gain * front_path_tangent_angle
+         + atan2(cross_track_gain * signed_cross_track_error,
+                 speed_mps + softening_mps)
+```
+
+두 원은 같은 중심을 사용한다. 직선은 경로 방향으로 회전한 측정 front offset을 더한다. 우측 경로 오차와 우회전 조향은 양수다. 이상적인 actor 원 위에서 cross-track error가 0일 때 front-path 접선 항은 `atan(wheelbase/Rrear)`를 제공한다. 물리적으로 도달할 수 없는 원, 역방향 국소 경로와 잘못된 입력은 상태를 변경하기 전에 거부한다. 국소 원은 예측 waypoint를 이용한 근사이므로 잡음이나 급격한 곡률 변화에서의 성능은 실제 개발 주행으로 비교해야 한다.
+
+Stanley도 bicycle steering을 같은 측정 Ackermann inner-wheel 명령으로 변환한다. 같은 preview curvature 속도 제한과 PI·antiwindup을 사용하며 조향은 actuator 범위로 제한한 뒤 `filtered = previous + alpha * (clipped - previous)`로 smoothing하고 마지막에 변화율을 제한한다. `alpha=1.0`이면 smoothing을 건너뛴다. Diagnostics는 heading/cross-track 각도, actor/front 경로 변환, smoothing·slew와 설정 hash를 남긴다. 계산 시간과 차량 제어기의 실제 동역학은 별도로 평가한다.
