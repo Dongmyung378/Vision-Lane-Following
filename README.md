@@ -150,5 +150,6 @@ Pilot은 정답 경로 제어기로 실제 이동 중 수집하며, 학습용과
 - [Controller](docs/controller.md): 차량 기하, Pure Pursuit·Stanley와 속도 제어.
 - [주행과 복귀](docs/driving.md): 초기 편차, 제어 readback, 센서·차체·정리 검사.
 - [평가 명세](docs/evaluation.md): 공통 조건, 주행 지표와 final test 원칙.
+- [독립 평가 동결](docs/final-evaluation.md): 보류 경로·시작 상태·평가 지표·실행 예산의 사전 확정과 코드·모델·데이터 변경 검출.
 
 수집 데이터, simulator 배포 파일, checkpoint와 실행 출력은 Git에서 제외되는 로컬 경로에 보관합니다.
